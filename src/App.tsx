@@ -9,6 +9,7 @@ import MasterFields from "./pages/MasterFields";
 import Forms from "./pages/Forms";
 import FormEditor from "./pages/FormEditor";
 import Universities from "./pages/Universities";
+import AddUniversity from "./pages/AddUniversity";
 import Courses from "./pages/Courses";
 import NotFound from "./pages/NotFound";
 
@@ -27,6 +28,8 @@ const App = () => (
             <Route path="forms" element={<Forms />} />
             <Route path="forms/:formId" element={<FormEditor />} />
             <Route path="universities" element={<Universities />} />
+            <Route path="universities/add" element={<AddUniversity />} />
+            <Route path="universities/edit/:universityId" element={<AddUniversity />} />
             <Route path="courses" element={<Courses />} />
           </Route>
           <Route path="*" element={<NotFound />} />
