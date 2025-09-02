@@ -56,6 +56,7 @@ export interface FieldCategory {
   description: string;
   order: number;
   subcategories?: FieldSubcategory[];
+  isCustom?: boolean;
 }
 
 export interface ConfiguredField extends ApplicationField {

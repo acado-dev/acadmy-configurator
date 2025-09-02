@@ -14,22 +14,24 @@ import {
   DialogTitle,
   DialogFooter,
 } from '@/components/ui/dialog';
-import { masterCategories, masterFields } from '@/data/masterFields';
 import { ApplicationField, ConfiguredField, FieldCategory } from '@/types/application';
 import { FormFieldEditor } from '@/components/forms/FormFieldEditor';
 import { FormMappingDialog } from '@/components/forms/FormMappingDialog';
 import { CategoryRenameDialog } from '@/components/forms/CategoryRenameDialog';
 import { FormPreview } from '@/components/forms/FormPreview';
 import { useFormsData } from '@/hooks/useFormsData';
+import { useMasterFieldsManagement } from '@/hooks/useMasterFieldsManagement';
 import {
   User, GraduationCap, Briefcase, Lightbulb, Award,
-  FileText as FileTextIcon, PenTool, Users, DollarSign, Settings
+  FileText as FileTextIcon, PenTool, Users, DollarSign, Settings,
+  Folder, Globe, Heart, Star, Shield
 } from 'lucide-react';
 
 const FormEditor = () => {
   const { formId } = useParams();
   const navigate = useNavigate();
   const { forms, universities, courses, createForm, updateForm, getFormById } = useFormsData();
+  const { categories: masterCategories, fields: masterFields } = useMasterFieldsManagement();
   
   const [formName, setFormName] = useState('');
   const [formDescription, setFormDescription] = useState('');
