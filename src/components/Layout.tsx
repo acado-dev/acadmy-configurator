@@ -10,7 +10,7 @@ const Layout = () => {
   const navigation = [
     { name: 'Dashboard', href: '/', icon: Home },
     { name: 'Master Fields', href: '/master-fields', icon: FileText },
-    { name: 'Form Configurator', href: '/form-configurator', icon: Settings },
+    { name: 'Application Forms', href: '/forms', icon: Settings },
     { name: 'Universities', href: '/universities', icon: Building2 },
     { name: 'Courses', href: '/courses', icon: BookOpen },
   ];

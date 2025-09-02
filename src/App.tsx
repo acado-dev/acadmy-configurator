@@ -6,7 +6,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Layout from "./components/Layout";
 import Dashboard from "./pages/Dashboard";
 import MasterFields from "./pages/MasterFields";
-import FormConfigurator from "./pages/FormConfigurator";
+import Forms from "./pages/Forms";
+import FormEditor from "./pages/FormEditor";
 import Universities from "./pages/Universities";
 import Courses from "./pages/Courses";
 import NotFound from "./pages/NotFound";
@@ -23,7 +24,8 @@ const App = () => (
           <Route path="/" element={<Layout />}>
             <Route index element={<Dashboard />} />
             <Route path="master-fields" element={<MasterFields />} />
-            <Route path="form-configurator" element={<FormConfigurator />} />
+            <Route path="forms" element={<Forms />} />
+            <Route path="forms/:formId" element={<FormEditor />} />
             <Route path="universities" element={<Universities />} />
             <Route path="courses" element={<Courses />} />
           </Route>

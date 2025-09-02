@@ -72,6 +72,7 @@ export interface ApplicationForm {
   courseIds: string[];
   categories: FieldCategory[];
   fields: ConfiguredField[];
+  customCategoryNames?: Record<string, { name: string; subcategories?: Record<string, string> }>;
   createdAt: Date;
   updatedAt: Date;
   isActive: boolean;

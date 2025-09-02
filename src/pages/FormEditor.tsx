@@ -1,12 +1,11 @@
-import React, { useState } from 'react';
-import { Plus, Save, Eye, Copy, Trash2, GripVertical, Check, X } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { ArrowLeft, Save, Eye, Link, Settings2, Plus, FileText } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import {
   Dialog,
   DialogContent,
@@ -17,18 +16,31 @@ import {
 } from '@/components/ui/dialog';
 import { masterCategories, masterFields } from '@/data/masterFields';
 import { ApplicationField, ConfiguredField, FieldCategory } from '@/types/application';
+import { FormFieldEditor } from '@/components/forms/FormFieldEditor';
+import { FormMappingDialog } from '@/components/forms/FormMappingDialog';
+import { CategoryRenameDialog } from '@/components/forms/CategoryRenameDialog';
+import { useFormsData } from '@/hooks/useFormsData';
 import {
   User, GraduationCap, Briefcase, Lightbulb, Award,
-  FileText, PenTool, Users, DollarSign, Settings
+  FileText as FileTextIcon, PenTool, Users, DollarSign, Settings
 } from 'lucide-react';
 
-const FormConfigurator = () => {
+const FormEditor = () => {
+  const { formId } = useParams();
+  const navigate = useNavigate();
+  const { forms, universities, courses, createForm, updateForm, getFormById } = useFormsData();
+  
   const [formName, setFormName] = useState('');
   const [formDescription, setFormDescription] = useState('');
   const [selectedFields, setSelectedFields] = useState<ConfiguredField[]>([]);
   const [isAddFieldDialogOpen, setIsAddFieldDialogOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [editingField, setEditingField] = useState<ConfiguredField | null>(null);
+  const [isMappingDialogOpen, setIsMappingDialogOpen] = useState(false);
+  const [isCategoryDialogOpen, setIsCategoryDialogOpen] = useState(false);
+  const [selectedUniversityId, setSelectedUniversityId] = useState('');
+  const [selectedCourseIds, setSelectedCourseIds] = useState<string[]>([]);
+  const [customCategoryNames, setCustomCategoryNames] = useState<Record<string, { name: string; subcategories?: Record<string, string> }>>({});
 
   const iconMap: Record<string, React.ComponentType<any>> = {
     User,
@@ -36,12 +48,27 @@ const FormConfigurator = () => {
     Briefcase,
     Lightbulb,
     Award,
-    FileText,
+    FileText: FileTextIcon,
     PenTool,
     Users,
     DollarSign,
     Settings
   };
+
+  // Load existing form if editing
+  useEffect(() => {
+    if (formId && formId !== 'new') {
+      const existingForm = getFormById(formId);
+      if (existingForm) {
+        setFormName(existingForm.name);
+        setFormDescription(existingForm.description);
+        setSelectedFields(existingForm.fields);
+        setSelectedUniversityId(existingForm.universityId);
+        setSelectedCourseIds(existingForm.courseIds);
+        setCustomCategoryNames(existingForm.customCategoryNames || {});
+      }
+    }
+  }, [formId, getFormById]);
 
   const handleAddField = (field: ApplicationField) => {
     const configuredField: ConfiguredField = {
@@ -64,32 +91,73 @@ const FormConfigurator = () => {
   };
 
   const handleSaveForm = () => {
-    console.log('Saving form:', {
+    const formData = {
       name: formName,
       description: formDescription,
+      universityId: selectedUniversityId,
+      courseIds: selectedCourseIds,
+      categories: masterCategories,
       fields: selectedFields,
-    });
-    // Here you would typically save to backend
+      customCategoryNames,
+      isActive: true,
+    };
+
+    if (formId && formId !== 'new') {
+      updateForm(formId, formData);
+    } else {
+      createForm({
+        ...formData,
+        id: '',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
+    }
+    navigate('/forms');
+  };
+
+  const handleSaveMapping = (universityId: string, courseIds: string[]) => {
+    setSelectedUniversityId(universityId);
+    setSelectedCourseIds(courseIds);
   };
 
   const getCategoryFields = (categoryId: string) => {
     return masterFields.filter(f => f.categoryId === categoryId);
   };
 
+  // Get categories that have fields in the form
+  const usedCategories = Array.from(new Set(selectedFields.map(f => f.categoryId)))
+    .map(catId => masterCategories.find(c => c.id === catId))
+    .filter(Boolean) as FieldCategory[];
+
   return (
     <div className="space-y-6">
       {/* Page Header */}
       <div className="flex justify-between items-start">
-        <div>
-          <h1 className="text-3xl font-bold">Form Configurator</h1>
-          <p className="text-muted-foreground mt-1">
-            Create and customize application forms for universities
-          </p>
+        <div className="flex items-center gap-4">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => navigate('/forms')}
+          >
+            <ArrowLeft className="w-4 h-4" />
+          </Button>
+          <div>
+            <h1 className="text-3xl font-bold">
+              {formId && formId !== 'new' ? 'Edit Form' : 'Create New Form'}
+            </h1>
+            <p className="text-muted-foreground mt-1">
+              Configure application form fields and settings
+            </p>
+          </div>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" className="gap-2">
             <Eye className="w-4 h-4" />
             Preview
+          </Button>
+          <Button variant="outline" className="gap-2" onClick={() => setIsMappingDialogOpen(true)}>
+            <Link className="w-4 h-4" />
+            Map to Courses
           </Button>
           <Button variant="gradient" className="gap-2" onClick={handleSaveForm}>
             <Save className="w-4 h-4" />
@@ -132,15 +200,26 @@ const FormConfigurator = () => {
           <Card className="p-6">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-lg font-semibold">Form Fields</h2>
-              <Button
-                variant="outline"
-                size="sm"
-                className="gap-2"
-                onClick={() => setIsAddFieldDialogOpen(true)}
-              >
-                <Plus className="w-4 h-4" />
-                Add Field
-              </Button>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="gap-2"
+                  onClick={() => setIsCategoryDialogOpen(true)}
+                >
+                  <Settings2 className="w-4 h-4" />
+                  Category Names
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="gap-2"
+                  onClick={() => setIsAddFieldDialogOpen(true)}
+                >
+                  <Plus className="w-4 h-4" />
+                  Add Field
+                </Button>
+              </div>
             </div>
 
             {selectedFields.length === 0 ? (
@@ -159,104 +238,14 @@ const FormConfigurator = () => {
             ) : (
               <div className="space-y-3">
                 {selectedFields.map((field) => (
-                  <div
+                  <FormFieldEditor
                     key={field.id}
-                    className="p-4 rounded-lg border bg-card hover:shadow-sm transition-all"
-                  >
-                    <div className="flex items-start gap-3">
-                      <GripVertical className="w-5 h-5 text-muted-foreground mt-1 cursor-move" />
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-2">
-                          {editingField?.id === field.id ? (
-                            <Input
-                              value={field.customLabel || field.label}
-                              onChange={(e) => handleUpdateField(field.id, { customLabel: e.target.value })}
-                              className="h-7 text-sm font-medium"
-                            />
-                          ) : (
-                            <p className="font-medium">{field.customLabel || field.label}</p>
-                          )}
-                          <Badge variant="secondary" className="text-xs">
-                            {field.type}
-                          </Badge>
-                          {field.isRequired && (
-                            <Badge variant="destructive" className="text-xs">
-                              Required
-                            </Badge>
-                          )}
-                        </div>
-                        <p className="text-xs text-muted-foreground mb-3">
-                          Field name: {field.name}
-                        </p>
-                        <div className="flex items-center gap-4">
-                          <div className="flex items-center gap-2">
-                            <Switch
-                              id={`visible-${field.id}`}
-                              checked={field.isVisible}
-                              onCheckedChange={(checked) => handleUpdateField(field.id, { isVisible: checked })}
-                            />
-                            <Label htmlFor={`visible-${field.id}`} className="text-sm">
-                              Visible
-                            </Label>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <Switch
-                              id={`required-${field.id}`}
-                              checked={field.isRequired}
-                              onCheckedChange={(checked) => handleUpdateField(field.id, { isRequired: checked })}
-                            />
-                            <Label htmlFor={`required-${field.id}`} className="text-sm">
-                              Required
-                            </Label>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        {editingField?.id === field.id ? (
-                          <>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-8 w-8"
-                              onClick={() => setEditingField(null)}
-                            >
-                              <Check className="w-4 h-4" />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-8 w-8"
-                              onClick={() => {
-                                handleUpdateField(field.id, { customLabel: field.label });
-                                setEditingField(null);
-                              }}
-                            >
-                              <X className="w-4 h-4" />
-                            </Button>
-                          </>
-                        ) : (
-                          <>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-8 w-8"
-                              onClick={() => setEditingField(field)}
-                            >
-                              <PenTool className="w-4 h-4" />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-8 w-8 text-destructive"
-                              onClick={() => handleRemoveField(field.id)}
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </Button>
-                          </>
-                        )}
-                      </div>
-                    </div>
-                  </div>
+                    field={field}
+                    editingField={editingField}
+                    onUpdate={handleUpdateField}
+                    onRemove={handleRemoveField}
+                    onEdit={setEditingField}
+                  />
                 ))}
               </div>
             )}
@@ -285,29 +274,27 @@ const FormConfigurator = () => {
                     const category = masterCategories.find(c => c.id === catId);
                     if (!category) return null;
                     const Icon = iconMap[category.icon] || FileText;
+                    const displayName = customCategoryNames[catId]?.name || category.name;
                     return (
                       <Badge key={catId} variant="secondary" className="gap-1">
                         <Icon className="w-3 h-3" />
-                        {category.name}
+                        {displayName}
                       </Badge>
                     );
                   })}
                 </div>
               </div>
-            </div>
-          </Card>
-
-          <Card className="p-6 mt-4">
-            <h3 className="font-semibold mb-3">Quick Actions</h3>
-            <div className="space-y-2">
-              <Button variant="outline" className="w-full justify-start gap-2" size="sm">
-                <Copy className="w-4 h-4" />
-                Duplicate Form
-              </Button>
-              <Button variant="outline" className="w-full justify-start gap-2" size="sm">
-                <FileText className="w-4 h-4" />
-                Import from Template
-              </Button>
+              {selectedUniversityId && (
+                <div>
+                  <p className="text-sm text-muted-foreground mb-2">Mapped To</p>
+                  <p className="text-sm font-medium">
+                    {universities.find(u => u.id === selectedUniversityId)?.name}
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {selectedCourseIds.length} course(s) selected
+                  </p>
+                </div>
+              )}
             </div>
           </Card>
         </div>
@@ -357,10 +344,9 @@ const FormConfigurator = () => {
                 return (
                   <div
                     key={field.id}
-                    className={cn(
-                      "flex items-center justify-between p-3 rounded-lg border",
-                      isAdded ? "bg-muted opacity-50" : "hover:bg-accent/50 cursor-pointer"
-                    )}
+                    className={`flex items-center justify-between p-3 rounded-lg border ${
+                      isAdded ? 'bg-muted opacity-50' : 'hover:bg-accent/50 cursor-pointer'
+                    }`}
                     onClick={() => !isAdded && handleAddField(field)}
                   >
                     <div>
@@ -394,12 +380,28 @@ const FormConfigurator = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Form Mapping Dialog */}
+      <FormMappingDialog
+        isOpen={isMappingDialogOpen}
+        onClose={() => setIsMappingDialogOpen(false)}
+        universities={universities}
+        courses={courses}
+        selectedUniversityId={selectedUniversityId}
+        selectedCourseIds={selectedCourseIds}
+        onSave={handleSaveMapping}
+      />
+
+      {/* Category Rename Dialog */}
+      <CategoryRenameDialog
+        isOpen={isCategoryDialogOpen}
+        onClose={() => setIsCategoryDialogOpen(false)}
+        categories={usedCategories}
+        customNames={customCategoryNames}
+        onSave={setCustomCategoryNames}
+      />
     </div>
   );
 };
 
-function cn(...classes: (string | undefined | null | false)[]) {
-  return classes.filter(Boolean).join(' ');
-}
-
-export default FormConfigurator;
+export default FormEditor;
