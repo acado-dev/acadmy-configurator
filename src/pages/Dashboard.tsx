@@ -49,9 +49,9 @@ const Dashboard = () => {
     <div className="space-y-6">
       {/* Page Header */}
       <div>
-        <h1 className="text-3xl font-bold">Dashboard</h1>
+        <h1 className="text-3xl font-bold">Welcome to ACADO Admin Portal</h1>
         <p className="text-muted-foreground mt-1">
-          Welcome to ACADO Application Configurator
+          Manage university applications and admissions efficiently
         </p>
       </div>
 

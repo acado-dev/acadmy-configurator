@@ -6,32 +6,37 @@
 
 @layer base {
   :root {
-    /* Primary Colors - Professional Blue */
-    --primary: 217 91% 60%;
-    --primary-hover: 217 91% 55%;
-    --primary-light: 217 91% 95%;
-    --primary-dark: 217 91% 40%;
-    --primary-foreground: 0 0% 100%;
+    /* ACADO Brand Colors */
+    --acado-lime: 84 81% 56%; /* #A3E635 - Primary lime green */
+    --acado-dark: 0 0% 8%; /* Dark background */
+    --acado-green: 82 84% 67%; /* Secondary green */
+    
+    /* Primary Colors - ACADO Lime */
+    --primary: 84 81% 56%;
+    --primary-hover: 84 81% 46%;
+    --primary-light: 84 81% 95%;
+    --primary-dark: 84 81% 40%;
+    --primary-foreground: 0 0% 0%;
 
-    /* Secondary Colors - Teal Accent */
-    --secondary: 174 83% 45%;
-    --secondary-hover: 174 83% 40%;
-    --secondary-light: 174 83% 95%;
-    --secondary-foreground: 0 0% 100%;
+    /* Secondary Colors */
+    --secondary: 0 0% 96%;
+    --secondary-hover: 0 0% 93%;
+    --secondary-light: 0 0% 98%;
+    --secondary-foreground: 0 0% 9%;
 
     /* Backgrounds */
     --background: 0 0% 100%;
-    --background-secondary: 210 40% 98%;
-    --foreground: 222 47% 11%;
+    --background-secondary: 0 0% 98%;
+    --foreground: 0 0% 3%;
 
     /* Cards and Surfaces */
     --card: 0 0% 100%;
-    --card-hover: 210 40% 99%;
-    --card-foreground: 222 47% 11%;
+    --card-hover: 0 0% 98%;
+    --card-foreground: 0 0% 3%;
 
     /* Form Elements */
-    --input: 214 32% 91%;
-    --input-focus: 217 91% 60%;
+    --input: 0 0% 89%;
+    --input-focus: 84 81% 56%;
 
     /* Status Colors */
     --success: 142 76% 36%;
@@ -42,29 +47,30 @@
     --destructive-foreground: 0 0% 100%;
 
     /* Neutral Colors */
-    --border: 214 32% 91%;
-    --ring: 217 91% 60%;
-    --muted: 210 40% 96%;
-    --muted-foreground: 215 16% 47%;
-    --accent: 210 40% 96%;
-    --accent-foreground: 222 47% 11%;
+    --border: 0 0% 89%;
+    --ring: 84 81% 56%;
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 45%;
+    --accent: 82 84% 67%;
+    --accent-foreground: 0 0% 9%;
 
     /* Popover */
     --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
+    --popover-foreground: 0 0% 3%;
 
     /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(217 91% 60%), hsl(174 83% 45%));
-    --gradient-subtle: linear-gradient(180deg, hsl(0 0% 100%), hsl(210 40% 98%));
-    --gradient-card: linear-gradient(145deg, hsl(0 0% 100%), hsl(210 40% 99%));
+    --gradient-primary: linear-gradient(135deg, hsl(84 81% 56%), hsl(82 84% 67%));
+    --gradient-dark: linear-gradient(135deg, hsl(0 0% 8%), hsl(0 0% 15%));
+    --gradient-subtle: linear-gradient(180deg, hsl(0 0% 100%), hsl(0 0% 97%));
+    --gradient-card: linear-gradient(145deg, hsl(0 0% 100%), hsl(0 0% 98%));
 
     /* Shadows */
-    --shadow-sm: 0 1px 2px 0 hsl(222 47% 11% / 0.05);
-    --shadow-md: 0 4px 6px -1px hsl(222 47% 11% / 0.1);
-    --shadow-lg: 0 10px 15px -3px hsl(222 47% 11% / 0.1);
-    --shadow-xl: 0 20px 25px -5px hsl(222 47% 11% / 0.1);
-    --shadow-card: 0 2px 8px -2px hsl(222 47% 11% / 0.08);
-    --shadow-hover: 0 10px 30px -10px hsl(217 91% 60% / 0.3);
+    --shadow-sm: 0 1px 2px 0 hsl(0 0% 0% / 0.05);
+    --shadow-md: 0 4px 6px -1px hsl(0 0% 0% / 0.1);
+    --shadow-lg: 0 10px 15px -3px hsl(0 0% 0% / 0.1);
+    --shadow-xl: 0 20px 25px -5px hsl(0 0% 0% / 0.1);
+    --shadow-card: 0 2px 8px -2px hsl(0 0% 0% / 0.08);
+    --shadow-hover: 0 10px 30px -10px hsl(84 81% 56% / 0.3);
 
     /* Animations */
     --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
@@ -80,50 +86,54 @@
 
     /* Sidebar */
     --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 222 47% 11%;
-    --sidebar-primary: 217 91% 60%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 210 40% 96%;
-    --sidebar-accent-foreground: 222 47% 11%;
-    --sidebar-border: 214 32% 91%;
-    --sidebar-ring: 217 91% 60%;
+    --sidebar-foreground: 0 0% 3%;
+    --sidebar-primary: 84 81% 56%;
+    --sidebar-primary-foreground: 0 0% 0%;
+    --sidebar-accent: 0 0% 96%;
+    --sidebar-accent-foreground: 0 0% 3%;
+    --sidebar-border: 0 0% 89%;
+    --sidebar-ring: 84 81% 56%;
   }
 
   .dark {
-    --primary: 217 91% 60%;
-    --primary-hover: 217 91% 65%;
-    --primary-light: 217 91% 20%;
-    --primary-dark: 217 91% 70%;
-    --primary-foreground: 0 0% 100%;
+    /* ACADO Dark Theme */
+    --primary: 84 81% 56%; /* Lime stays bright in dark */
+    --primary-hover: 84 81% 66%;
+    --primary-light: 84 81% 20%;
+    --primary-dark: 84 81% 70%;
+    --primary-foreground: 0 0% 0%;
 
-    --secondary: 174 83% 45%;
-    --secondary-hover: 174 83% 50%;
-    --secondary-light: 174 83% 20%;
-    --secondary-foreground: 0 0% 100%;
+    --secondary: 0 0% 14%;
+    --secondary-hover: 0 0% 17%;
+    --secondary-light: 0 0% 10%;
+    --secondary-foreground: 0 0% 98%;
 
-    --background: 222 47% 11%;
-    --background-secondary: 222 47% 7%;
-    --foreground: 210 40% 98%;
+    --background: 0 0% 8%;
+    --background-secondary: 0 0% 5%;
+    --foreground: 0 0% 98%;
 
-    --card: 222 47% 13%;
-    --card-hover: 222 47% 15%;
-    --card-foreground: 210 40% 98%;
+    --card: 0 0% 12%;
+    --card-hover: 0 0% 14%;
+    --card-foreground: 0 0% 98%;
 
-    --input: 217 32% 17%;
-    --input-focus: 217 91% 60%;
+    --input: 0 0% 14%;
+    --input-focus: 84 81% 56%;
 
-    --border: 217 32% 17%;
-    --ring: 217 91% 60%;
-    --muted: 217 32% 17%;
-    --muted-foreground: 215 20% 65%;
-    --accent: 217 32% 17%;
-    --accent-foreground: 210 40% 98%;
+    --border: 0 0% 14%;
+    --ring: 84 81% 56%;
+    --muted: 0 0% 14%;
+    --muted-foreground: 0 0% 63%;
+    --accent: 82 84% 67%;
+    --accent-foreground: 0 0% 9%;
 
-    --popover: 222 47% 11%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 0 0% 12%;
+    --popover-foreground: 0 0% 98%;
 
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
+    --destructive: 0 62% 30%;
+    --destructive-foreground: 0 0% 98%;
+
+    --sidebar-background: 0 0% 8%;
+    --sidebar-foreground: 0 0% 98%;
   }
 }
 
