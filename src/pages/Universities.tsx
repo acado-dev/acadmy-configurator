@@ -26,7 +26,179 @@ const Universities = () => {
     const savedUniversities = localStorage.getItem('acado_universities');
     if (savedUniversities) {
       setUniversities(JSON.parse(savedUniversities));
+      return;
     }
+
+    // Seed sample universities for reference
+    const seedUniversities: UniversityDetails[] = [
+      {
+        id: 'u-jamk',
+        name: 'Jamk University of Applied Sciences',
+        tagline: 'Openness, Innovation, Responsibility, Collaboration',
+        foundedYear: 1994,
+        logo: '',
+        coverImage: '',
+        brochureUrl: '',
+        website: 'https://www.jamk.fi',
+        location: {
+          city: 'Jyväskylä',
+          state: 'Central Finland',
+          country: 'Finland',
+          campuses: [
+            { id: 'c1', name: 'Rajakatu Campus', location: 'Jyväskylä', specializations: ['Business', 'Technology', 'Tourism', 'Teacher Education'] },
+            { id: 'c2', name: 'Lutakko Campus', location: 'Jyväskylä', specializations: ['Social Services', 'Health Care', 'ICT'] },
+          ],
+        },
+        about: {
+          description:
+            "JAMK is one of Finland's leading universities of applied sciences with strong industry partnerships and international outlook.",
+          mission:
+            'Provide future-focused education with practical skills, critical thinking, and global perspectives.',
+          values: ['Openness', 'Innovation', 'Responsibility', 'Collaboration'],
+          highlights: ['300+ partner institutions', '40,000+ alumni', 'Strong RDI projects'],
+        },
+        factsAndFigures: {
+          totalStudents: 9500,
+          internationalStudents: 700,
+          staffMembers: 900,
+          alumniCount: 40000,
+          internationalPartnerships: 300,
+          partnerCountries: 50,
+          graduateEmployability: 80,
+          annualGraduates: 1500,
+          researchBudget: 20,
+        },
+        community: {
+          description: 'Vibrant network of students, faculty, industry partners, and alumni.',
+          studentCount: 9500,
+          facultyCount: 900,
+          alumniInCountries: 100,
+          activeProjects: 300,
+        },
+        fieldsOfEducation: [
+          { id: 'f1', name: 'Business and Tourism', description: 'International business and hospitality', programs: ['International Business', 'Tourism Management'], degrees: ['Bachelor', 'Master'] },
+          { id: 'f2', name: 'Technology and ICT', description: 'Engineering and ICT', programs: ['Automation and Robotics', 'ICT Engineering', 'Cybersecurity'], degrees: ['Bachelor', 'Master'] },
+        ],
+        socialResponsibility: {
+          description: 'Committed to sustainable bioeconomy and digitalisation projects.',
+          commitments: ['Sustainability', 'Digitalisation', 'Entrepreneurship'],
+          initiatives: ['Business Incubator', 'Green Transition Projects'],
+        },
+        testimonials: [],
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        isActive: true,
+        isVerified: true,
+      },
+      {
+        id: 'u-oxford',
+        name: 'University of Oxford',
+        tagline: 'Dominus Illuminatio Mea',
+        foundedYear: 1096,
+        logo: '',
+        coverImage: '',
+        brochureUrl: '',
+        website: 'https://www.ox.ac.uk',
+        location: {
+          city: 'Oxford',
+          country: 'United Kingdom',
+          campuses: [],
+        },
+        about: {
+          description: 'World-renowned research university with a history of academic excellence.',
+          mission: 'Achieve excellence in research and education for the benefit of society.',
+          values: ['Excellence', 'Integrity', 'Diversity'],
+          highlights: ['Oldest in the English-speaking world', 'Global ranking top 1-5'],
+        },
+        factsAndFigures: {
+          totalStudents: 26000,
+          internationalStudents: 11000,
+          staffMembers: 13000,
+          alumniCount: 300000,
+          internationalPartnerships: 500,
+          partnerCountries: 100,
+          graduateEmployability: 92,
+          annualGraduates: 7000,
+        },
+        community: {
+          description: 'A diverse and inclusive global community.',
+          studentCount: 26000,
+          facultyCount: 13000,
+          alumniInCountries: 150,
+          activeProjects: 1000,
+        },
+        fieldsOfEducation: [
+          { id: 'f1', name: 'Humanities', programs: ['History', 'Philosophy'], degrees: ['Bachelor', 'Master', 'PhD'] },
+          { id: 'f2', name: 'Sciences', programs: ['Physics', 'Chemistry', 'Biology'], degrees: ['Bachelor', 'Master', 'PhD'] },
+        ],
+        socialResponsibility: {
+          description: 'Global impact through research and innovation.',
+          commitments: ['Sustainability', 'Health', 'Education'],
+          initiatives: ['Oxford Martin School', 'Vaccines research'],
+        },
+        testimonials: [],
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        isActive: true,
+        isVerified: true,
+      },
+      {
+        id: 'u-mit',
+        name: 'Massachusetts Institute of Technology (MIT)',
+        tagline: 'Mens et Manus',
+        foundedYear: 1861,
+        logo: '',
+        coverImage: '',
+        brochureUrl: '',
+        website: 'https://www.mit.edu',
+        location: {
+          city: 'Cambridge',
+          state: 'Massachusetts',
+          country: 'USA',
+          campuses: [],
+        },
+        about: {
+          description: 'Leading institute for technology and innovation.',
+          mission: 'Advance knowledge and educate students in science and technology.',
+          values: ['Innovation', 'Excellence', 'Collaboration'],
+          highlights: ['Cutting-edge research', 'Entrepreneurial ecosystem'],
+        },
+        factsAndFigures: {
+          totalStudents: 11500,
+          internationalStudents: 3400,
+          staffMembers: 13000,
+          alumniCount: 140000,
+          internationalPartnerships: 200,
+          partnerCountries: 60,
+          graduateEmployability: 95,
+          annualGraduates: 3000,
+        },
+        community: {
+          description: 'Innovative and entrepreneurial community.',
+          studentCount: 11500,
+          facultyCount: 13000,
+          alumniInCountries: 120,
+          activeProjects: 800,
+        },
+        fieldsOfEducation: [
+          { id: 'f1', name: 'Engineering', programs: ['Mechanical', 'Electrical', 'Computer Science'], degrees: ['Bachelor', 'Master', 'PhD'] },
+          { id: 'f2', name: 'Business', programs: ['MBA', 'Finance'], degrees: ['Master'] },
+        ],
+        socialResponsibility: {
+          description: 'Solving global challenges through technology.',
+          commitments: ['Climate action', 'Health', 'AI for good'],
+          initiatives: ['Climate Grand Challenges', 'Jameel Clinic'],
+        },
+        testimonials: [],
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        isActive: true,
+        isVerified: true,
+      },
+    ];
+
+    localStorage.setItem('acado_universities', JSON.stringify(seedUniversities));
+    setUniversities(seedUniversities);
   }, []);
 
   const handleDelete = () => {
