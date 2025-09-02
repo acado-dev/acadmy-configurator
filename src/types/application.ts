@@ -73,6 +73,9 @@ export interface ApplicationForm {
   categories: FieldCategory[];
   fields: ConfiguredField[];
   customCategoryNames?: Record<string, { name: string; subcategories?: Record<string, string> }>;
+  startDate?: Date;
+  endDate?: Date;
+  isLaunched: boolean;
   createdAt: Date;
   updatedAt: Date;
   isActive: boolean;

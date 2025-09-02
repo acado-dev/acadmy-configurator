@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FormsList } from '@/components/forms/FormsList';
 import { useFormsData } from '@/hooks/useFormsData';
+import { ApplicationForm } from '@/types/application';
 
 const Forms = () => {
   const navigate = useNavigate();
-  const { forms, deleteForm } = useFormsData();
+  const { forms, universities, courses, deleteForm, updateForm } = useFormsData();
 
   const handleCreateNew = () => {
     navigate('/forms/new');
@@ -19,12 +20,19 @@ const Forms = () => {
     deleteForm(formId);
   };
 
+  const handleUpdateForm = (formId: string, updates: Partial<ApplicationForm>) => {
+    updateForm(formId, updates);
+  };
+
   return (
     <FormsList
       forms={forms}
+      universities={universities}
+      courses={courses}
       onCreateNew={handleCreateNew}
       onEdit={handleEdit}
       onDelete={handleDelete}
+      onUpdateForm={handleUpdateForm}
     />
   );
 };

@@ -108,6 +108,7 @@ const FormEditor = () => {
       createForm({
         ...formData,
         id: '',
+        isLaunched: false,
         createdAt: new Date(),
         updatedAt: new Date(),
       });
