@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Plus, Edit, Trash2, Link, Calendar, Clock, FileText, Rocket, Power } from 'lucide-react';
+import { Plus, Edit, Trash2, Link, Calendar, Clock, FileText, Rocket, Power, Eye } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -16,6 +16,7 @@ import {
 import { ApplicationForm, University, Course } from '@/types/application';
 import { FormMappingDialog } from './FormMappingDialog';
 import { FormLaunchDialog } from './FormLaunchDialog';
+import { FormPreview } from './FormPreview';
 import { format } from 'date-fns';
 
 interface FormsListProps {
@@ -40,6 +41,7 @@ export const FormsList: React.FC<FormsListProps> = ({
   const [deleteFormId, setDeleteFormId] = useState<string | null>(null);
   const [mappingFormId, setMappingFormId] = useState<string | null>(null);
   const [launchFormId, setLaunchFormId] = useState<string | null>(null);
+  const [previewFormId, setPreviewFormId] = useState<string | null>(null);
 
   const handleDelete = () => {
     if (deleteFormId) {
@@ -223,8 +225,15 @@ export const FormsList: React.FC<FormsListProps> = ({
                       )}
                     </div>
 
-                    {/* Edit/Delete Buttons */}
+                    {/* Edit/Preview/Delete Buttons */}
                     <div className="flex gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setPreviewFormId(form.id)}
+                      >
+                        <Eye className="w-4 h-4" />
+                      </Button>
                       <Button
                         variant="outline"
                         size="sm"
@@ -290,6 +299,17 @@ export const FormsList: React.FC<FormsListProps> = ({
           startDate={forms.find(f => f.id === launchFormId)?.startDate}
           endDate={forms.find(f => f.id === launchFormId)?.endDate}
           onLaunch={(startDate, endDate) => handleLaunch(launchFormId, startDate, endDate)}
+        />
+      )}
+
+      {/* Preview Dialog */}
+      {previewFormId && (
+        <FormPreview
+          isOpen={!!previewFormId}
+          onClose={() => setPreviewFormId(null)}
+          form={forms.find(f => f.id === previewFormId)!}
+          university={universities.find(u => u.id === forms.find(f => f.id === previewFormId)?.universityId)}
+          courses={courses.filter(c => forms.find(f => f.id === previewFormId)?.courseIds.includes(c.id))}
         />
       )}
     </>

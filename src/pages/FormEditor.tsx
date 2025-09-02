@@ -19,6 +19,7 @@ import { ApplicationField, ConfiguredField, FieldCategory } from '@/types/applic
 import { FormFieldEditor } from '@/components/forms/FormFieldEditor';
 import { FormMappingDialog } from '@/components/forms/FormMappingDialog';
 import { CategoryRenameDialog } from '@/components/forms/CategoryRenameDialog';
+import { FormPreview } from '@/components/forms/FormPreview';
 import { useFormsData } from '@/hooks/useFormsData';
 import {
   User, GraduationCap, Briefcase, Lightbulb, Award,
@@ -38,6 +39,7 @@ const FormEditor = () => {
   const [editingField, setEditingField] = useState<ConfiguredField | null>(null);
   const [isMappingDialogOpen, setIsMappingDialogOpen] = useState(false);
   const [isCategoryDialogOpen, setIsCategoryDialogOpen] = useState(false);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [selectedUniversityId, setSelectedUniversityId] = useState('');
   const [selectedCourseIds, setSelectedCourseIds] = useState<string[]>([]);
   const [customCategoryNames, setCustomCategoryNames] = useState<Record<string, { name: string; subcategories?: Record<string, string> }>>({});
@@ -152,7 +154,7 @@ const FormEditor = () => {
           </div>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" className="gap-2">
+          <Button variant="outline" className="gap-2" onClick={() => setIsPreviewOpen(true)}>
             <Eye className="w-4 h-4" />
             Preview
           </Button>
@@ -400,6 +402,28 @@ const FormEditor = () => {
         categories={usedCategories}
         customNames={customCategoryNames}
         onSave={setCustomCategoryNames}
+      />
+
+      {/* Form Preview */}
+      <FormPreview
+        isOpen={isPreviewOpen}
+        onClose={() => setIsPreviewOpen(false)}
+        form={{
+          id: formId || '',
+          name: formName,
+          description: formDescription,
+          universityId: selectedUniversityId,
+          courseIds: selectedCourseIds,
+          categories: masterCategories,
+          fields: selectedFields,
+          customCategoryNames,
+          isLaunched: false,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          isActive: true,
+        }}
+        university={universities.find(u => u.id === selectedUniversityId)}
+        courses={courses.filter(c => selectedCourseIds.includes(c.id))}
       />
     </div>
   );
