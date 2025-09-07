@@ -92,8 +92,6 @@ const Layout = () => {
       subItems: [
         { label: 'Content Category', path: '/content-category', icon: Hash },
         { label: 'Content', path: '/content', icon: FileText },
-        { label: 'Communities', path: '/communities', icon: Users },
-        { label: 'Reels', path: '/reels', icon: Rss },
       ]
     },
     {
@@ -102,6 +100,8 @@ const Layout = () => {
       icon: Globe,
       subItems: [
         { label: 'Wall', path: '/wall', icon: FileText },
+        { label: 'Communities', path: '/communities', icon: Users },
+        { label: 'Reels', path: '/reels', icon: Rss },
         { label: 'Events', path: '/events', icon: Calendar },
         { label: 'Volunteering', path: '/volunteering', icon: Heart },
         { label: 'Scholarships', path: '/scholarships', icon: Gift },
