@@ -1,11 +1,24 @@
 import React from 'react';
-import { Link, Outlet, useLocation } from 'react-router-dom';
-import { Home, FileText, Building2, BookOpen, Settings, Menu, X } from 'lucide-react';
+import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { Home, FileText, Building2, BookOpen, Settings, Menu, X, LogOut, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { AcadoLogo } from '@/components/AcadoLogo';
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { useAuth } from "@/hooks/useAuth";
 
 const Layout = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { userEmail, logout } = useAuth();
   const [sidebarOpen, setSidebarOpen] = React.useState(true);
 
   const navigation = [
@@ -37,9 +50,32 @@ const Layout = () => {
             </div>
           </div>
           <div className="flex items-center gap-4">
-            <span className="text-sm font-medium px-3 py-1.5 bg-primary/10 text-primary rounded-full">
-              Admin Portal
+            <span className="text-sm text-muted-foreground">
+              {userEmail || "admin@acado.ai"}
             </span>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="relative h-10 w-10 rounded-full">
+                  <Avatar className="h-10 w-10">
+                    <AvatarFallback className="bg-primary text-primary-foreground">
+                      {(userEmail || "admin@acado.ai").charAt(0).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56" align="end">
+                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => navigate("/profile")} className="cursor-pointer">
+                  <User className="mr-2 h-4 w-4" />
+                  Profile
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={logout} className="cursor-pointer text-destructive">
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Logout
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </header>

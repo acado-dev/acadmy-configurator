@@ -18,12 +18,23 @@ const Login = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // For demo purposes - actual auth would require Supabase integration
-    if (email && password) {
+    // Mockup login - accepts demo credentials
+    if (email === "admin@acado.ai" && password === "admin123") {
       toast({
         title: "Login Successful",
-        description: "Welcome back to ACADO Study Abroad Portal",
+        description: "Welcome to ACADO Admin Panel",
       });
+      localStorage.setItem("isAuthenticated", "true");
+      localStorage.setItem("userEmail", email);
+      navigate("/");
+    } else if (email && password) {
+      // Accept any credentials for demo
+      toast({
+        title: "Login Successful",
+        description: "Welcome to ACADO Study Abroad Portal",
+      });
+      localStorage.setItem("isAuthenticated", "true");
+      localStorage.setItem("userEmail", email);
       navigate("/");
     } else {
       toast({
@@ -61,6 +72,13 @@ const Login = () => {
                 <p className="text-muted-foreground mt-2">
                   Please enter your credentials to sign in!
                 </p>
+                <div className="mt-4 p-3 bg-primary/10 border border-primary/20 rounded-md">
+                  <p className="text-xs text-muted-foreground">
+                    <span className="font-semibold">Demo Credentials:</span><br/>
+                    Email: admin@acado.ai<br/>
+                    Password: admin123
+                  </p>
+                </div>
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-4">
