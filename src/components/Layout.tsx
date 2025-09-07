@@ -1,6 +1,39 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { Home, FileText, Building2, BookOpen, Settings, Menu, X, LogOut, User } from 'lucide-react';
+import { 
+  Home, 
+  FileText, 
+  Building2, 
+  BookOpen, 
+  Settings, 
+  Menu, 
+  X, 
+  LogOut, 
+  User,
+  ChevronDown,
+  ChevronRight,
+  GraduationCap,
+  Users,
+  LayoutDashboard,
+  Target,
+  Library,
+  Hash,
+  Globe,
+  Rss,
+  Calendar,
+  Heart,
+  Gift,
+  Briefcase,
+  UserCheck,
+  BarChart,
+  FileBarChart,
+  UserSearch,
+  Search,
+  FormInput,
+  Cog,
+  Mail,
+  FileCode
+} from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { AcadoLogo } from '@/components/AcadoLogo';
 import { Button } from "@/components/ui/button";
@@ -14,40 +47,183 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useAuth } from "@/hooks/useAuth";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 const Layout = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { userEmail, logout } = useAuth();
-  const [sidebarOpen, setSidebarOpen] = React.useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [expandedMenus, setExpandedMenus] = useState<string[]>(['university-setup']);
 
-  const navigation = [
-    { name: 'Dashboard', href: '/', icon: Home },
-    { name: 'Master Fields', href: '/master-fields', icon: FileText },
-    { name: 'Application Forms', href: '/forms', icon: Settings },
-    { name: 'Universities', href: '/universities', icon: Building2 },
-    { name: 'Courses', href: '/courses', icon: BookOpen },
+  const toggleMenu = (menuId: string) => {
+    setExpandedMenus(prev => 
+      prev.includes(menuId) 
+        ? prev.filter(id => id !== menuId)
+        : [...prev, menuId]
+    );
+  };
+
+  const menuItems = [
+    {
+      id: 'university-setup',
+      label: 'University Setup',
+      icon: Building2,
+      subItems: [
+        { label: 'Dashboard', path: '/', icon: LayoutDashboard },
+        { label: 'Universities', path: '/universities', icon: Building2 },
+        { label: 'Users', path: '/users', icon: Users },
+      ]
+    },
+    {
+      id: 'course',
+      label: 'Course',
+      icon: GraduationCap,
+      subItems: [
+        { label: 'Course Category', path: '/course-category', icon: Hash },
+        { label: 'Learning Outcome', path: '/learning-outcome', icon: Target },
+        { label: 'Courses', path: '/courses', icon: BookOpen },
+      ]
+    },
+    {
+      id: 'content-management',
+      label: 'Content Management',
+      icon: Library,
+      subItems: [
+        { label: 'Content Category', path: '/content-category', icon: Hash },
+        { label: 'Content', path: '/content', icon: FileText },
+        { label: 'Communities', path: '/communities', icon: Users },
+        { label: 'Reels', path: '/reels', icon: Rss },
+      ]
+    },
+    {
+      id: 'engagement-builder',
+      label: 'Engagement Builder',
+      icon: Globe,
+      subItems: [
+        { label: 'Wall', path: '/wall', icon: FileText },
+        { label: 'Events', path: '/events', icon: Calendar },
+        { label: 'Volunteering', path: '/volunteering', icon: Heart },
+        { label: 'Scholarships', path: '/scholarships', icon: Gift },
+      ]
+    },
+    {
+      id: 'talent-management',
+      label: 'Talent Management',
+      icon: Briefcase,
+      subItems: [
+        { label: 'Talent Pool', path: '/talent-pool', icon: UserCheck },
+        { label: 'Job Opportunities', path: '/job-opportunities', icon: Briefcase },
+      ]
+    },
+    {
+      id: 'reports-analytics',
+      label: 'Reports/Analytics',
+      icon: BarChart,
+      subItems: [
+        { label: 'Analytics', path: '/analytics', icon: BarChart },
+        { label: 'Reports', path: '/reports', icon: FileBarChart },
+        { label: 'Interested Users', path: '/interested-users', icon: UserSearch },
+        { label: 'User Search', path: '/user-search', icon: Search },
+      ]
+    },
+    {
+      id: 'form-builder',
+      label: 'Form Builder',
+      icon: FormInput,
+      subItems: [
+        { label: 'Master Fields', path: '/master-fields', icon: FileText },
+        { label: 'Application Form', path: '/forms', icon: FormInput },
+      ]
+    },
+    {
+      id: 'settings',
+      label: 'Settings',
+      icon: Settings,
+      subItems: [
+        { label: 'Configuration', path: '/configuration', icon: Cog },
+        { label: 'Bulk Email', path: '/bulk-email', icon: Mail },
+        { label: 'Mail Template', path: '/mail-template', icon: FileCode },
+      ]
+    },
   ];
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-lg border-b border-border">
-        <div className="flex items-center justify-between px-6 py-4">
+      {/* Sidebar */}
+      <aside className={cn(
+        "fixed left-0 top-0 bottom-0 bg-card border-r border-border transition-all duration-300 z-50 overflow-y-auto",
+        isSidebarOpen ? "w-64" : "w-0"
+      )}>
+        <div className={cn("p-4", !isSidebarOpen && "hidden")}>
+          {/* Logo */}
+          <div className="mb-8">
+            <AcadoLogo className="h-8" />
+          </div>
+
+          {/* Navigation */}
+          <nav className="space-y-1">
+            {menuItems.map((item) => (
+              <div key={item.id} className="mb-1">
+                <Collapsible
+                  open={expandedMenus.includes(item.id)}
+                  onOpenChange={() => toggleMenu(item.id)}
+                >
+                  <CollapsibleTrigger className="w-full">
+                    <div className={cn(
+                      "flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium transition-all hover:bg-accent hover:text-accent-foreground cursor-pointer",
+                      expandedMenus.includes(item.id) && "bg-accent/50"
+                    )}>
+                      <div className="flex items-center gap-3">
+                        <item.icon className="h-4 w-4" />
+                        <span>{item.label}</span>
+                      </div>
+                      {expandedMenus.includes(item.id) ? (
+                        <ChevronDown className="h-4 w-4" />
+                      ) : (
+                        <ChevronRight className="h-4 w-4" />
+                      )}
+                    </div>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className="mt-1 ml-4 space-y-1">
+                    {item.subItems.map((subItem) => (
+                      <Link
+                        key={subItem.path}
+                        to={subItem.path}
+                        className={cn(
+                          "flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all hover:bg-accent hover:text-accent-foreground",
+                          location.pathname === subItem.path && "bg-primary text-primary-foreground hover:bg-primary-hover hover:text-primary-foreground"
+                        )}
+                      >
+                        <subItem.icon className="h-4 w-4" />
+                        <span>{subItem.label}</span>
+                      </Link>
+                    ))}
+                  </CollapsibleContent>
+                </Collapsible>
+              </div>
+            ))}
+          </nav>
+        </div>
+      </aside>
+
+      {/* Main Content */}
+      <div className={cn(
+        "transition-all duration-300",
+        isSidebarOpen ? "ml-64" : "ml-0"
+      )}>
+        {/* Header */}
+        <header className="bg-card border-b border-border px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <button
-              onClick={() => setSidebarOpen(!sidebarOpen)}
+              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
               className="p-2 rounded-lg hover:bg-accent transition-colors"
             >
-              {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              {isSidebarOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
-            <div className="flex items-center gap-3">
-              <AcadoLogo className="h-8 w-auto" />
-              <div className="h-8 w-px bg-border" />
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Application Configurator</p>
-              </div>
-            </div>
+            <h1 className="text-xl font-bold text-foreground">
+              ACADO Admin Portal
+            </h1>
           </div>
           <div className="flex items-center gap-4">
             <span className="text-sm text-muted-foreground">
@@ -77,62 +253,13 @@ const Layout = () => {
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
-        </div>
-      </header>
+        </header>
 
-      {/* Sidebar */}
-      <aside
-        className={cn(
-          "fixed left-0 top-[65px] bottom-0 z-40 w-64 bg-card border-r border-border transition-transform duration-200",
-          !sidebarOpen && "-translate-x-full"
-        )}
-      >
-        <nav className="p-4 space-y-1">
-          {navigation.map((item) => {
-            const isActive = location.pathname === item.href || 
-                           (item.href === '/forms' && location.pathname.startsWith('/forms')) ||
-                           (item.href === '/universities' && location.pathname.startsWith('/universities'));
-            return (
-              <Link
-                key={item.name}
-                to={item.href}
-                className={cn(
-                  "flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 group",
-                  isActive
-                    ? "bg-primary text-primary-foreground shadow-sm hover:bg-primary-hover"
-                    : "hover:bg-accent text-foreground"
-                )}
-              >
-                <item.icon className={cn(
-                  "w-5 h-5 transition-transform",
-                  !isActive && "group-hover:scale-110"
-                )} />
-                <span className="font-medium">{item.name}</span>
-              </Link>
-            );
-          })}
-        </nav>
-        
-        {/* Footer Branding */}
-        <div className="absolute bottom-4 left-4 right-4">
-          <div className="p-4 bg-gradient-to-r from-primary/10 to-accent/10 rounded-lg border border-primary/20">
-            <p className="text-xs font-medium text-muted-foreground mb-1">Powered by</p>
-            <AcadoLogo className="h-6 w-auto" />
-          </div>
-        </div>
-      </aside>
-
-      {/* Main Content */}
-      <main
-        className={cn(
-          "pt-[65px] transition-all duration-200 min-h-screen",
-          sidebarOpen ? "pl-64" : "pl-0"
-        )}
-      >
-        <div className="p-6">
+        {/* Page Content */}
+        <main className="p-6">
           <Outlet />
-        </div>
-      </main>
+        </main>
+      </div>
     </div>
   );
 };
