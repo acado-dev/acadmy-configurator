@@ -12,7 +12,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useToast } from "@/hooks/use-toast";
 import { ChevronLeft, ChevronRight, Save, Send, Check } from "lucide-react";
 import { ApplicationField, FieldCategory } from "@/types/application";
-import { masterFieldsData } from "@/data/masterFields";
+import { masterFields, masterCategories } from "@/data/masterFields";
 
 const ApplicationWizard = () => {
   const { formId } = useParams();
@@ -35,31 +35,31 @@ const ApplicationWizard = () => {
     {
       title: "Personal Information",
       description: "Basic details about yourself",
-      fields: masterFieldsData.fields.filter(f => f.categoryId === "personal"),
+      fields: masterFields.filter(f => f.categoryId === "personal"),
       icon: "👤"
     },
     {
       title: "Educational Background",
       description: "Your academic history",
-      fields: masterFieldsData.fields.filter(f => f.categoryId === "education"),
+      fields: masterFields.filter(f => f.categoryId === "education"),
       icon: "🎓"
     },
     {
       title: "Professional Experience",
       description: "Work and internship details",
-      fields: masterFieldsData.fields.filter(f => f.categoryId === "professional"),
+      fields: masterFields.filter(f => f.categoryId === "professional"),
       icon: "💼"
     },
     {
       title: "Documents",
       description: "Upload required documents",
-      fields: masterFieldsData.fields.filter(f => f.categoryId === "documents"),
+      fields: masterFields.filter(f => f.categoryId === "documents"),
       icon: "📄"
     },
     {
       title: "Additional Information",
       description: "Extra details and preferences",
-      fields: masterFieldsData.fields.filter(f => f.categoryId === "additional"),
+      fields: masterFields.filter(f => f.categoryId === "additional"),
       icon: "ℹ️"
     },
     {

@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Mail, Lock } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import AcadoLogo from "@/components/AcadoLogo";
+import { AcadoLogo } from "@/components/AcadoLogo";
 
 const UserLogin = () => {
   const [email, setEmail] = useState("");

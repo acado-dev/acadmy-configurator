@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
-import AcadoLogo from "./AcadoLogo";
+import { AcadoLogo } from "./AcadoLogo";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 const UserLayout = () => {
