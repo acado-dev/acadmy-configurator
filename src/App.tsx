@@ -16,6 +16,16 @@ import Signup from "./pages/Signup";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
 
+// User pages
+import UserLogin from "./pages/UserLogin";
+import UserRegister from "./pages/UserRegister";
+import UserLayout from "./components/UserLayout";
+import UserProtectedRoute from "./components/UserProtectedRoute";
+import UserDashboard from "./pages/user/UserDashboard";
+import CourseListing from "./pages/user/CourseListing";
+import CourseDetail from "./pages/user/CourseDetail";
+import ApplicationWizard from "./pages/user/ApplicationWizard";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -25,6 +35,7 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
+          {/* Admin Routes */}
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/" element={
@@ -41,6 +52,21 @@ const App = () => (
             <Route path="universities/edit/:universityId" element={<AddUniversity />} />
             <Route path="courses" element={<Courses />} />
           </Route>
+          
+          {/* User Routes */}
+          <Route path="/user/login" element={<UserLogin />} />
+          <Route path="/user/register" element={<UserRegister />} />
+          <Route path="/user" element={
+            <UserProtectedRoute>
+              <UserLayout />
+            </UserProtectedRoute>
+          }>
+            <Route path="dashboard" element={<UserDashboard />} />
+            <Route path="courses" element={<CourseListing />} />
+            <Route path="courses/:courseId" element={<CourseDetail />} />
+            <Route path="apply/:formId" element={<ApplicationWizard />} />
+          </Route>
+          
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
