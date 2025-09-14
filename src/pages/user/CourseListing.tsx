@@ -9,6 +9,14 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Search, Star, Users, Filter, X } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 
+// Import course images
+import aiCourseImg from "@/assets/courses/ai-course.jpg";
+import businessLeadershipImg from "@/assets/courses/business-leadership.jpg";
+import creativityArtsImg from "@/assets/courses/creativity-arts.jpg";
+import constructionRealEstateImg from "@/assets/courses/construction-real-estate.jpg";
+import healthcareDiagnosticsImg from "@/assets/courses/healthcare-diagnostics.jpg";
+import businessInformaticsImg from "@/assets/courses/business-informatics.jpg";
+
 interface Course {
   id: string;
   universityId: string;
@@ -36,7 +44,7 @@ const mockCourses: Course[] = [
     enrollments: 156,
     rating: 4.5,
     category: "Artificial Intelligence",
-    imageUrl: "/api/placeholder/400/250"
+    imageUrl: aiCourseImg
   },
   {
     id: "2",
@@ -49,7 +57,7 @@ const mockCourses: Course[] = [
     enrollments: 89,
     rating: 4.5,
     category: "Business Management",
-    imageUrl: "/api/placeholder/400/250"
+    imageUrl: businessLeadershipImg
   },
   {
     id: "3",
@@ -62,7 +70,7 @@ const mockCourses: Course[] = [
     enrollments: 234,
     rating: 4.5,
     category: "Healthcare",
-    imageUrl: "/api/placeholder/400/250"
+    imageUrl: creativityArtsImg
   },
   {
     id: "4",
@@ -75,20 +83,20 @@ const mockCourses: Course[] = [
     enrollments: 178,
     rating: 4.5,
     category: "construction",
-    imageUrl: "/api/placeholder/400/250"
+    imageUrl: constructionRealEstateImg
   },
   {
     id: "5",
     universityId: "1",
     universityName: "Metropolia University of Applied Sciences",
-    name: "Computing In Construction, Master's Degree",
+    name: "Health Care Diagnostics, Master's Degree",
     type: "degree",
     duration: "1.5 Years",
-    description: "Advanced computing applications in construction industry",
+    description: "Advanced healthcare diagnostics and medical technology",
     enrollments: 102,
     rating: 4.5,
-    category: "Engineering",
-    imageUrl: "/api/placeholder/400/250"
+    category: "Healthcare",
+    imageUrl: healthcareDiagnosticsImg
   },
   {
     id: "6",
@@ -101,7 +109,7 @@ const mockCourses: Course[] = [
     enrollments: 267,
     rating: 4.5,
     category: "Business Intelligence",
-    imageUrl: "/api/placeholder/400/250"
+    imageUrl: businessInformaticsImg
   },
 ];
 
