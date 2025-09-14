@@ -32,7 +32,8 @@ import {
   Target,
   Info,
   Upload,
-  CheckCircle2
+  CheckCircle2,
+  ChevronDown
 } from "lucide-react";
 import { ApplicationField } from "@/types/application";
 import { masterFields } from "@/data/masterFields";
@@ -49,6 +50,7 @@ const ApplicationWizard = () => {
   const [formData, setFormData] = useState<Record<string, any>>({});
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [expandedGroups, setExpandedGroups] = useState<string[]>(["personal"]); // Start with first group expanded
   
   // Get course info from navigation state
   const courseInfo = location.state || {
@@ -67,7 +69,8 @@ const ApplicationWizard = () => {
         f.categoryId === "personal" && 
         ["firstName", "lastName", "email", "phone"].includes(f.name)
       ),
-      color: "from-blue-500 to-blue-600"
+      color: "from-blue-500 to-blue-600",
+      group: "personal"
     },
     {
       id: "contact-info",
@@ -78,7 +81,8 @@ const ApplicationWizard = () => {
         f.categoryId === "personal" && 
         ["address", "city", "country", "postalCode"].includes(f.name)
       ),
-      color: "from-indigo-500 to-indigo-600"
+      color: "from-indigo-500 to-indigo-600",
+      group: "personal"
     },
     {
       id: "personal-details",
@@ -89,7 +93,8 @@ const ApplicationWizard = () => {
         f.categoryId === "personal" && 
         ["dateOfBirth", "nationality", "gender", "passportNumber"].includes(f.name)
       ),
-      color: "from-purple-500 to-purple-600"
+      color: "from-purple-500 to-purple-600",
+      group: "personal"
     },
     {
       id: "current-education",
@@ -100,7 +105,8 @@ const ApplicationWizard = () => {
         f.categoryId === "education" && 
         ["currentDegree", "institution", "graduationDate", "gpa"].includes(f.name)
       ),
-      color: "from-green-500 to-green-600"
+      color: "from-green-500 to-green-600",
+      group: "education"
     },
     {
       id: "academic-history",
@@ -111,29 +117,8 @@ const ApplicationWizard = () => {
         f.categoryId === "education" && 
         ["previousDegrees", "academicAchievements", "researchExperience"].includes(f.name)
       ),
-      color: "from-emerald-500 to-emerald-600"
-    },
-    {
-      id: "work-experience",
-      title: "Professional Experience",
-      subtitle: "Your work and internship history",
-      icon: Briefcase,
-      fields: masterFields.filter(f => 
-        f.categoryId === "professional" && 
-        ["currentEmployment", "workExperience", "internships"].includes(f.name)
-      ),
-      color: "from-orange-500 to-orange-600"
-    },
-    {
-      id: "skills",
-      title: "Skills & Languages",
-      subtitle: "Your competencies and language proficiency",
-      icon: Languages,
-      fields: masterFields.filter(f => 
-        f.categoryId === "professional" && 
-        ["skills", "languages", "certifications"].includes(f.name)
-      ),
-      color: "from-red-500 to-red-600"
+      color: "from-emerald-500 to-emerald-600",
+      group: "education"
     },
     {
       id: "test-scores",
@@ -144,7 +129,32 @@ const ApplicationWizard = () => {
         f.categoryId === "documents" && 
         ["ieltsScore", "toeflScore", "greScore", "gmatScore"].includes(f.name)
       ),
-      color: "from-cyan-500 to-cyan-600"
+      color: "from-cyan-500 to-cyan-600",
+      group: "education"
+    },
+    {
+      id: "work-experience",
+      title: "Professional Experience",
+      subtitle: "Your work and internship history",
+      icon: Briefcase,
+      fields: masterFields.filter(f => 
+        f.categoryId === "professional" && 
+        ["currentEmployment", "workExperience", "internships"].includes(f.name)
+      ),
+      color: "from-orange-500 to-orange-600",
+      group: "experience"
+    },
+    {
+      id: "skills",
+      title: "Skills & Languages",
+      subtitle: "Your competencies and language proficiency",
+      icon: Languages,
+      fields: masterFields.filter(f => 
+        f.categoryId === "professional" && 
+        ["skills", "languages", "certifications"].includes(f.name)
+      ),
+      color: "from-red-500 to-red-600",
+      group: "experience"
     },
     {
       id: "documents",
@@ -155,7 +165,8 @@ const ApplicationWizard = () => {
         f.categoryId === "documents" && 
         ["resume", "transcripts", "recommendationLetters", "portfolio"].includes(f.name)
       ),
-      color: "from-teal-500 to-teal-600"
+      color: "from-teal-500 to-teal-600",
+      group: "documents"
     },
     {
       id: "statement",
@@ -166,7 +177,8 @@ const ApplicationWizard = () => {
         f.categoryId === "additional" && 
         ["statementOfPurpose", "whyThisUniversity"].includes(f.name)
       ),
-      color: "from-pink-500 to-pink-600"
+      color: "from-pink-500 to-pink-600",
+      group: "documents"
     },
     {
       id: "additional",
@@ -177,7 +189,8 @@ const ApplicationWizard = () => {
         f.categoryId === "additional" && 
         ["extracurricular", "specialNeeds", "additionalComments"].includes(f.name)
       ),
-      color: "from-violet-500 to-violet-600"
+      color: "from-violet-500 to-violet-600",
+      group: "documents"
     },
     {
       id: "review",
@@ -185,6 +198,46 @@ const ApplicationWizard = () => {
       subtitle: "Check your application before submitting",
       icon: CheckCircle2,
       fields: [],
+      color: "from-slate-500 to-slate-600",
+      group: "review"
+    }
+  ];
+
+  // Define parent groups
+  const wizardGroups = [
+    {
+      id: "personal",
+      title: "Personal Information",
+      icon: User,
+      description: "Basic details and contact information",
+      color: "from-blue-500 to-purple-600"
+    },
+    {
+      id: "education", 
+      title: "Education",
+      icon: GraduationCap,
+      description: "Academic background and test scores",
+      color: "from-green-500 to-cyan-600"
+    },
+    {
+      id: "experience",
+      title: "Experience",
+      icon: Briefcase,
+      description: "Professional background and skills",
+      color: "from-orange-500 to-red-600"
+    },
+    {
+      id: "documents",
+      title: "Documents & Essays",
+      icon: FileText,
+      description: "Required documents and statements",
+      color: "from-teal-500 to-violet-600"
+    },
+    {
+      id: "review",
+      title: "Review",
+      icon: CheckCircle2,
+      description: "Review and submit application",
       color: "from-slate-500 to-slate-600"
     }
   ];
@@ -254,6 +307,13 @@ const ApplicationWizard = () => {
     // Allow navigation to completed steps or current step
     if (index <= currentStep || completedSteps.includes(index)) {
       setCurrentStep(index);
+      
+      // Auto-expand the group containing the selected step
+      const stepGroup = wizardSteps[index].group;
+      if (stepGroup && !expandedGroups.includes(stepGroup)) {
+        setExpandedGroups(prev => [...prev, stepGroup]);
+      }
+      
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
@@ -307,12 +367,26 @@ const ApplicationWizard = () => {
       setCurrentStep(parsed.currentStep || 0);
       setCompletedSteps(parsed.completedSteps || []);
       
+      // Expand the group containing the current step
+      const currentGroup = wizardSteps[parsed.currentStep || 0].group;
+      if (currentGroup) {
+        setExpandedGroups([currentGroup]);
+      }
+      
       toast({
         title: "Progress Restored",
         description: "Your previous progress has been loaded.",
       });
     }
   }, [formId, toast]);
+  
+  // Auto-expand current step's group when step changes
+  useEffect(() => {
+    const currentGroup = wizardSteps[currentStep].group;
+    if (currentGroup && !expandedGroups.includes(currentGroup)) {
+      setExpandedGroups(prev => [...prev, currentGroup]);
+    }
+  }, [currentStep]);
 
   const renderField = (field: ApplicationField) => {
     const value = formData[field.name] || "";
@@ -688,40 +762,97 @@ const ApplicationWizard = () => {
               <Card className="sticky top-24">
                 <CardHeader>
                   <CardTitle className="text-base">Navigation</CardTitle>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Complete each section to proceed
+                  </p>
                 </CardHeader>
                 <CardContent className="p-3">
-                  <nav className="space-y-1">
-                    {wizardSteps.map((step, index) => {
-                      const Icon = step.icon;
-                      const isActive = index === currentStep;
-                      const isCompleted = completedSteps.includes(index);
-                      const isClickable = index <= currentStep || isCompleted;
+                  <nav className="space-y-2">
+                    {wizardGroups.map((group) => {
+                      const groupSteps = wizardSteps.filter(step => step.group === group.id);
+                      const GroupIcon = group.icon;
+                      const isGroupExpanded = expandedGroups.includes(group.id);
+                      const hasCompletedStep = groupSteps.some((_, idx) => {
+                        const stepIndex = wizardSteps.findIndex(s => s.id === groupSteps[idx].id);
+                        return completedSteps.includes(stepIndex);
+                      });
+                      const hasActiveStep = groupSteps.some(step => {
+                        const stepIndex = wizardSteps.findIndex(s => s.id === step.id);
+                        return stepIndex === currentStep;
+                      });
                       
                       return (
-                        <button
-                          key={index}
-                          onClick={() => isClickable && handleStepClick(index)}
-                          disabled={!isClickable}
-                          className={cn(
-                            "w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all text-left",
-                            isActive && "bg-primary text-primary-foreground",
-                            isCompleted && !isActive && "text-primary hover:bg-primary/10",
-                            !isActive && !isCompleted && "text-muted-foreground",
-                            isClickable && !isActive && "hover:bg-muted",
-                            !isClickable && "opacity-50 cursor-not-allowed"
-                          )}
-                        >
-                          <Icon className="h-4 w-4 flex-shrink-0" />
-                          <div className="flex-1 min-w-0">
-                            <div className="font-medium truncate">{step.title}</div>
-                            <div className="text-xs opacity-80 truncate">
-                              {step.subtitle}
+                        <div key={group.id} className="space-y-1">
+                          {/* Group Header */}
+                          <button
+                            onClick={() => {
+                              setExpandedGroups(prev => 
+                                isGroupExpanded 
+                                  ? prev.filter(g => g !== group.id)
+                                  : [...prev, group.id]
+                              );
+                            }}
+                            className={cn(
+                              "w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all",
+                              "hover:bg-muted/50",
+                              hasActiveStep && "bg-primary/10 text-primary",
+                              hasCompletedStep && !hasActiveStep && "text-primary"
+                            )}
+                          >
+                            <div className={cn(
+                              "p-1 rounded-md bg-gradient-to-r",
+                              group.color,
+                              "opacity-90"
+                            )}>
+                              <GroupIcon className="h-3.5 w-3.5 text-white" />
                             </div>
-                          </div>
-                          {isCompleted && (
-                            <CheckCircle2 className="h-4 w-4 flex-shrink-0" />
+                            <span className="flex-1 text-left">{group.title}</span>
+                            {hasCompletedStep && (
+                              <CheckCircle2 className="h-3.5 w-3.5 text-primary" />
+                            )}
+                            <ChevronDown 
+                              className={cn(
+                                "h-3.5 w-3.5 transition-transform",
+                                isGroupExpanded && "rotate-180"
+                              )}
+                            />
+                          </button>
+                          
+                          {/* Group Steps */}
+                          {isGroupExpanded && (
+                            <div className="ml-3 pl-3 border-l-2 border-muted space-y-0.5">
+                              {groupSteps.map((step) => {
+                                const stepIndex = wizardSteps.findIndex(s => s.id === step.id);
+                                const Icon = step.icon;
+                                const isActive = stepIndex === currentStep;
+                                const isCompleted = completedSteps.includes(stepIndex);
+                                const isClickable = stepIndex <= currentStep || isCompleted;
+                                
+                                return (
+                                  <button
+                                    key={step.id}
+                                    onClick={() => isClickable && handleStepClick(stepIndex)}
+                                    disabled={!isClickable}
+                                    className={cn(
+                                      "w-full flex items-center gap-2 px-2 py-1.5 rounded-md text-xs transition-all text-left",
+                                      isActive && "bg-primary text-primary-foreground font-medium",
+                                      isCompleted && !isActive && "text-primary hover:bg-primary/10",
+                                      !isActive && !isCompleted && "text-muted-foreground",
+                                      isClickable && !isActive && "hover:bg-muted",
+                                      !isClickable && "opacity-50 cursor-not-allowed"
+                                    )}
+                                  >
+                                    <Icon className="h-3.5 w-3.5 flex-shrink-0" />
+                                    <span className="flex-1 truncate">{step.title}</span>
+                                    {isCompleted && (
+                                      <Check className="h-3 w-3 flex-shrink-0" />
+                                    )}
+                                  </button>
+                                );
+                              })}
+                            </div>
                           )}
-                        </button>
+                        </div>
                       );
                     })}
                   </nav>
