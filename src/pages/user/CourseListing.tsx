@@ -9,13 +9,8 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Search, Star, Users, Filter, X } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 
-// Import course images
-import aiCourseImg from "@/assets/courses/ai-course.jpg";
-import businessLeadershipImg from "@/assets/courses/business-leadership.jpg";
-import creativityArtsImg from "@/assets/courses/creativity-arts.jpg";
-import constructionRealEstateImg from "@/assets/courses/construction-real-estate.jpg";
-import healthcareDiagnosticsImg from "@/assets/courses/healthcare-diagnostics.jpg";
-import businessInformaticsImg from "@/assets/courses/business-informatics.jpg";
+// Import placeholder for course images
+import { coursePlaceholder } from "@/assets/courses/placeholder";
 
 interface Course {
   id: string;
@@ -44,7 +39,7 @@ const mockCourses: Course[] = [
     enrollments: 156,
     rating: 4.5,
     category: "Artificial Intelligence",
-    imageUrl: aiCourseImg
+    imageUrl: coursePlaceholder
   },
   {
     id: "2",
@@ -57,7 +52,7 @@ const mockCourses: Course[] = [
     enrollments: 89,
     rating: 4.5,
     category: "Business Management",
-    imageUrl: businessLeadershipImg
+    imageUrl: coursePlaceholder
   },
   {
     id: "3",
@@ -70,7 +65,7 @@ const mockCourses: Course[] = [
     enrollments: 234,
     rating: 4.5,
     category: "Healthcare",
-    imageUrl: creativityArtsImg
+    imageUrl: coursePlaceholder
   },
   {
     id: "4",
@@ -83,7 +78,7 @@ const mockCourses: Course[] = [
     enrollments: 178,
     rating: 4.5,
     category: "construction",
-    imageUrl: constructionRealEstateImg
+    imageUrl: coursePlaceholder
   },
   {
     id: "5",
@@ -96,7 +91,7 @@ const mockCourses: Course[] = [
     enrollments: 102,
     rating: 4.5,
     category: "Healthcare",
-    imageUrl: healthcareDiagnosticsImg
+    imageUrl: coursePlaceholder
   },
   {
     id: "6",
@@ -109,7 +104,7 @@ const mockCourses: Course[] = [
     enrollments: 267,
     rating: 4.5,
     category: "Business Intelligence",
-    imageUrl: businessInformaticsImg
+    imageUrl: coursePlaceholder
   },
 ];
 
