@@ -33,24 +33,31 @@ import {
   Info,
   Upload,
   CheckCircle2,
-  ChevronDown
+  ChevronDown,
+  UserCheck
 } from "lucide-react";
 import { ApplicationField } from "@/types/application";
 import { masterFields } from "@/data/masterFields";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
+import { usePortfolio } from "@/hooks/usePortfolio";
+import { toast } from "sonner";
+
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 const ApplicationWizard = () => {
   const { formId } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
-  const { toast } = useToast();
+  const { toast: toastHook } = useToast();
+  const { portfolio } = usePortfolio();
   
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState<Record<string, any>>({});
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [expandedGroups, setExpandedGroups] = useState<string[]>(["personal"]); // Start with first group expanded
+  const [portfolioDataLoaded, setPortfolioDataLoaded] = useState(false);
   
   // Get course info from navigation state
   const courseInfo = location.state || {
@@ -245,6 +252,110 @@ const ApplicationWizard = () => {
   const currentStepData = wizardSteps[currentStep];
   const progress = ((currentStep + 1) / wizardSteps.length) * 100;
 
+  // Map portfolio data to form fields
+  const mapPortfolioToFormData = () => {
+    const mappedData: Record<string, any> = {};
+    
+    // Map personal information
+    if (portfolio.firstName) mappedData.firstName = portfolio.firstName;
+    if (portfolio.lastName) mappedData.lastName = portfolio.lastName;
+    if (portfolio.email) mappedData.email = portfolio.email;
+    if (portfolio.phone) mappedData.phone = portfolio.phone;
+    if (portfolio.about) mappedData.personalStatement = portfolio.about;
+    
+    // Map education information
+    if (portfolio.education.length > 0) {
+      const latestEducation = portfolio.education[0];
+      mappedData.currentDegree = latestEducation.degree;
+      mappedData.currentUniversity = latestEducation.institution;
+      mappedData.educationLevel = latestEducation.degree.includes('Bachelor') ? 'undergraduate' : 
+                                  latestEducation.degree.includes('Master') ? 'graduate' : 'other';
+      
+      // Map all education to previous education
+      const previousEducation = portfolio.education.map(edu => ({
+        degree: edu.degree,
+        institution: edu.institution,
+        year: edu.endDate ? new Date(edu.endDate).getFullYear().toString() : '',
+        grade: edu.grade
+      }));
+      
+      if (previousEducation.length > 0) {
+        mappedData.previousEducation = JSON.stringify(previousEducation);
+      }
+    }
+    
+    // Map work experience
+    if (portfolio.experience.length > 0) {
+      const workExperience = portfolio.experience.map(exp => ({
+        title: exp.title,
+        company: exp.company,
+        duration: `${exp.startDate} - ${exp.current ? 'Present' : exp.endDate}`,
+        description: exp.description
+      }));
+      mappedData.workExperience = JSON.stringify(workExperience);
+      mappedData.yearsOfExperience = portfolio.experience.length.toString();
+    }
+    
+    // Map skills
+    if (portfolio.skills.length > 0) {
+      mappedData.technicalSkills = portfolio.skills
+        .filter(s => s.category === 'technical' || s.category === 'programming')
+        .map(s => s.name).join(', ');
+      mappedData.softSkills = portfolio.skills
+        .filter(s => s.category === 'soft' || s.category === 'interpersonal')
+        .map(s => s.name).join(', ');
+    }
+    
+    // Map languages
+    if (portfolio.languages.length > 0) {
+      mappedData.languageSkills = portfolio.languages
+        .map(lang => `${lang.name} (${lang.proficiency})`)
+        .join(', ');
+    }
+    
+    // Map certifications
+    if (portfolio.certifications.length > 0) {
+      mappedData.certifications = portfolio.certifications
+        .map(cert => `${cert.name} - ${cert.issuer}`)
+        .join(', ');
+    }
+    
+    // Map projects
+    if (portfolio.projects.length > 0) {
+      mappedData.projects = JSON.stringify(portfolio.projects.map(proj => ({
+        title: proj.title,
+        description: proj.description,
+        technologies: proj.technologies.join(', ')
+      })));
+    }
+    
+    // Map volunteering
+    if (portfolio.volunteering.length > 0) {
+      mappedData.extracurricular = portfolio.volunteering
+        .map(vol => `${vol.role} at ${vol.organization}`)
+        .join(', ');
+    }
+    
+    return mappedData;
+  };
+
+  // Load portfolio data on component mount
+  useEffect(() => {
+    if (portfolio && !portfolioDataLoaded) {
+      const mappedData = mapPortfolioToFormData();
+      if (Object.keys(mappedData).length > 0) {
+        setFormData(prev => ({
+          ...mappedData,
+          ...prev // Keep any existing form data
+        }));
+        setPortfolioDataLoaded(true);
+        
+        // Show notification that portfolio data has been loaded
+        toast("✅ Portfolio data loaded! Your information has been pre-filled. You can still edit any field.");
+      }
+    }
+  }, [portfolio, portfolioDataLoaded]);
+
   const validateStep = () => {
     const stepErrors: Record<string, string> = {};
     const currentFields = currentStepData.fields;
@@ -288,7 +399,7 @@ const ApplicationWizard = () => {
       setCurrentStep(currentStep + 1);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
-      toast({
+      toastHook({
         title: "Please complete required fields",
         description: "Fill in all required fields before proceeding",
         variant: "destructive"
@@ -330,7 +441,7 @@ const ApplicationWizard = () => {
     
     localStorage.setItem(`application_${formId}`, JSON.stringify(applicationData));
     
-    toast({
+    toastHook({
       title: "Progress Saved",
       description: "Your application has been saved. You can continue later.",
     });
@@ -350,7 +461,7 @@ const ApplicationWizard = () => {
     
     localStorage.removeItem(`application_${formId}`);
     
-    toast({
+    toastHook({
       title: "Application Submitted!",
       description: "Your application has been successfully submitted.",
     });
@@ -373,12 +484,12 @@ const ApplicationWizard = () => {
         setExpandedGroups([currentGroup]);
       }
       
-      toast({
+      toastHook({
         title: "Progress Restored",
         description: "Your previous progress has been loaded.",
       });
     }
-  }, [formId, toast]);
+  }, [formId, toastHook]);
   
   // Auto-expand current step's group when step changes
   useEffect(() => {
@@ -708,6 +819,24 @@ const ApplicationWizard = () => {
 
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-6xl mx-auto">
+          {/* Portfolio Data Notification */}
+          {portfolioDataLoaded && (
+            <Alert className="mb-6 border-primary/20 bg-primary/5">
+              <UserCheck className="h-4 w-4" />
+              <AlertDescription className="flex items-center justify-between">
+                <span>Your portfolio information has been automatically loaded. You can edit any field as needed.</span>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => navigate("/user/portfolio")}
+                  className="ml-4"
+                >
+                  View Portfolio
+                </Button>
+              </AlertDescription>
+            </Alert>
+          )}
+          
           {/* Progress Bar */}
           <div className="mb-8">
             <div className="flex items-center justify-between mb-3">
