@@ -25,6 +25,7 @@ import UserDashboard from "./pages/user/UserDashboard";
 import CourseListing from "./pages/user/CourseListing";
 import CourseDetail from "./pages/user/CourseDetail";
 import ApplicationWizard from "./pages/user/ApplicationWizard";
+import Portfolio from "./pages/user/Portfolio";
 
 const queryClient = new QueryClient();
 
@@ -65,6 +66,7 @@ const App = () => (
             <Route path="courses" element={<CourseListing />} />
             <Route path="courses/:courseId" element={<CourseDetail />} />
             <Route path="apply/:formId" element={<ApplicationWizard />} />
+            <Route path="portfolio" element={<Portfolio />} />
           </Route>
           
           <Route path="*" element={<NotFound />} />
