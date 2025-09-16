@@ -190,12 +190,6 @@ const Portfolio = () => {
                     <span>{portfolio.phone}</span>
                   </div>
                 )}
-                {portfolio.location && (
-                  <div className="flex items-center gap-3 text-sm">
-                    <MapPin className="h-4 w-4 text-muted-foreground" />
-                    <span>{portfolio.location}</span>
-                  </div>
-                )}
               </CardContent>
             </Card>
           </div>
@@ -438,12 +432,12 @@ const Portfolio = () => {
                 size="sm"
                 onClick={() => setEditingProject({
                   id: '',
-                  name: '',
+                  title: '',
                   description: '',
                   technologies: [],
                   link: '',
-                  github: '',
-                  image: ''
+                  startDate: '',
+                  endDate: ''
                 })}
                 className="gap-2"
               >
@@ -458,7 +452,7 @@ const Portfolio = () => {
                   <Card key={project.id} className="hover-scale animate-fade-in" style={{ animationDelay: `${index * 100}ms` }}>
                     <CardContent className="pt-6">
                       <div className="flex justify-between items-start mb-3">
-                        <h4 className="font-semibold text-lg">{project.name}</h4>
+                        <h4 className="font-semibold text-lg">{project.title}</h4>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button variant="ghost" size="icon">
@@ -502,14 +496,6 @@ const Portfolio = () => {
                             </a>
                           </Button>
                         )}
-                        {project.github && (
-                          <Button size="sm" variant="outline" asChild>
-                            <a href={project.github} target="_blank" rel="noopener noreferrer">
-                              <Github className="h-3 w-3 mr-1" />
-                              Code
-                            </a>
-                          </Button>
-                        )}
                       </div>
                     </CardContent>
                   </Card>
@@ -525,15 +511,15 @@ const Portfolio = () => {
                       variant="outline"
                       size="sm"
                       className="mt-4"
-                      onClick={() => setEditingProject({
-                        id: '',
-                        name: '',
-                        description: '',
-                        technologies: [],
-                        link: '',
-                        github: '',
-                        image: ''
-                      })}
+                        onClick={() => setEditingProject({
+                          id: '',
+                          title: '',
+                          description: '',
+                          technologies: [],
+                          link: '',
+                          startDate: '',
+                          endDate: ''
+                        })}
                     >
                       Add Your First Project
                     </Button>
@@ -617,7 +603,7 @@ const Portfolio = () => {
                   id: '',
                   name: '',
                   issuer: '',
-                  date: '',
+                  issueDate: '',
                   expiryDate: '',
                   credentialId: '',
                   credentialUrl: ''
@@ -643,7 +629,7 @@ const Portfolio = () => {
                             <h4 className="font-semibold">{cert.name}</h4>
                             <p className="text-sm text-muted-foreground">{cert.issuer}</p>
                             <p className="text-xs text-muted-foreground mt-1">
-                              Issued {cert.date}
+                              Issued {cert.issueDate}
                               {cert.expiryDate && ` • Expires ${cert.expiryDate}`}
                             </p>
                             {cert.credentialUrl && (
@@ -693,15 +679,15 @@ const Portfolio = () => {
                       variant="outline"
                       size="sm"
                       className="mt-4"
-                      onClick={() => setEditingCertification({
-                        id: '',
-                        name: '',
-                        issuer: '',
-                        date: '',
-                        expiryDate: '',
-                        credentialId: '',
-                        credentialUrl: ''
-                      })}
+                        onClick={() => setEditingCertification({
+                          id: '',
+                          name: '',
+                          issuer: '',
+                          issueDate: '',
+                          expiryDate: '',
+                          credentialId: '',
+                          credentialUrl: ''
+                        })}
                     >
                       Add Your First Certification
                     </Button>
@@ -726,9 +712,10 @@ const Portfolio = () => {
                   id: '',
                   title: '',
                   publisher: '',
-                  date: '',
+                  publicationDate: '',
+                  authors: [],
                   description: '',
-                  url: ''
+                  link: ''
                 })}
                 className="gap-2"
               >
@@ -745,13 +732,13 @@ const Portfolio = () => {
                       <div className="flex justify-between items-start">
                         <div className="flex-1">
                           <h4 className="font-semibold">{pub.title}</h4>
-                          <p className="text-sm text-muted-foreground">{pub.publisher} • {pub.date}</p>
+                          <p className="text-sm text-muted-foreground">{pub.publisher} • {pub.publicationDate}</p>
                           {pub.description && (
                             <p className="mt-2 text-sm text-muted-foreground">{pub.description}</p>
                           )}
-                          {pub.url && (
+                          {pub.link && (
                             <Button size="sm" variant="link" className="px-0 mt-2" asChild>
-                              <a href={pub.url} target="_blank" rel="noopener noreferrer">
+                              <a href={pub.link} target="_blank" rel="noopener noreferrer">
                                 Read Publication
                               </a>
                             </Button>
@@ -795,14 +782,15 @@ const Portfolio = () => {
                       variant="outline"
                       size="sm"
                       className="mt-4"
-                      onClick={() => setEditingPublication({
-                        id: '',
-                        title: '',
-                        publisher: '',
-                        date: '',
-                        description: '',
-                        url: ''
-                      })}
+                        onClick={() => setEditingPublication({
+                          id: '',
+                          title: '',
+                          publisher: '',
+                          publicationDate: '',
+                          authors: [],
+                          description: '',
+                          link: ''
+                        })}
                     >
                       Add Your First Publication
                     </Button>
@@ -1127,6 +1115,7 @@ const Portfolio = () => {
       <AddProfileSectionDialog 
         open={isAddSectionOpen}
         onOpenChange={setIsAddSectionOpen}
+        onAddSection={(section) => { setActiveSection(section as Section); setIsAddSectionOpen(false); }}
       />
 
       {editingAbout && (
@@ -1144,18 +1133,13 @@ const Portfolio = () => {
           onOpenChange={(open) => !open && setEditingExperience(null)}
           experience={editingExperience}
           onSave={(experience) => {
-            if (experience.id) {
-              updateExperience(experience.id, experience);
+            if (editingExperience && editingExperience.id) {
+              updateExperience(editingExperience.id, experience);
               toast.success("Experience updated");
             } else {
               addExperience(experience);
               toast.success("Experience added");
             }
-            setEditingExperience(null);
-          }}
-          onDelete={(id) => {
-            deleteExperience(id);
-            toast.success("Experience deleted");
             setEditingExperience(null);
           }}
         />
@@ -1167,18 +1151,13 @@ const Portfolio = () => {
           onOpenChange={(open) => !open && setEditingEducation(null)}
           education={editingEducation}
           onSave={(education) => {
-            if (education.id) {
-              updateEducation(education.id, education);
+            if (editingEducation && editingEducation.id) {
+              updateEducation(editingEducation.id, education);
               toast.success("Education updated");
             } else {
               addEducation(education);
               toast.success("Education added");
             }
-            setEditingEducation(null);
-          }}
-          onDelete={(id) => {
-            deleteEducation(id);
-            toast.success("Education deleted");
             setEditingEducation(null);
           }}
         />
@@ -1190,18 +1169,13 @@ const Portfolio = () => {
           onOpenChange={(open) => !open && setEditingProject(null)}
           project={editingProject}
           onSave={(project) => {
-            if (project.id) {
-              updateProject(project.id, project);
+            if (editingProject && editingProject.id) {
+              updateProject(editingProject.id, project);
               toast.success("Project updated");
             } else {
               addProject(project);
               toast.success("Project added");
             }
-            setEditingProject(null);
-          }}
-          onDelete={(id) => {
-            deleteProject(id);
-            toast.success("Project deleted");
             setEditingProject(null);
           }}
         />
@@ -1213,8 +1187,8 @@ const Portfolio = () => {
           onOpenChange={(open) => !open && setEditingSkill(null)}
           skill={editingSkill}
           onSave={(skill) => {
-            if (skill.id) {
-              updateSkill(skill.id, skill);
+            if (editingSkill && editingSkill.id) {
+              updateSkill(editingSkill.id, skill);
               toast.success("Skill updated");
             } else {
               addSkill(skill);
@@ -1222,10 +1196,12 @@ const Portfolio = () => {
             }
             setEditingSkill(null);
           }}
-          onDelete={(id) => {
-            deleteSkill(id);
-            toast.success("Skill deleted");
-            setEditingSkill(null);
+          onDelete={() => {
+            if (editingSkill?.id) {
+              deleteSkill(editingSkill.id);
+              toast.success("Skill deleted");
+              setEditingSkill(null);
+            }
           }}
         />
       )}
@@ -1236,18 +1212,13 @@ const Portfolio = () => {
           onOpenChange={(open) => !open && setEditingCertification(null)}
           certification={editingCertification}
           onSave={(certification) => {
-            if (certification.id) {
-              updateCertification(certification.id, certification);
+            if (editingCertification && editingCertification.id) {
+              updateCertification(editingCertification.id, certification);
               toast.success("Certification updated");
             } else {
               addCertification(certification);
               toast.success("Certification added");
             }
-            setEditingCertification(null);
-          }}
-          onDelete={(id) => {
-            deleteCertification(id);
-            toast.success("Certification deleted");
             setEditingCertification(null);
           }}
         />
@@ -1259,18 +1230,13 @@ const Portfolio = () => {
           onOpenChange={(open) => !open && setEditingPublication(null)}
           publication={editingPublication}
           onSave={(publication) => {
-            if (publication.id) {
-              updatePublication(publication.id, publication);
+            if (editingPublication && editingPublication.id) {
+              updatePublication(editingPublication.id, publication);
               toast.success("Publication updated");
             } else {
               addPublication(publication);
               toast.success("Publication added");
             }
-            setEditingPublication(null);
-          }}
-          onDelete={(id) => {
-            deletePublication(id);
-            toast.success("Publication deleted");
             setEditingPublication(null);
           }}
         />
@@ -1282,18 +1248,13 @@ const Portfolio = () => {
           onOpenChange={(open) => !open && setEditingVolunteering(null)}
           volunteering={editingVolunteering}
           onSave={(volunteering) => {
-            if (volunteering.id) {
-              updateVolunteering(volunteering.id, volunteering);
+            if (editingVolunteering && editingVolunteering.id) {
+              updateVolunteering(editingVolunteering.id, volunteering);
               toast.success("Volunteering updated");
             } else {
               addVolunteering(volunteering);
               toast.success("Volunteering added");
             }
-            setEditingVolunteering(null);
-          }}
-          onDelete={(id) => {
-            deleteVolunteering(id);
-            toast.success("Volunteering deleted");
             setEditingVolunteering(null);
           }}
         />
@@ -1305,8 +1266,8 @@ const Portfolio = () => {
           onOpenChange={(open) => !open && setEditingLanguage(null)}
           language={editingLanguage}
           onSave={(language) => {
-            if (language.id) {
-              updateLanguage(language.id, language);
+            if (editingLanguage && editingLanguage.id) {
+              updateLanguage(editingLanguage.id, language);
               toast.success("Language updated");
             } else {
               addLanguage(language);
@@ -1314,10 +1275,12 @@ const Portfolio = () => {
             }
             setEditingLanguage(null);
           }}
-          onDelete={(id) => {
-            deleteLanguage(id);
-            toast.success("Language deleted");
-            setEditingLanguage(null);
+          onDelete={() => {
+            if (editingLanguage?.id) {
+              deleteLanguage(editingLanguage.id);
+              toast.success("Language deleted");
+              setEditingLanguage(null);
+            }
           }}
         />
       )}
