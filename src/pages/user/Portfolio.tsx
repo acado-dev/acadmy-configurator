@@ -34,7 +34,8 @@ import {
   Users,
   PenTool,
   ChevronRight,
-  Building
+  Building,
+  ExternalLink
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -106,10 +107,41 @@ const Portfolio = () => {
     toast.success("Portfolio exported successfully!");
   };
 
-  const handleShareProfile = () => {
-    const profileUrl = window.location.href;
-    navigator.clipboard.writeText(profileUrl);
-    toast.success("Profile link copied to clipboard!");
+  const handleShareProfile = async () => {
+    // Generate username from email or use firstName-lastName
+    const username = portfolio.email?.split('@')[0] || 
+                    `${portfolio.firstName}-${portfolio.lastName}`.toLowerCase().replace(/\s+/g, '-');
+    const profileUrl = `${window.location.origin}/profile/${username}`;
+    
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: `${portfolio.firstName} ${portfolio.lastName}'s Portfolio`,
+          text: 'Check out my professional portfolio',
+          url: profileUrl
+        });
+        toast.success('Profile shared successfully!');
+      } catch (error) {
+        // User cancelled share or error occurred
+        if (error instanceof Error && error.name !== 'AbortError') {
+          console.error('Error sharing:', error);
+          // Fallback to clipboard
+          navigator.clipboard.writeText(profileUrl);
+          toast.success('Public profile link copied to clipboard!');
+        }
+      }
+    } else {
+      // Fallback to copying to clipboard
+      navigator.clipboard.writeText(profileUrl);
+      toast.success('Public profile link copied to clipboard!');
+    }
+  };
+
+  const handleViewPublicProfile = () => {
+    const username = portfolio.email?.split('@')[0] || 
+                    `${portfolio.firstName}-${portfolio.lastName}`.toLowerCase().replace(/\s+/g, '-');
+    const profileUrl = `/profile/${username}`;
+    window.open(profileUrl, '_blank');
   };
 
   const getInitials = () => {
@@ -1004,6 +1036,10 @@ const Portfolio = () => {
               <Button variant="outline" size="sm" onClick={handleExportResume} className="gap-2">
                 <Download className="h-4 w-4" />
                 Export
+              </Button>
+              <Button variant="outline" size="sm" onClick={handleViewPublicProfile} className="gap-2">
+                <ExternalLink className="h-4 w-4" />
+                View Public
               </Button>
               <Button variant="outline" size="sm" onClick={handleShareProfile} className="gap-2">
                 <Share2 className="h-4 w-4" />
