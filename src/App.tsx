@@ -17,16 +17,25 @@ import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 // User pages
-import UserLogin from "./pages/UserLogin";
-import UserRegister from "./pages/UserRegister";
-import UserLayout from "./components/UserLayout";
-import UserProtectedRoute from "./components/UserProtectedRoute";
-import UserDashboard from "./pages/user/UserDashboard";
-import CourseListing from "./pages/user/CourseListing";
-import CourseDetail from "./pages/user/CourseDetail";
-import ApplicationWizard from "./pages/user/ApplicationWizard";
-import Portfolio from "./pages/user/Portfolio";
-import ProfileView from "./pages/ProfileView";
+import UserLogin from '@/pages/UserLogin';
+import UserRegister from '@/pages/UserRegister';
+import UserLayout from '@/components/UserLayout';
+import UserProtectedRoute from '@/components/UserProtectedRoute';
+import UserDashboard from '@/pages/user/UserDashboard';
+import CourseListing from '@/pages/user/CourseListing';
+import CourseDetail from '@/pages/user/CourseDetail';
+import ApplicationWizard from '@/pages/user/ApplicationWizard';
+import Portfolio from '@/pages/user/Portfolio';
+import ProfileView from '@/pages/ProfileView';
+
+// University Admin Pages
+import UniversityLogin from '@/pages/university/UniversityLogin';
+import UniversityDashboard from '@/pages/university/UniversityDashboard';
+import UniversityCourses from '@/pages/university/UniversityCourses';
+import UniversityFormBuilder from '@/pages/university/UniversityFormBuilder';
+import MatchingCriteria from '@/pages/university/MatchingCriteria';
+import ApplicationReview from '@/pages/university/ApplicationReview';
+import ApplicationsList from '@/pages/university/ApplicationsList';
 
 const queryClient = new QueryClient();
 
@@ -69,6 +78,21 @@ const App = () => (
             <Route path="apply/:formId" element={<ApplicationWizard />} />
             <Route path="portfolio" element={<Portfolio />} />
           </Route>
+          
+          {/* University Admin Routes */}
+          <Route path="/university/login" element={<UniversityLogin />} />
+          <Route path="/university/dashboard" element={<UniversityDashboard />} />
+          <Route path="/university/courses" element={<UniversityCourses />} />
+          <Route path="/university/courses/new" element={<UniversityCourses />} />
+          <Route path="/university/courses/:courseId" element={<UniversityCourses />} />
+          <Route path="/university/courses/:courseId/edit" element={<UniversityCourses />} />
+          <Route path="/university/forms" element={<UniversityCourses />} />
+          <Route path="/university/forms/new" element={<UniversityFormBuilder />} />
+          <Route path="/university/forms/:formId" element={<UniversityFormBuilder />} />
+          <Route path="/university/matching-criteria/:courseId" element={<MatchingCriteria />} />
+          <Route path="/university/applications" element={<ApplicationsList />} />
+          <Route path="/university/applications/:applicationId" element={<ApplicationReview />} />
+          <Route path="/university/communications" element={<UniversityDashboard />} />
           
           {/* Public Profile View */}
           <Route path="/profile/:username" element={<ProfileView />} />

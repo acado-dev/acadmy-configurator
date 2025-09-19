@@ -8,6 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Select, SelectTrigger, SelectValue } from '@/components/ui/select';
 import {
   Plus,
   Save,
@@ -19,10 +20,8 @@ import {
   FileText
 } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
-import { FormFieldEditor } from '@/components/forms/FormFieldEditor';
-import { FormPreview } from '@/components/forms/FormPreview';
-import { masterFields } from '@/data/masterFields';
-import { ApplicationField, ConfiguredField } from '@/types/application';
+import { masterFields, masterCategories } from '@/data/masterFields';
+import { ApplicationField, ConfiguredField, ApplicationForm } from '@/types/application';
 
 const UniversityFormBuilder = () => {
   const { formId } = useParams();
@@ -80,12 +79,11 @@ const UniversityFormBuilder = () => {
     navigate('/university/forms');
   };
 
-  const allFields = masterFields.flatMap(category => 
-    category.fields ? category.fields.map((field: any) => ({
-      ...field,
-      categoryName: category.name
-    })) : []
-  );
+  // Get all available fields from masterFields
+  const availableFields = masterFields.map(field => ({
+    ...field,
+    categoryName: masterCategories.find(c => c.id === field.categoryId)?.name || 'Other'
+  }));
 
   return (
     <div className="min-h-screen bg-background">
@@ -209,29 +207,33 @@ const UniversityFormBuilder = () => {
                   <TabsContent value="available" className="space-y-4">
                     <ScrollArea className="h-[400px]">
                       <div className="space-y-4">
-                        {masterFields.map((category) => (
-                          <div key={category.id} className="space-y-2">
-                            <h4 className="font-medium text-sm text-muted-foreground">
-                              {category.name}
-                            </h4>
-                            <div className="grid grid-cols-1 gap-2">
-                              {category.fields.map((field) => (
-                                <div
-                                  key={field.id}
-                                  className="flex items-center justify-between p-2 border rounded hover:bg-muted/50"
-                                >
-                                  <div>
-                                    <p className="text-sm font-medium">{field.label}</p>
-                                    <Badge variant="outline" className="text-xs mt-1">
-                                      {field.type}
-                                    </Badge>
-                                  </div>
-                                  <Button
-                                    size="sm"
-                                    variant="ghost"
-                                    onClick={() => handleAddField(field)}
-                                    disabled={selectedFields.some(f => f.id === field.id)}
+                        {masterCategories.map((category) => {
+                          const categoryFields = availableFields.filter(f => f.categoryId === category.id);
+                          if (categoryFields.length === 0) return null;
+                          
+                          return (
+                            <div key={category.id} className="space-y-2">
+                              <h4 className="font-medium text-sm text-muted-foreground">
+                                {category.name}
+                              </h4>
+                              <div className="grid grid-cols-1 gap-2">
+                                {categoryFields.map((field) => (
+                                  <div
+                                    key={field.id}
+                                    className="flex items-center justify-between p-2 border rounded hover:bg-muted/50"
                                   >
+                                    <div>
+                                      <p className="text-sm font-medium">{field.label}</p>
+                                      <Badge variant="outline" className="text-xs mt-1">
+                                        {field.type}
+                                      </Badge>
+                                    </div>
+                                    <Button
+                                      size="sm"
+                                      variant="ghost"
+                                      onClick={() => handleAddField(field)}
+                                      disabled={selectedFields.some(f => f.id === field.id)}
+                                    >
                                     {selectedFields.some(f => f.id === field.id) ? (
                                       'Added'
                                     ) : (
@@ -245,7 +247,8 @@ const UniversityFormBuilder = () => {
                               ))}
                             </div>
                           </div>
-                        ))}
+                          );
+                        })}
                       </div>
                     </ScrollArea>
                   </TabsContent>
@@ -263,25 +266,53 @@ const UniversityFormBuilder = () => {
                   <CardDescription>See how your form will look to applicants</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <FormPreview
-                    fields={selectedFields}
-                    categories={masterFields}
-                    formName={formName}
-                  />
+                  <ScrollArea className="h-[600px]">
+                    <div className="space-y-4">
+                      <div>
+                        <h3 className="font-semibold text-lg">{formName || 'Untitled Form'}</h3>
+                        {formDescription && (
+                          <p className="text-sm text-muted-foreground mt-1">{formDescription}</p>
+                        )}
+                      </div>
+                      <div className="space-y-6">
+                        {masterCategories.map((category) => {
+                          const categoryFields = selectedFields.filter(f => f.categoryId === category.id);
+                          if (categoryFields.length === 0) return null;
+                          
+                          return (
+                            <div key={category.id}>
+                              <h4 className="font-medium mb-3">{category.name}</h4>
+                              <div className="space-y-3">
+                                {categoryFields.map((field) => (
+                                  <div key={field.id}>
+                                    <Label>{field.customLabel || field.label}</Label>
+                                    {field.type === 'text' && (
+                                      <Input placeholder={field.placeholder} disabled />
+                                    )}
+                                    {field.type === 'textarea' && (
+                                      <Textarea placeholder={field.placeholder} disabled />
+                                    )}
+                                    {field.type === 'select' && (
+                                      <Select disabled>
+                                        <SelectTrigger>
+                                          <SelectValue placeholder={field.placeholder || 'Select...'} />
+                                        </SelectTrigger>
+                                      </Select>
+                                    )}
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </ScrollArea>
                 </CardContent>
               </Card>
             </div>
           )}
         </div>
-
-        {/* Field Editor Dialog */}
-        {editingField && (
-          <FormFieldEditor
-            field={editingField}
-            onSave={(updates) => handleUpdateField(editingField.id, updates)}
-            onClose={() => setEditingField(null)}
-          />
-        )}
       </div>
     </div>
   );
