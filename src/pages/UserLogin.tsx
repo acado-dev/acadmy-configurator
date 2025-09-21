@@ -24,7 +24,10 @@ const UserLogin = () => {
         title: "Welcome back!",
         description: "Successfully logged in to your account.",
       });
-      navigate("/user/dashboard");
+      // Add small delay to ensure localStorage is set
+      setTimeout(() => {
+        navigate("/user/dashboard");
+      }, 100);
     } else {
       toast({
         title: "Error",

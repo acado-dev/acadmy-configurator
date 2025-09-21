@@ -20,22 +20,28 @@ const Login = () => {
     e.preventDefault();
     // Mockup login - accepts demo credentials
     if (email === "admin@acado.ai" && password === "admin123") {
+      localStorage.setItem("isAuthenticated", "true");
+      localStorage.setItem("userEmail", email);
       toast({
         title: "Login Successful",
         description: "Welcome to ACADO Admin Panel",
       });
-      localStorage.setItem("isAuthenticated", "true");
-      localStorage.setItem("userEmail", email);
-      navigate("/");
+      // Add small delay to ensure localStorage is set
+      setTimeout(() => {
+        navigate("/dashboard");
+      }, 100);
     } else if (email && password) {
       // Accept any credentials for demo
+      localStorage.setItem("isAuthenticated", "true");
+      localStorage.setItem("userEmail", email);
       toast({
         title: "Login Successful",
         description: "Welcome to ACADO Study Abroad Portal",
       });
-      localStorage.setItem("isAuthenticated", "true");
-      localStorage.setItem("userEmail", email);
-      navigate("/");
+      // Add small delay to ensure localStorage is set
+      setTimeout(() => {
+        navigate("/dashboard");
+      }, 100);
     } else {
       toast({
         title: "Login Failed",

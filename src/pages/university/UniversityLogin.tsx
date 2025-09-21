@@ -20,6 +20,8 @@ const UniversityLogin = () => {
 
     // Mock authentication - replace with actual auth
     if (email === 'admin@harvard.edu' && password === 'admin123') {
+      // Set authentication status
+      localStorage.setItem('universityAuth', 'true');
       localStorage.setItem('universityAdmin', JSON.stringify({
         id: 'uni-admin-1',
         universityId: 'harvard',
@@ -27,11 +29,16 @@ const UniversityLogin = () => {
         name: 'Harvard Admin',
         role: 'admin'
       }));
+      
       toast({
         title: "Login successful",
         description: "Welcome to University Admin Dashboard",
       });
-      navigate('/university/dashboard');
+      
+      // Navigate to university dashboard
+      setTimeout(() => {
+        navigate('/university');
+      }, 100);
     } else {
       setError('Invalid credentials. Use admin@harvard.edu / admin123');
     }

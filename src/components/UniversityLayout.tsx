@@ -65,6 +65,7 @@ const UniversityLayout = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("universityAuth");
+    localStorage.removeItem("universityAdmin");
     navigate("/university/login");
   };
 
