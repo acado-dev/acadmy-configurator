@@ -30,12 +30,16 @@ import ProfileView from '@/pages/ProfileView';
 
 // University Admin Pages
 import UniversityLogin from '@/pages/university/UniversityLogin';
+import UniversityLayout from '@/components/UniversityLayout';
+import UniversityProtectedRoute from '@/components/UniversityProtectedRoute';
 import UniversityDashboard from '@/pages/university/UniversityDashboard';
 import UniversityCourses from '@/pages/university/UniversityCourses';
 import UniversityFormBuilder from '@/pages/university/UniversityFormBuilder';
 import MatchingCriteria from '@/pages/university/MatchingCriteria';
 import ApplicationReview from '@/pages/university/ApplicationReview';
 import ApplicationsList from '@/pages/university/ApplicationsList';
+import UniversityInfo from '@/pages/university/UniversityInfo';
+import TalentPool from '@/pages/university/TalentPool';
 
 const queryClient = new QueryClient();
 
