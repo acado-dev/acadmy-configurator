@@ -85,18 +85,29 @@ const App = () => (
           
           {/* University Admin Routes */}
           <Route path="/university/login" element={<UniversityLogin />} />
-          <Route path="/university/dashboard" element={<UniversityDashboard />} />
-          <Route path="/university/courses" element={<UniversityCourses />} />
-          <Route path="/university/courses/new" element={<UniversityCourses />} />
-          <Route path="/university/courses/:courseId" element={<UniversityCourses />} />
-          <Route path="/university/courses/:courseId/edit" element={<UniversityCourses />} />
-          <Route path="/university/forms" element={<UniversityCourses />} />
-          <Route path="/university/forms/new" element={<UniversityFormBuilder />} />
-          <Route path="/university/forms/:formId" element={<UniversityFormBuilder />} />
-          <Route path="/university/matching-criteria/:courseId" element={<MatchingCriteria />} />
-          <Route path="/university/applications" element={<ApplicationsList />} />
-          <Route path="/university/applications/:applicationId" element={<ApplicationReview />} />
-          <Route path="/university/communications" element={<UniversityDashboard />} />
+          <Route path="/university" element={
+            <UniversityProtectedRoute>
+              <UniversityLayout />
+            </UniversityProtectedRoute>
+          }>
+            <Route index element={<UniversityDashboard />} />
+            <Route path="dashboard" element={<UniversityDashboard />} />
+            <Route path="info" element={<UniversityInfo />} />
+            <Route path="courses" element={<UniversityCourses />} />
+            <Route path="courses/new" element={<UniversityCourses />} />
+            <Route path="courses/:courseId" element={<UniversityCourses />} />
+            <Route path="courses/:courseId/edit" element={<UniversityCourses />} />
+            <Route path="forms" element={<UniversityFormBuilder />} />
+            <Route path="forms/new" element={<UniversityFormBuilder />} />
+            <Route path="forms/:formId" element={<UniversityFormBuilder />} />
+            <Route path="matching-criteria/:courseId" element={<MatchingCriteria />} />
+            <Route path="applications" element={<ApplicationsList />} />
+            <Route path="applications/:applicationId" element={<ApplicationReview />} />
+            <Route path="talent" element={<TalentPool />} />
+            <Route path="communications" element={<UniversityDashboard />} />
+            <Route path="users" element={<UniversityDashboard />} />
+            <Route path="settings" element={<UniversityDashboard />} />
+          </Route>
           
           {/* Public Profile View */}
           <Route path="/profile/:username" element={<ProfileView />} />
