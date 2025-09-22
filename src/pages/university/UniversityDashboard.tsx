@@ -194,7 +194,7 @@ const UniversityDashboard = () => {
                 </CardContent>
               </Card>
 
-              <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate('/university/matching-criteria')}>
+              <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate('/university/forms')}>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Target className="h-5 w-5" />
