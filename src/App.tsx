@@ -34,6 +34,7 @@ import UniversityLayout from '@/components/UniversityLayout';
 import UniversityProtectedRoute from '@/components/UniversityProtectedRoute';
 import UniversityDashboard from '@/pages/university/UniversityDashboard';
 import UniversityCourses from '@/pages/university/UniversityCourses';
+import UniversityForms from '@/pages/university/UniversityForms';
 import UniversityFormBuilder from '@/pages/university/UniversityFormBuilder';
 import MatchingCriteria from '@/pages/university/MatchingCriteria';
 import ApplicationReview from '@/pages/university/ApplicationReview';
@@ -97,7 +98,7 @@ const App = () => (
             <Route path="courses/new" element={<UniversityCourses />} />
             <Route path="courses/:courseId" element={<UniversityCourses />} />
             <Route path="courses/:courseId/edit" element={<UniversityCourses />} />
-            <Route path="forms" element={<UniversityFormBuilder />} />
+            <Route path="forms" element={<UniversityForms />} />
             <Route path="forms/new" element={<UniversityFormBuilder />} />
             <Route path="forms/:formId" element={<UniversityFormBuilder />} />
             <Route path="matching-criteria/:courseId" element={<MatchingCriteria />} />
