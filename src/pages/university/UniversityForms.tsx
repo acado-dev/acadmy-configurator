@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { FormsList } from '@/components/forms/FormsList';
 import { useFormsData } from '@/hooks/useFormsData';
 import { ApplicationForm } from '@/types/application';
+import { Button } from '@/components/ui/button';
+import { Target } from 'lucide-react';
 
 const UniversityForms = () => {
   const navigate = useNavigate();
@@ -29,16 +31,45 @@ const UniversityForms = () => {
     updateForm(formId, updates);
   };
 
+  const handleSetupMatchingCriteria = (courseId: string) => {
+    navigate(`/university/matching-criteria/${courseId}`);
+  };
+
   return (
-    <FormsList
-      forms={universityForms}
-      universities={universities.filter(u => u.id === universityId)}
-      courses={universityCourses}
-      onCreateNew={handleCreateNew}
-      onEdit={handleEdit}
-      onDelete={handleDelete}
-      onUpdateForm={handleUpdateForm}
-    />
+    <div>
+      <FormsList
+        forms={universityForms}
+        universities={universities.filter(u => u.id === universityId)}
+        courses={universityCourses}
+        onCreateNew={handleCreateNew}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+        onUpdateForm={handleUpdateForm}
+      />
+      {universityCourses.length > 0 && (
+        <div className="mt-6 p-4 border rounded-lg bg-secondary/10">
+          <h3 className="text-lg font-semibold mb-3">Matching Criteria</h3>
+          <p className="text-sm text-muted-foreground mb-4">
+            Configure evaluation rules for applicant assessment based on form fields and additional criteria.
+          </p>
+          <div className="space-y-2">
+            {universityCourses.map(course => (
+              <div key={course.id} className="flex items-center justify-between">
+                <span className="text-sm">{course.name}</span>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => handleSetupMatchingCriteria(course.id)}
+                >
+                  <Target className="h-4 w-4 mr-2" />
+                  Setup Criteria
+                </Button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
 
