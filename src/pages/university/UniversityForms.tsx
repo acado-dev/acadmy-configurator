@@ -35,7 +35,7 @@ const UniversityForms = () => {
   };
 
   const handleSetupMatchingCriteria = (courseId: string) => {
-    navigate(`matching-criteria/${courseId}`);
+    navigate(`/university/matching-criteria/${courseId}`);
   };
 
   return (
