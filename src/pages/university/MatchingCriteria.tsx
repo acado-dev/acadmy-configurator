@@ -34,53 +34,57 @@ const MatchingCriteria = () => {
   const courseForm = forms.find(f => course?.applicationFormId === f.id);
 
   useEffect(() => {
-    if (courseId) {
-      const existingConfig = getCriteriaByCoursId(courseId);
-      if (existingConfig) {
-        setMinimumScore(existingConfig.minimumScore);
-        setCriteria(existingConfig.criteria);
-      } else {
-        // Initialize with default criteria
-        setCriteria([
-          {
-            id: Date.now().toString(),
-            fieldName: 'gpa',
-            type: 'weighted',
-            weight: 30,
-            conditions: []
-          },
-          {
-            id: (Date.now() + 1).toString(),
-            fieldName: 'test_score',
-            type: 'weighted',
-            weight: 25,
-            conditions: []
-          },
-          {
-            id: (Date.now() + 2).toString(),
-            fieldName: 'experience',
-            type: 'weighted',
-            weight: 20,
-            conditions: []
-          },
-          {
-            id: (Date.now() + 3).toString(),
-            fieldName: 'essay',
-            type: 'weighted',
-            weight: 15,
-            conditions: []
-          },
-          {
-            id: (Date.now() + 4).toString(),
-            fieldName: 'interview',
-            type: 'weighted',
-            weight: 10,
-            conditions: []
-          }
-        ]);
-      }
+    // Guard: if no courseId or invalid course, go back to Matching Criteria list
+    if (!courseId || !course) {
+      navigate('/university/matching-criteria');
+      return;
     }
-  }, [courseId, getCriteriaByCoursId]);
+
+    const existingConfig = getCriteriaByCoursId(courseId);
+    if (existingConfig) {
+      setMinimumScore(existingConfig.minimumScore);
+      setCriteria(existingConfig.criteria);
+    } else {
+      // Initialize with default criteria
+      setCriteria([
+        {
+          id: Date.now().toString(),
+          fieldName: 'gpa',
+          type: 'weighted',
+          weight: 30,
+          conditions: []
+        },
+        {
+          id: (Date.now() + 1).toString(),
+          fieldName: 'test_score',
+          type: 'weighted',
+          weight: 25,
+          conditions: []
+        },
+        {
+          id: (Date.now() + 2).toString(),
+          fieldName: 'experience',
+          type: 'weighted',
+          weight: 20,
+          conditions: []
+        },
+        {
+          id: (Date.now() + 3).toString(),
+          fieldName: 'essay',
+          type: 'weighted',
+          weight: 15,
+          conditions: []
+        },
+        {
+          id: (Date.now() + 4).toString(),
+          fieldName: 'interview',
+          type: 'weighted',
+          weight: 10,
+          conditions: []
+        }
+      ]);
+    }
+  }, [courseId, course, getCriteriaByCoursId, navigate]);
 
   const handleAddCriteria = () => {
     const newCriteria: MatchingCriterion = {
@@ -132,7 +136,7 @@ const MatchingCriteria = () => {
         title: "Criteria Saved",
         description: "Matching criteria has been configured successfully"
       });
-      navigate('/university/forms');
+      navigate('/university/matching-criteria');
     }
   };
 
