@@ -21,7 +21,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useApplicationProcess, MatchingCriterion } from '@/hooks/useApplicationProcess';
 import { useFormsData } from '@/hooks/useFormsData';
 
-const ApplicationProcess = () => {
+function ApplicationProcess() {
   const { courseId } = useParams<{ courseId: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();

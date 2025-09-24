@@ -22,7 +22,7 @@ import {
 } from '@/components/ui/table';
 import { useToast } from '@/hooks/use-toast';
 
-const ApplicationProcessList = () => {
+function ApplicationProcessList() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { criteriaConfigs, deleteCriteriaConfig } = useApplicationProcess();
