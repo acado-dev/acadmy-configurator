@@ -34,11 +34,11 @@ function ApplicationProcessList() {
   const universityForms = forms.filter(form => form.universityId === universityId);
 
   const handleCreateNew = (courseId: string) => {
-    navigate(`/university/matching-criteria/${courseId}`);
+    navigate(`/university/application-process/${courseId}`);
   };
 
   const handleEdit = (courseId: string) => {
-    navigate(`/university/matching-criteria/${courseId}`);
+    navigate(`/university/application-process/${courseId}`);
   };
 
   const handleDelete = (courseId: string) => {
