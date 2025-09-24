@@ -194,11 +194,11 @@ const UniversityDashboard = () => {
                 </CardContent>
               </Card>
 
-              <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate('/university/matching-criteria')}>
+              <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate('/university/application-process')}>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Target className="h-5 w-5" />
-                    Configure Matching Criteria
+                    Application Process Setup
                   </CardTitle>
                   <CardDescription>Set up application evaluation rules</CardDescription>
                 </CardHeader>

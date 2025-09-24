@@ -16,7 +16,7 @@ export interface MatchingCriteriaConfig {
   updatedAt: Date;
 }
 
-export const useMatchingCriteria = () => {
+export const useApplicationProcess = () => {
   const [criteriaConfigs, setCriteriaConfigs] = useState<MatchingCriteriaConfig[]>([]);
 
   useEffect(() => {

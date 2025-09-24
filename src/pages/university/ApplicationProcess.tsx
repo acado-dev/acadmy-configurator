@@ -18,14 +18,14 @@ import {
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { useMatchingCriteria, MatchingCriterion } from '@/hooks/useMatchingCriteria';
+import { useApplicationProcess, MatchingCriterion } from '@/hooks/useApplicationProcess';
 import { useFormsData } from '@/hooks/useFormsData';
 
-const MatchingCriteria = () => {
+const ApplicationProcess = () => {
   const { courseId } = useParams<{ courseId: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { saveCriteriaConfig, getCriteriaByCoursId } = useMatchingCriteria();
+  const { saveCriteriaConfig, getCriteriaByCoursId } = useApplicationProcess();
   const { courses, forms } = useFormsData();
   const [minimumScore, setMinimumScore] = useState(70);
   const [criteria, setCriteria] = useState<MatchingCriterion[]>([]);
@@ -34,9 +34,9 @@ const MatchingCriteria = () => {
   const courseForm = forms.find(f => course?.applicationFormId === f.id);
 
   useEffect(() => {
-    // Guard: if no courseId or invalid course, go back to Matching Criteria list
+    // Guard: if no courseId or invalid course, go back to Application Process list
     if (!courseId || !course) {
-      navigate('/university/matching-criteria');
+      navigate('/university/application-process');
       return;
     }
 
@@ -136,7 +136,7 @@ const MatchingCriteria = () => {
         title: "Criteria Saved",
         description: "Matching criteria has been configured successfully"
       });
-      navigate('/university/matching-criteria');
+      navigate('/university/application-process');
     }
   };
 
@@ -145,20 +145,67 @@ const MatchingCriteria = () => {
   return (
     <div className="container mx-auto py-6">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold">Matching Criteria Setup</h1>
+        <h1 className="text-3xl font-bold">Application Process Configuration</h1>
         <p className="text-muted-foreground mt-2">
-          Configure evaluation rules for {course?.name || 'Course'}
+          Configure the complete application workflow for {course?.name || 'Course'}
         </p>
       </div>
 
       <div className="grid gap-6 md:grid-cols-3">
         <div className="md:col-span-2 space-y-6">
-          <Card>
+          {/* Step 1: Application Collection */}
+          <Card className="border-primary/20">
             <CardHeader>
-              <CardTitle>Minimum Acceptance Score</CardTitle>
-              <CardDescription>
-                Set the minimum score required for application consideration
-              </CardDescription>
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-semibold">
+                  1
+                </div>
+                <div>
+                  <CardTitle>Application Collection</CardTitle>
+                  <CardDescription>
+                    Application form configured for this course
+                  </CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              {courseForm ? (
+                <div className="flex items-center justify-between p-4 bg-accent/50 rounded-lg">
+                  <div>
+                    <p className="font-medium">{courseForm.name}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {courseForm.fields?.length || 0} fields configured
+                    </p>
+                  </div>
+                  <Button variant="outline" size="sm" onClick={() => navigate(`/university/forms/${courseForm.id}`)}>
+                    Edit Form
+                  </Button>
+                </div>
+              ) : (
+                <div className="text-center p-6 border-2 border-dashed rounded-lg">
+                  <p className="text-muted-foreground mb-4">No application form mapped to this course</p>
+                  <Button onClick={() => navigate('/university/forms')}>
+                    Configure Form
+                  </Button>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Step 2: Evaluation & Shortlisting */}
+          <Card className="border-primary/20">
+            <CardHeader>
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-semibold">
+                  2
+                </div>
+                <div>
+                  <CardTitle>Evaluation & Shortlisting</CardTitle>
+                  <CardDescription>
+                    Configure criteria for automated application evaluation
+                  </CardDescription>
+                </div>
+              </div>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
@@ -173,7 +220,7 @@ const MatchingCriteria = () => {
                   step={5}
                 />
                 <p className="text-sm text-muted-foreground">
-                  Applications scoring below {minimumScore}% will be marked for review
+                  Applications scoring below {minimumScore}% will be automatically filtered out
                 </p>
               </div>
             </CardContent>
@@ -372,4 +419,4 @@ const MatchingCriteria = () => {
   );
 };
 
-export default MatchingCriteria;
+export default ApplicationProcess;

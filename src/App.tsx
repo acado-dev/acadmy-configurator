@@ -36,8 +36,8 @@ import UniversityDashboard from '@/pages/university/UniversityDashboard';
 import UniversityCourses from '@/pages/university/UniversityCourses';
 import UniversityForms from '@/pages/university/UniversityForms';
 import UniversityFormBuilder from '@/pages/university/UniversityFormBuilder';
-import MatchingCriteria from '@/pages/university/MatchingCriteria';
-import MatchingCriteriaList from '@/pages/university/MatchingCriteriaList';
+import ApplicationProcess from '@/pages/university/ApplicationProcess';
+import ApplicationProcessList from '@/pages/university/ApplicationProcessList';
 import ApplicationReview from '@/pages/university/ApplicationReview';
 import ApplicationsList from '@/pages/university/ApplicationsList';
 import UniversityInfo from '@/pages/university/UniversityInfo';
@@ -102,8 +102,8 @@ const App = () => (
             <Route path="forms" element={<UniversityForms />} />
             <Route path="forms/new" element={<UniversityFormBuilder />} />
             <Route path="forms/:formId" element={<UniversityFormBuilder />} />
-            <Route path="matching-criteria" element={<MatchingCriteriaList />} />
-            <Route path="matching-criteria/:courseId" element={<MatchingCriteria />} />
+            <Route path="application-process" element={<ApplicationProcessList />} />
+            <Route path="application-process/:courseId" element={<ApplicationProcess />} />
             <Route path="applications" element={<ApplicationsList />} />
             <Route path="applications/:applicationId" element={<ApplicationReview />} />
             <Route path="talent" element={<TalentPool />} />

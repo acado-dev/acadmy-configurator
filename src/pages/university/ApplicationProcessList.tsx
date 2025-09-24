@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Plus, Edit, Target, CheckCircle, AlertCircle, MoreVertical, Trash2 } from 'lucide-react';
-import { useMatchingCriteria } from '@/hooks/useMatchingCriteria';
+import { useApplicationProcess } from '@/hooks/useApplicationProcess';
 import { useFormsData } from '@/hooks/useFormsData';
 import {
   DropdownMenu,
@@ -22,10 +22,10 @@ import {
 } from '@/components/ui/table';
 import { useToast } from '@/hooks/use-toast';
 
-const MatchingCriteriaList = () => {
+const ApplicationProcessList = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { criteriaConfigs, deleteCriteriaConfig } = useMatchingCriteria();
+  const { criteriaConfigs, deleteCriteriaConfig } = useApplicationProcess();
   const { courses, forms } = useFormsData();
   
   // Filter for current university (mock data)
@@ -66,7 +66,10 @@ const MatchingCriteriaList = () => {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold">Matching Criteria</h1>
+      <h1 className="text-3xl font-bold">Application Process Configuration</h1>
+      <p className="text-muted-foreground mt-2">
+        Configure the complete application process: collection forms, evaluation criteria, and selection steps
+      </p>
           <p className="text-muted-foreground mt-2">
             Configure evaluation rules for applicant assessment based on form fields and criteria
           </p>
@@ -77,9 +80,9 @@ const MatchingCriteriaList = () => {
       {universityCourses.filter(course => !criteriaConfigs.find(c => c.courseId === course.id)).length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle>Courses Without Criteria</CardTitle>
+            <CardTitle>Courses Without Application Process</CardTitle>
             <CardDescription>
-              These courses need matching criteria configured for automated applicant evaluation
+              These courses need evaluation criteria and process steps configured for applicant assessment
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -95,7 +98,7 @@ const MatchingCriteriaList = () => {
                           <p className="text-sm text-muted-foreground">{course.type}</p>
                           <div className="flex items-center gap-2 mt-2">
                             <AlertCircle className="h-3 w-3 text-orange-500" />
-                            <span className="text-xs text-orange-500">No criteria configured</span>
+                            <span className="text-xs text-orange-500">No process configured</span>
                           </div>
                         </div>
                       </div>
@@ -105,7 +108,7 @@ const MatchingCriteriaList = () => {
                         onClick={() => handleCreateNew(course.id)}
                       >
                         <Plus className="h-4 w-4 mr-2" />
-                        Setup Criteria
+                        Configure Process
                       </Button>
                     </CardContent>
                   </Card>
@@ -119,9 +122,9 @@ const MatchingCriteriaList = () => {
       {criteriaConfigs.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle>Configured Matching Criteria</CardTitle>
+            <CardTitle>Configured Application Processes</CardTitle>
             <CardDescription>
-              Manage evaluation criteria for your courses
+              Manage evaluation criteria and process steps for your courses
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -241,4 +244,4 @@ const MatchingCriteriaList = () => {
   );
 };
 
-export default MatchingCriteriaList;
+export default ApplicationProcessList;
