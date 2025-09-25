@@ -27,6 +27,9 @@ import CourseDetail from '@/pages/user/CourseDetail';
 import ApplicationWizard from '@/pages/user/ApplicationWizard';
 import Portfolio from '@/pages/user/Portfolio';
 import ProfileView from '@/pages/ProfileView';
+import MyApplications from '@/pages/user/MyApplications';
+import ApplicationDetail from '@/pages/user/ApplicationDetail';
+import Communications from '@/pages/user/Communications';
 
 // University Admin Pages
 import UniversityLogin from '@/pages/university/UniversityLogin';
