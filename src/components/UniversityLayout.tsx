@@ -102,12 +102,13 @@ const UniversityLayout = () => {
       ]
     },
     {
-      id: 'form-builder',
-      label: 'Form Builder',
+      id: 'form-configuration',
+      label: 'Form Configuration',
       icon: FormInput,
       subItems: [
         { label: 'Application Forms', path: '/university/forms', icon: FormInput },
-        { label: 'Application Process', path: '/university/application-process', icon: FileCheck },
+        { label: 'Evaluation Criteria', path: '/university/application-process', icon: Settings },
+        { label: 'Process Steps', path: '/university/application-process-list', icon: FileCheck },
       ]
     },
     {
@@ -116,8 +117,9 @@ const UniversityLayout = () => {
       icon: ClipboardList,
       badge: universityData.pendingApplications,
       subItems: [
-        { label: 'Review Applications', path: '/university/applications', icon: ClipboardList },
-        { label: 'Application Process', path: '/university/process', icon: FileCheck },
+        { label: 'Collected Applications', path: '/university/applications', icon: ClipboardList, badge: universityData.pendingApplications },
+        { label: 'Applications Overview', path: '/university/applications-overview', icon: BarChart },
+        { label: 'Selection Process', path: '/university/process', icon: FileCheck },
         { label: 'Acceptance Letters', path: '/university/acceptance', icon: Mail },
       ]
     },
@@ -216,6 +218,11 @@ const UniversityLayout = () => {
                       >
                         <subItem.icon className="h-4 w-4" />
                         <span>{subItem.label}</span>
+                        {subItem.badge && (
+                          <Badge variant="destructive" className="ml-auto">
+                            {subItem.badge}
+                          </Badge>
+                        )}
                       </Link>
                     ))}
                   </CollapsibleContent>

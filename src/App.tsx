@@ -43,6 +43,7 @@ import ApplicationProcess from '@/pages/university/ApplicationProcess';
 import ApplicationProcessList from '@/pages/university/ApplicationProcessList';
 import ApplicationReview from '@/pages/university/ApplicationReview';
 import ApplicationsList from '@/pages/university/ApplicationsList';
+import ApplicationsOverview from '@/pages/university/ApplicationsOverview';
 import UniversityInfo from '@/pages/university/UniversityInfo';
 import TalentPool from '@/pages/university/TalentPool';
 
@@ -105,10 +106,11 @@ const App = () => (
             <Route path="forms" element={<UniversityForms />} />
             <Route path="forms/new" element={<UniversityFormBuilder />} />
             <Route path="forms/:formId" element={<UniversityFormBuilder />} />
-            <Route path="application-process" element={<ApplicationProcessList />} />
-            <Route path="application-process/:courseId" element={<ApplicationProcess />} />
+            <Route path="application-process" element={<ApplicationProcess />} />
+            <Route path="application-process-list" element={<ApplicationProcessList />} />
             <Route path="applications" element={<ApplicationsList />} />
-            <Route path="applications/:applicationId" element={<ApplicationReview />} />
+            <Route path="applications/:id" element={<ApplicationReview />} />
+            <Route path="applications-overview" element={<ApplicationsOverview />} />
             <Route path="talent" element={<TalentPool />} />
             <Route path="communications" element={<UniversityDashboard />} />
             <Route path="users" element={<UniversityDashboard />} />
