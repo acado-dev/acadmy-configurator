@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -16,82 +16,67 @@ import {
   AlertCircle,
   XCircle,
   Target,
-  ChevronRight
+  ChevronRight,
+  FileText,
+  Users,
+  TrendingUp,
+  Award
 } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
+import { useApplicationSubmissions } from '@/hooks/useApplicationSubmissions';
+import { useFormsData } from '@/hooks/useFormsData';
 
 const ApplicationsList = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const courseId = searchParams.get('course');
+  const formId = searchParams.get('form');
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [scoreFilter, setScoreFilter] = useState('all');
+  const [selectedCourse, setSelectedCourse] = useState(courseId || 'all');
+  
+  const { 
+    applications, 
+    stats, 
+    updateApplicationStatus,
+    getApplicationsByCourse,
+    getApplicationsByStatus 
+  } = useApplicationSubmissions();
+  
+  const { forms, courses } = useFormsData();
 
-  const applications = [
-    {
-      id: '1',
-      applicantName: 'John Doe',
-      email: 'john.doe@example.com',
-      course: 'MBA',
-      matchScore: 92,
-      status: 'shortlisted',
-      submittedAt: '2024-01-15',
-      lastActivity: '2 hours ago'
-    },
-    {
-      id: '2',
-      applicantName: 'Jane Smith',
-      email: 'jane.smith@example.com',
-      course: 'Computer Science',
-      matchScore: 87,
-      status: 'under_review',
-      submittedAt: '2024-01-14',
-      lastActivity: '1 day ago'
-    },
-    {
-      id: '3',
-      applicantName: 'Mike Johnson',
-      email: 'mike.j@example.com',
-      course: 'Engineering',
-      matchScore: 78,
-      status: 'document_requested',
-      submittedAt: '2024-01-13',
-      lastActivity: '3 days ago'
-    },
-    {
-      id: '4',
-      applicantName: 'Sarah Williams',
-      email: 'sarah.w@example.com',
-      course: 'MBA',
-      matchScore: 95,
-      status: 'accepted',
-      submittedAt: '2024-01-12',
-      lastActivity: '1 week ago'
-    },
-    {
-      id: '5',
-      applicantName: 'David Brown',
-      email: 'david.b@example.com',
-      course: 'Computer Science',
-      matchScore: 65,
-      status: 'rejected',
-      submittedAt: '2024-01-11',
-      lastActivity: '2 weeks ago'
-    }
-  ];
-
+  // Filter applications based on selected filters
   const filteredApplications = applications.filter(app => {
-    const matchesSearch = app.applicantName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         app.email.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === 'all' || app.status === statusFilter;
-    const matchesScore = scoreFilter === 'all' ||
-                        (scoreFilter === 'high' && app.matchScore >= 80) ||
-                        (scoreFilter === 'medium' && app.matchScore >= 60 && app.matchScore < 80) ||
-                        (scoreFilter === 'low' && app.matchScore < 60);
-    const matchesCourse = !courseId || app.course === courseId;
+    // Filter by search term
+    if (searchTerm && !app.applicantName.toLowerCase().includes(searchTerm.toLowerCase()) &&
+        !app.applicantEmail.toLowerCase().includes(searchTerm.toLowerCase())) {
+      return false;
+    }
     
-    return matchesSearch && matchesStatus && matchesScore && matchesCourse;
+    // Filter by course
+    if (selectedCourse !== 'all' && app.courseId !== selectedCourse) {
+      return false;
+    }
+    
+    // Filter by form
+    if (formId && app.formId !== formId) {
+      return false;
+    }
+    
+    // Filter by status
+    if (statusFilter !== 'all' && app.status !== statusFilter) {
+      return false;
+    }
+    
+    // Filter by score
+    if (scoreFilter !== 'all') {
+      if (scoreFilter === 'high' && app.matchScore <= 80) return false;
+      if (scoreFilter === 'medium' && (app.matchScore < 50 || app.matchScore > 80)) return false;
+      if (scoreFilter === 'low' && app.matchScore >= 50) return false;
+    }
+    
+    return true;
   });
 
   const getStatusIcon = (status: string) => {
@@ -189,23 +174,43 @@ const ApplicationsList = () => {
         </Card>
 
         {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium">Total Applications</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{applications.length}</div>
+              <div className="text-2xl font-bold">{stats.totalApplications}</div>
+              <p className="text-xs text-muted-foreground">{Object.keys(stats.byCourse).length} courses</p>
             </CardContent>
           </Card>
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Pending Review</CardTitle>
+              <CardTitle className="text-sm font-medium">Avg Match Score</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-warning">
-                {applications.filter(a => a.status === 'under_review').length}
+              <div className="text-2xl font-bold text-primary">{stats.averageMatchScore}%</div>
+              <Progress value={stats.averageMatchScore} className="mt-2 h-1" />
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium">High Match (&gt;80%)</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-green-600">{stats.highMatchCount}</div>
+              <p className="text-xs text-muted-foreground">Strong candidates</p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium">Under Review</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-yellow-600">
+                {stats.byStatus['under_review'] || 0}
               </div>
+              <p className="text-xs text-muted-foreground">Pending: {stats.byStatus['submitted'] || 0}</p>
             </CardContent>
           </Card>
           <Card>
@@ -213,19 +218,10 @@ const ApplicationsList = () => {
               <CardTitle className="text-sm font-medium">Shortlisted</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-secondary">
-                {applications.filter(a => a.status === 'shortlisted').length}
+              <div className="text-2xl font-bold text-blue-600">
+                {stats.byStatus['shortlisted'] || 0}
               </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Accepted</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-success">
-                {applications.filter(a => a.status === 'accepted').length}
-              </div>
+              <p className="text-xs text-muted-foreground">Accepted: {stats.byStatus['accepted'] || 0}</p>
             </CardContent>
           </Card>
         </div>
@@ -258,13 +254,13 @@ const ApplicationsList = () => {
                         </Badge>
                       </div>
                       <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                        <span>{application.email}</span>
+                        <span>{application.applicantEmail}</span>
                         <span>•</span>
-                        <span>{application.course}</span>
+                        <span>{application.courseName}</span>
                         <span>•</span>
-                        <span>Submitted {application.submittedAt}</span>
+                        <span>Submitted {new Date(application.submittedAt).toLocaleDateString()}</span>
                         <span>•</span>
-                        <span>{application.lastActivity}</span>
+                        <span>Updated {new Date(application.lastUpdated).toLocaleDateString()}</span>
                       </div>
                     </div>
                     
