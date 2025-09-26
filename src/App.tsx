@@ -106,7 +106,7 @@ const App = () => (
             <Route path="forms" element={<UniversityForms />} />
             <Route path="forms/new" element={<UniversityFormBuilder />} />
             <Route path="forms/:formId" element={<UniversityFormBuilder />} />
-            <Route path="application-process" element={<ApplicationProcess />} />
+            <Route path="application-process/:courseId" element={<ApplicationProcess />} />
             <Route path="application-process-list" element={<ApplicationProcessList />} />
             <Route path="applications" element={<ApplicationsList />} />
             <Route path="applications/:id" element={<ApplicationReview />} />
