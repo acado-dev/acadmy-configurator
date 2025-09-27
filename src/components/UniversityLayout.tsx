@@ -108,7 +108,7 @@ const UniversityLayout = () => {
       subItems: [
         { label: 'Application Forms', path: '/university/forms', icon: FormInput },
         { label: 'Evaluation Criteria', path: '/university/application-process-list', icon: Settings },
-        { label: 'Process Steps', path: '/university/application-process-list', icon: FileCheck },
+        { label: 'Process Steps', path: '/university/process-steps', icon: FileCheck },
       ]
     },
     {

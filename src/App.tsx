@@ -46,6 +46,7 @@ import ApplicationsList from '@/pages/university/ApplicationsList';
 import ApplicationsOverview from '@/pages/university/ApplicationsOverview';
 import UniversityInfo from '@/pages/university/UniversityInfo';
 import TalentPool from '@/pages/university/TalentPool';
+import ProcessSteps from '@/pages/university/ProcessSteps';
 
 const queryClient = new QueryClient();
 
@@ -108,6 +109,7 @@ const App = () => (
             <Route path="forms/:formId" element={<UniversityFormBuilder />} />
             <Route path="application-process/:courseId" element={<ApplicationProcess />} />
             <Route path="application-process-list" element={<ApplicationProcessList />} />
+            <Route path="process-steps" element={<ProcessSteps />} />
             <Route path="applications" element={<ApplicationsList />} />
             <Route path="applications/:id" element={<ApplicationReview />} />
             <Route path="applications-overview" element={<ApplicationsOverview />} />
