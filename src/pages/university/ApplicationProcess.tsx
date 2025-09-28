@@ -31,6 +31,7 @@ function ApplicationProcess() {
   const { courses, forms } = useFormsData();
   const [minimumScore, setMinimumScore] = useState(70);
   const [criteria, setCriteria] = useState<MatchingCriterion[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<Record<string, string>>({});
 
   const course = courses.find(c => c.id === courseId);
   const courseForm = forms.find(f => course?.applicationFormId === f.id);
@@ -108,13 +109,21 @@ function ApplicationProcess() {
   }, [courseId, course, getCriteriaByCoursId, navigate]);
 
   const handleAddCriteria = () => {
-    setCriteria([...criteria, {
+    const newCriterion = {
       id: Date.now().toString(),
       fieldName: '',
-      type: 'weighted',
+      type: 'weighted' as const,
       weight: 0,
       conditions: []
-    }]);
+    };
+    setCriteria(prev => [...prev, newCriterion]);
+  };
+
+  const handleCategoryChange = (criterionId: string, categoryId: string) => {
+    setSelectedCategories(prev => ({
+      ...prev,
+      [criterionId]: categoryId
+    }));
   };
 
   const handleUpdateCriteria = (index: number, updated: MatchingCriterion) => {
@@ -251,6 +260,26 @@ function ApplicationProcess() {
                 <Card key={criterion.id}>
                   <CardContent className="pt-6">
                     <div className="grid grid-cols-12 gap-4">
+                      {/* Category Selection */}
+                      <div className="col-span-3">
+                        <Label>Category</Label>
+                        <Select
+                          value={selectedCategories[criterion.id] || ''}
+                          onValueChange={(value) => handleCategoryChange(criterion.id, value)}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select category" />
+                          </SelectTrigger>
+                          <SelectContent className="z-50 bg-background">
+                            {masterCategories.map(category => (
+                              <SelectItem key={category.id} value={category.id}>
+                                {category.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+
                       {/* Field Name */}
                       <div className="col-span-3">
                         <Label>Field Name</Label>
@@ -260,25 +289,18 @@ function ApplicationProcess() {
                             ...criterion,
                             fieldName: value
                           })}
+                          disabled={!selectedCategories[criterion.id]}
                         >
                           <SelectTrigger>
-                            <SelectValue placeholder="Select a field" />
+                            <SelectValue placeholder={selectedCategories[criterion.id] ? "Select field" : "Select category first"} />
                           </SelectTrigger>
-                          <SelectContent>
-                            {Object.entries(availableFields).map(([categoryId, fields]) => {
-                              const category = masterCategories.find(c => c.id === categoryId);
-                              return (
-                                <SelectGroup key={categoryId}>
-                                  <SelectLabel>{category?.name || categoryId}</SelectLabel>
-                                  {fields.map(field => (
-                                    <SelectItem key={field.id} value={field.label}>
-                                      {field.label}
-                                    </SelectItem>
-                                  ))}
-                                </SelectGroup>
-                              );
-                            })}
-                            {/* Allow custom field entry */}
+                          <SelectContent className="z-50 bg-background">
+                            {selectedCategories[criterion.id] && availableFields[selectedCategories[criterion.id]]?.map(field => (
+                              <SelectItem key={field.id} value={field.label}>
+                                {field.label}
+                              </SelectItem>
+                            ))}
+                            {/* Common fields as fallback */}
                             <SelectGroup>
                               <SelectLabel>Common Fields</SelectLabel>
                               <SelectItem value="GPA">GPA</SelectItem>
@@ -292,7 +314,7 @@ function ApplicationProcess() {
                       </div>
 
                       {/* Type */}
-                      <div className="col-span-3">
+                      <div className="col-span-2">
                         <Label>Type</Label>
                         <Select
                           value={criterion.type}
