@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate, Navigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Slider } from '@/components/ui/slider';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, SelectGroup, SelectLabel } from '@/components/ui/select';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import {
   Target,
@@ -20,6 +20,8 @@ import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useApplicationProcess, MatchingCriterion } from '@/hooks/useApplicationProcess';
 import { useFormsData } from '@/hooks/useFormsData';
+import { masterCategories, masterFields } from '@/data/masterFields';
+import { ApplicationField, FieldCategory } from '@/types/application';
 
 function ApplicationProcess() {
   const { courseId } = useParams<{ courseId: string }>();
@@ -32,6 +34,25 @@ function ApplicationProcess() {
 
   const course = courses.find(c => c.id === courseId);
   const courseForm = forms.find(f => course?.applicationFormId === f.id);
+
+  // Get available fields from the form
+  const availableFields = useMemo(() => {
+    if (!courseForm) return [];
+    
+    // Get fields from the configured form or use master fields
+    const formFields = courseForm.fields.length > 0 ? courseForm.fields : masterFields;
+    
+    // Group fields by category
+    const fieldsByCategory: Record<string, ApplicationField[]> = {};
+    formFields.forEach(field => {
+      if (!fieldsByCategory[field.categoryId]) {
+        fieldsByCategory[field.categoryId] = [];
+      }
+      fieldsByCategory[field.categoryId].push(field);
+    });
+    
+    return fieldsByCategory;
+  }, [courseForm]);
 
   useEffect(() => {
     // Guard: if no courseId or invalid course, go back to Application Process list
@@ -212,7 +233,12 @@ function ApplicationProcess() {
                 Define the criteria and their weights for evaluating applications
               </CardDescription>
             </div>
-            <Button onClick={handleAddCriteria} size="sm">
+            <Button 
+              onClick={handleAddCriteria} 
+              size="sm"
+              variant="default"
+              type="button"
+            >
               <Plus className="w-4 h-4 mr-2" />
               Add Criterion
             </Button>
@@ -228,14 +254,41 @@ function ApplicationProcess() {
                       {/* Field Name */}
                       <div className="col-span-3">
                         <Label>Field Name</Label>
-                        <Input
+                        <Select
                           value={criterion.fieldName}
-                          onChange={(e) => handleUpdateCriteria(index, {
+                          onValueChange={(value) => handleUpdateCriteria(index, {
                             ...criterion,
-                            fieldName: e.target.value
+                            fieldName: value
                           })}
-                          placeholder="e.g., GPA"
-                        />
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select a field" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {Object.entries(availableFields).map(([categoryId, fields]) => {
+                              const category = masterCategories.find(c => c.id === categoryId);
+                              return (
+                                <SelectGroup key={categoryId}>
+                                  <SelectLabel>{category?.name || categoryId}</SelectLabel>
+                                  {fields.map(field => (
+                                    <SelectItem key={field.id} value={field.label}>
+                                      {field.label}
+                                    </SelectItem>
+                                  ))}
+                                </SelectGroup>
+                              );
+                            })}
+                            {/* Allow custom field entry */}
+                            <SelectGroup>
+                              <SelectLabel>Common Fields</SelectLabel>
+                              <SelectItem value="GPA">GPA</SelectItem>
+                              <SelectItem value="Test Score">Test Score</SelectItem>
+                              <SelectItem value="Work Experience">Work Experience</SelectItem>
+                              <SelectItem value="Statement of Purpose">Statement of Purpose</SelectItem>
+                              <SelectItem value="Letters of Recommendation">Letters of Recommendation</SelectItem>
+                            </SelectGroup>
+                          </SelectContent>
+                        </Select>
                       </div>
 
                       {/* Type */}
