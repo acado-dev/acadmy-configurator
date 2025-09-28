@@ -14,7 +14,7 @@ import { useFormsData } from '@/hooks/useFormsData';
 interface ProcessStep {
   id: string;
   name: string;
-  type: 'interview' | 'test' | 'document-review' | 'committee-review' | 'final-decision';
+  type: 'application' | 'interview' | 'test' | 'document-review' | 'committee-review' | 'final-decision';
   description: string;
   duration: string;
   responsible: string;
@@ -72,7 +72,7 @@ export default function ProcessConfiguration() {
     const newStep: ProcessStep = {
       id: Date.now().toString(),
       name: '',
-      type: 'document-review',
+      type: 'application',
       description: '',
       duration: '',
       responsible: '',
@@ -155,6 +155,8 @@ export default function ProcessConfiguration() {
 
   const getStepIcon = (type: ProcessStep['type']) => {
     switch (type) {
+      case 'application':
+        return <FileText className="h-4 w-4" />;
       case 'interview':
         return <Users className="h-4 w-4" />;
       case 'test':
@@ -290,6 +292,12 @@ export default function ProcessConfiguration() {
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
+                          <SelectItem value="application">
+                            <div className="flex items-center gap-2">
+                              <FileText className="h-4 w-4" />
+                              Application Collection
+                            </div>
+                          </SelectItem>
                           <SelectItem value="document-review">
                             <div className="flex items-center gap-2">
                               <FileText className="h-4 w-4" />
