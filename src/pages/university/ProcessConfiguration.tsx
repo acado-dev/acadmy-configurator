@@ -19,6 +19,7 @@ interface ProcessStep {
   duration: string;
   responsible: string;
   order: number;
+  weight: number; // Percentage weightage for this step
 }
 
 export default function ProcessConfiguration() {
@@ -50,7 +51,8 @@ export default function ProcessConfiguration() {
         description: 'Review of application documents',
         duration: '2 days',
         responsible: 'Admissions Team',
-        order: 1
+        order: 1,
+        weight: 30
       },
       {
         id: '2',
@@ -59,7 +61,8 @@ export default function ProcessConfiguration() {
         description: 'Online aptitude and subject test',
         duration: '1 day',
         responsible: 'Testing Center',
-        order: 2
+        order: 2,
+        weight: 40
       }
     ];
     setSteps(mockSteps);
@@ -73,7 +76,8 @@ export default function ProcessConfiguration() {
       description: '',
       duration: '',
       responsible: '',
-      order: steps.length + 1
+      order: steps.length + 1,
+      weight: 0
     };
     setSteps([...steps, newStep]);
   };
@@ -122,6 +126,16 @@ export default function ProcessConfiguration() {
       toast({
         title: "Error",
         description: "Please add at least one process step",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    const totalWeight = steps.reduce((sum, step) => sum + (step.weight || 0), 0);
+    if (totalWeight !== 100) {
+      toast({
+        title: "Error",
+        description: `Total weightage must equal 100%. Current total: ${totalWeight}%`,
         variant: "destructive"
       });
       return;
@@ -317,7 +331,7 @@ export default function ProcessConfiguration() {
                       rows={2}
                     />
                     
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-3 gap-4">
                       <div>
                         <Label>Duration</Label>
                         <Input
@@ -334,7 +348,31 @@ export default function ProcessConfiguration() {
                           onChange={(e) => updateStep(step.id, 'responsible', e.target.value)}
                         />
                       </div>
+                      <div>
+                        <Label>Weightage (%)</Label>
+                        <Input
+                          type="number"
+                          min="0"
+                          max="100"
+                          placeholder="e.g., 30"
+                          value={step.weight || 0}
+                          onChange={(e) => updateStep(step.id, 'weight', parseInt(e.target.value) || 0)}
+                        />
+                      </div>
                     </div>
+                    {index === steps.length - 1 && steps.length > 1 && (
+                      <div className="mt-2 p-3 bg-muted/50 rounded-lg">
+                        <div className="text-sm">
+                          <span className="font-medium">Total Weightage: </span>
+                          <span className={`font-bold ${steps.reduce((sum, s) => sum + (s.weight || 0), 0) === 100 ? 'text-green-600' : 'text-yellow-600'}`}>
+                            {steps.reduce((sum, s) => sum + (s.weight || 0), 0)}%
+                          </span>
+                          {steps.reduce((sum, s) => sum + (s.weight || 0), 0) !== 100 && (
+                            <span className="text-muted-foreground ml-2">(Should equal 100%)</span>
+                          )}
+                        </div>
+                      </div>
+                    )}
                   </div>
                   
                   <Button
