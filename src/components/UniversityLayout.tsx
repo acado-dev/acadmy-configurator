@@ -117,8 +117,8 @@ const UniversityLayout = () => {
       icon: ClipboardList,
       badge: universityData.pendingApplications,
       subItems: [
-        { label: 'Collected Applications', path: '/university/applications', icon: ClipboardList, badge: universityData.pendingApplications },
         { label: 'Applications Overview', path: '/university/applications-overview', icon: BarChart },
+        { label: 'Collected Applications', path: '/university/applications', icon: FileText, badge: universityData.pendingApplications },
         { label: 'Selection Process', path: '/university/process', icon: FileCheck },
         { label: 'Acceptance Letters', path: '/university/acceptance', icon: Mail },
       ]
