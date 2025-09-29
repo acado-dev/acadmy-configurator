@@ -23,7 +23,9 @@ import {
   Send,
   Download,
   Eye,
-  Star
+  Star,
+  Target,
+  TrendingUp
 } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -39,7 +41,7 @@ const TalentPool = () => {
   const [messageDialogOpen, setMessageDialogOpen] = useState(false);
   const [selectedCandidate, setSelectedCandidate] = useState<any>(null);
 
-  // Mock talent data
+  // Mock talent data with course matching
   const talents = [
     {
       id: '1',
@@ -54,6 +56,15 @@ const TalentPool = () => {
       graduationYear: '2024',
       gpa: '3.8',
       matchScore: 95,
+      matchedCourse: {
+        name: 'MSc Artificial Intelligence',
+        matchPercentage: 95,
+        matchReasons: ['Strong ML background', 'Python expertise', 'Research experience']
+      },
+      otherMatches: [
+        { name: 'MSc Data Science', matchPercentage: 88 },
+        { name: 'MSc Computer Science', matchPercentage: 82 }
+      ],
       skills: ['Python', 'Machine Learning', 'React', 'Node.js'],
       experience: '2 internships at tech companies',
       achievements: ['Dean\'s List', 'Hackathon Winner', 'Research Published'],
@@ -62,25 +73,6 @@ const TalentPool = () => {
     },
     {
       id: '2',
-      name: 'Michael Chen',
-      email: 'michael.c@email.com',
-      phone: '+1 234-567-8902',
-      location: 'New York, NY',
-      profileImage: '',
-      field: 'Business Administration',
-      degree: 'MBA',
-      university: 'NYU Stern',
-      graduationYear: '2023',
-      gpa: '3.9',
-      matchScore: 88,
-      skills: ['Financial Analysis', 'Strategic Planning', 'Leadership', 'Data Analytics'],
-      experience: '5 years in consulting',
-      achievements: ['Summa Cum Laude', 'Case Competition Winner'],
-      status: 'active',
-      lastActive: '1 day ago'
-    },
-    {
-      id: '3',
       name: 'Emily Rodriguez',
       email: 'emily.r@email.com',
       phone: '+1 234-567-8903',
@@ -92,13 +84,78 @@ const TalentPool = () => {
       graduationYear: '2024',
       gpa: '3.7',
       matchScore: 92,
+      matchedCourse: {
+        name: 'PhD Biomedical Engineering',
+        matchPercentage: 92,
+        matchReasons: ['Research publications', 'Lab management', 'Strong GPA']
+      },
+      otherMatches: [
+        { name: 'MSc Healthcare Innovation', matchPercentage: 85 },
+        { name: 'MSc Biotechnology', matchPercentage: 78 }
+      ],
       skills: ['Biotechnology', 'Research', 'Lab Management', 'Data Analysis'],
       experience: '3 research projects',
       achievements: ['Research Grant Recipient', 'Published Author'],
       status: 'active',
       lastActive: '3 hours ago'
+    },
+    {
+      id: '3',
+      name: 'Michael Chen',
+      email: 'michael.c@email.com',
+      phone: '+1 234-567-8902',
+      location: 'New York, NY',
+      profileImage: '',
+      field: 'Business Administration',
+      degree: 'MBA',
+      university: 'NYU Stern',
+      graduationYear: '2023',
+      gpa: '3.9',
+      matchScore: 88,
+      matchedCourse: {
+        name: 'Executive MBA',
+        matchPercentage: 88,
+        matchReasons: ['Leadership experience', 'Strategic planning', 'Consulting background']
+      },
+      otherMatches: [
+        { name: 'MSc Business Analytics', matchPercentage: 82 },
+        { name: 'MSc Finance', matchPercentage: 75 }
+      ],
+      skills: ['Financial Analysis', 'Strategic Planning', 'Leadership', 'Data Analytics'],
+      experience: '5 years in consulting',
+      achievements: ['Summa Cum Laude', 'Case Competition Winner'],
+      status: 'active',
+      lastActive: '1 day ago'
+    },
+    {
+      id: '4',
+      name: 'Jessica Park',
+      email: 'jessica.p@email.com',
+      phone: '+1 234-567-8904',
+      location: 'Boston, MA',
+      profileImage: '',
+      field: 'Architecture',
+      degree: 'Bachelor of Architecture',
+      university: 'MIT',
+      graduationYear: '2024',
+      gpa: '3.6',
+      matchScore: 78,
+      matchedCourse: {
+        name: 'MSc Sustainable Architecture',
+        matchPercentage: 78,
+        matchReasons: ['Design portfolio', 'Sustainability focus', 'CAD expertise']
+      },
+      otherMatches: [
+        { name: 'MSc Urban Planning', matchPercentage: 72 },
+        { name: 'MSc Real Estate Development', matchPercentage: 65 }
+      ],
+      skills: ['AutoCAD', 'Revit', 'Sustainable Design', '3D Modeling'],
+      experience: 'Architecture firm internship',
+      achievements: ['Design Competition Finalist', 'LEED Associate'],
+      status: 'active',
+      lastActive: '5 hours ago'
     }
-  ];
+  ].sort((a, b) => b.matchScore - a.matchScore); // Sort by highest match score first
 
   const filteredTalents = talents.filter(talent => {
     const matchesSearch = talent.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -250,9 +307,47 @@ const TalentPool = () => {
                       <div className={`text-2xl font-bold ${getScoreColor(talent.matchScore)}`}>
                         {talent.matchScore}%
                       </div>
-                      <p className="text-xs text-muted-foreground">Match Score</p>
+                      <p className="text-xs text-muted-foreground">Overall Match</p>
                     </div>
                   </div>
+
+                  {/* Course Matching Section */}
+                  <div className="mb-4 p-3 bg-primary/5 rounded-lg border border-primary/20">
+                    <div className="flex items-start justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <Target className="h-4 w-4 text-primary" />
+                        <span className="text-sm font-semibold text-primary">Best Match</span>
+                      </div>
+                      <Badge variant="default" className="bg-primary">
+                        {talent.matchedCourse.matchPercentage}% Match
+                      </Badge>
+                    </div>
+                    <p className="font-medium text-sm mb-1">{talent.matchedCourse.name}</p>
+                    <div className="flex flex-wrap gap-1 mt-2">
+                      {talent.matchedCourse.matchReasons.map((reason, index) => (
+                        <Badge key={index} variant="outline" className="text-xs border-primary/30">
+                          {reason}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Other Course Matches */}
+                  {talent.otherMatches && talent.otherMatches.length > 0 && (
+                    <div className="mb-3">
+                      <p className="text-xs text-muted-foreground mb-2">Other Suitable Courses:</p>
+                      <div className="space-y-1">
+                        {talent.otherMatches.slice(0, 2).map((course, index) => (
+                          <div key={index} className="flex items-center justify-between text-xs">
+                            <span className="text-muted-foreground">{course.name}</span>
+                            <Badge variant="outline" className="text-xs">
+                              {course.matchPercentage}%
+                            </Badge>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
 
                   <div className="space-y-3">
                     <div className="flex items-center gap-2 text-sm">
