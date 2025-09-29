@@ -75,7 +75,7 @@ const ApplicationsOverview = () => {
               <FileText className="h-4 w-4 mr-2" />
               Manage Forms
             </Button>
-            <Button variant="outline" onClick={() => navigate('/university/process-configuration')}>
+            <Button variant="outline" onClick={() => navigate('/university/process-steps')}>
               <Target className="h-4 w-4 mr-2" />
               Configure Matching
             </Button>
