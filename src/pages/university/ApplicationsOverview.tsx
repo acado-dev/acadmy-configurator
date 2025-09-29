@@ -75,9 +75,9 @@ const ApplicationsOverview = () => {
               <FileText className="h-4 w-4 mr-2" />
               Manage Forms
             </Button>
-            <Button variant="outline" onClick={() => navigate('/university/process-steps')}>
+            <Button variant="outline" onClick={() => navigate('/university/application-process-list')}>
               <Target className="h-4 w-4 mr-2" />
-              Configure Matching
+              Configure Evaluation Criteria
             </Button>
             <Button variant="outline">
               <Download className="h-4 w-4 mr-2" />
