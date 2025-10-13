@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -33,6 +34,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 
 const TalentPool = () => {
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [filterField, setFilterField] = useState('all');
   const [filterScore, setFilterScore] = useState('all');
@@ -400,7 +402,12 @@ const TalentPool = () => {
                       <MessageSquare className="mr-2 h-4 w-4" />
                       Message
                     </Button>
-                    <Button variant="outline" size="sm" className="flex-1">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="flex-1"
+                      onClick={() => navigate(`/profile/${talent.name.toLowerCase().replace(/\s+/g, '-')}`)}
+                    >
                       <Eye className="mr-2 h-4 w-4" />
                       View Profile
                     </Button>
