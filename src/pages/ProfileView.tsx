@@ -6,7 +6,7 @@ import {
   MapPin, Mail, Phone, Globe, Linkedin, Github, Twitter,
   Briefcase, GraduationCap, Code2, Award, BookOpen, Heart,
   Languages, Calendar, ExternalLink, Share2, Download, QrCode,
-  ChevronRight, Star, Clock, Users, Link2
+  ChevronRight, Star, Clock, Users, Link2, Image as ImageIcon
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -400,11 +400,16 @@ END:VCARD`;
           transition={{ delay: 0.3 }}
         >
           <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-            <TabsList className="grid grid-cols-4 w-full">
+            <TabsList className="grid grid-cols-9 w-full overflow-x-auto">
               <TabsTrigger value="overview">Overview</TabsTrigger>
               <TabsTrigger value="experience">Experience</TabsTrigger>
+              <TabsTrigger value="education">Education</TabsTrigger>
               <TabsTrigger value="projects">Projects</TabsTrigger>
               <TabsTrigger value="skills">Skills</TabsTrigger>
+              <TabsTrigger value="certifications">Certifications</TabsTrigger>
+              <TabsTrigger value="publications">Publications</TabsTrigger>
+              <TabsTrigger value="volunteering">Volunteering</TabsTrigger>
+              <TabsTrigger value="languages">Languages</TabsTrigger>
             </TabsList>
 
             <TabsContent value="overview" className="space-y-6">
@@ -541,7 +546,77 @@ END:VCARD`;
                           {exp.location}
                         </span>
                       </div>
-                      <p className="text-muted-foreground">{exp.description}</p>
+                      <p className="text-muted-foreground mb-4">{exp.description}</p>
+                      {exp.images && exp.images.length > 0 && (
+                        <div>
+                          <h4 className="text-sm font-semibold mb-2 flex items-center gap-2">
+                            <ImageIcon className="h-4 w-4" />
+                            Achievement Images
+                          </h4>
+                          <div className="grid grid-cols-3 gap-2">
+                            {exp.images.map((img, idx) => (
+                              <img
+                                key={idx}
+                                src={img}
+                                alt={`${exp.title} achievement ${idx + 1}`}
+                                className="w-full h-32 object-cover rounded-lg border"
+                              />
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
+            </TabsContent>
+
+            <TabsContent value="education" className="space-y-4">
+              {portfolio.education.map((edu, index) => (
+                <motion.div
+                  key={edu.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1 * index }}
+                >
+                  <Card>
+                    <CardContent className="p-6">
+                      <div className="flex items-start justify-between mb-4">
+                        <div>
+                          <h3 className="text-lg font-semibold">{edu.degree}</h3>
+                          <p className="text-muted-foreground">{edu.institution}</p>
+                        </div>
+                        {edu.grade && <Badge variant="secondary">{edu.grade}</Badge>}
+                      </div>
+                      <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4">
+                        <span className="flex items-center gap-1">
+                          <Calendar className="h-4 w-4" />
+                          {edu.startDate} - {edu.endDate}
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <MapPin className="h-4 w-4" />
+                          {edu.location}
+                        </span>
+                      </div>
+                      <p className="text-muted-foreground mb-4">{edu.description}</p>
+                      {edu.images && edu.images.length > 0 && (
+                        <div>
+                          <h4 className="text-sm font-semibold mb-2 flex items-center gap-2">
+                            <ImageIcon className="h-4 w-4" />
+                            Certificates & Achievements
+                          </h4>
+                          <div className="grid grid-cols-3 gap-2">
+                            {edu.images.map((img, idx) => (
+                              <img
+                                key={idx}
+                                src={img}
+                                alt={`${edu.degree} certificate ${idx + 1}`}
+                                className="w-full h-32 object-cover rounded-lg border"
+                              />
+                            ))}
+                          </div>
+                        </div>
+                      )}
                     </CardContent>
                   </Card>
                 </motion.div>
@@ -569,6 +644,24 @@ END:VCARD`;
                         )}
                       </div>
                       <p className="text-muted-foreground mb-4">{project.description}</p>
+                      {project.images && project.images.length > 0 && (
+                        <div className="mb-4">
+                          <h4 className="text-sm font-semibold mb-2 flex items-center gap-2">
+                            <ImageIcon className="h-4 w-4" />
+                            Project Screenshots
+                          </h4>
+                          <div className="grid grid-cols-3 gap-2">
+                            {project.images.map((img, idx) => (
+                              <img
+                                key={idx}
+                                src={img}
+                                alt={`${project.title} screenshot ${idx + 1}`}
+                                className="w-full h-32 object-cover rounded-lg border"
+                              />
+                            ))}
+                          </div>
+                        </div>
+                      )}
                       <div className="flex flex-wrap gap-2 mb-4">
                         {project.technologies.map((tech) => (
                           <Badge key={tech} variant="secondary">
@@ -616,7 +709,131 @@ END:VCARD`;
                   </div>
                 </CardContent>
               </Card>
+            </TabsContent>
 
+            <TabsContent value="certifications" className="space-y-4">
+              {portfolio.certifications.map((cert, index) => (
+                <motion.div
+                  key={cert.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1 * index }}
+                >
+                  <Card>
+                    <CardContent className="p-6">
+                      <div className="flex items-start justify-between mb-4">
+                        <div>
+                          <h3 className="text-lg font-semibold">{cert.name}</h3>
+                          <p className="text-muted-foreground">{cert.issuer}</p>
+                        </div>
+                        {cert.credentialUrl && (
+                          <Button size="sm" variant="ghost" asChild>
+                            <a href={cert.credentialUrl} target="_blank" rel="noopener noreferrer">
+                              <ExternalLink className="h-4 w-4" />
+                            </a>
+                          </Button>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4">
+                        <span>Issued: {cert.issueDate}</span>
+                        {cert.expiryDate && <span>Expires: {cert.expiryDate}</span>}
+                        {cert.credentialId && (
+                          <Badge variant="secondary">ID: {cert.credentialId}</Badge>
+                        )}
+                      </div>
+                      {cert.images && cert.images.length > 0 && (
+                        <div>
+                          <h4 className="text-sm font-semibold mb-2 flex items-center gap-2">
+                            <ImageIcon className="h-4 w-4" />
+                            Certificate Images
+                          </h4>
+                          <div className="grid grid-cols-3 gap-2">
+                            {cert.images.map((img, idx) => (
+                              <img
+                                key={idx}
+                                src={img}
+                                alt={`${cert.name} certificate ${idx + 1}`}
+                                className="w-full h-32 object-cover rounded-lg border"
+                              />
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
+            </TabsContent>
+
+            <TabsContent value="publications" className="space-y-4">
+              {portfolio.publications.map((pub, index) => (
+                <motion.div
+                  key={pub.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1 * index }}
+                >
+                  <Card>
+                    <CardContent className="p-6">
+                      <div className="flex items-start justify-between mb-4">
+                        <div className="flex-1">
+                          <h3 className="text-lg font-semibold mb-2">{pub.title}</h3>
+                          <p className="text-sm text-muted-foreground mb-1">
+                            {pub.publisher} • {pub.publicationDate}
+                          </p>
+                          <p className="text-sm text-muted-foreground">
+                            Authors: {pub.authors.join(', ')}
+                          </p>
+                        </div>
+                        {pub.link && (
+                          <Button size="sm" variant="ghost" asChild>
+                            <a href={pub.link} target="_blank" rel="noopener noreferrer">
+                              <ExternalLink className="h-4 w-4" />
+                            </a>
+                          </Button>
+                        )}
+                      </div>
+                      <p className="text-muted-foreground">{pub.description}</p>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
+            </TabsContent>
+
+            <TabsContent value="volunteering" className="space-y-4">
+              {portfolio.volunteering.map((vol, index) => (
+                <motion.div
+                  key={vol.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1 * index }}
+                >
+                  <Card>
+                    <CardContent className="p-6">
+                      <div className="flex items-start justify-between mb-4">
+                        <div>
+                          <h3 className="text-lg font-semibold">{vol.role}</h3>
+                          <p className="text-muted-foreground">{vol.organization}</p>
+                        </div>
+                        {vol.current && (
+                          <Badge className="bg-green-500/10 text-green-600">Active</Badge>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4">
+                        <span className="flex items-center gap-1">
+                          <Calendar className="h-4 w-4" />
+                          {vol.startDate} - {vol.current ? 'Present' : vol.endDate}
+                        </span>
+                        <Badge variant="secondary">{vol.cause}</Badge>
+                      </div>
+                      <p className="text-muted-foreground">{vol.description}</p>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
+            </TabsContent>
+
+            <TabsContent value="languages" className="space-y-6">
               {/* Languages */}
               <Card>
                 <CardContent className="p-6">
