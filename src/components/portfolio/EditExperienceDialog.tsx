@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Experience } from "@/types/portfolio";
+import { Upload, X } from "lucide-react";
 
 interface EditExperienceDialogProps {
   open: boolean;
@@ -16,6 +17,21 @@ interface EditExperienceDialogProps {
 
 export default function EditExperienceDialog({ open, onOpenChange, experience, onSave }: EditExperienceDialogProps) {
   const [formData, setFormData] = useState(experience);
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files) {
+      const imageUrls = Array.from(files).map(file => URL.createObjectURL(file));
+      setFormData({ ...formData, images: [...(formData.images || []), ...imageUrls] });
+    }
+  };
+
+  const handleRemoveImage = (index: number) => {
+    setFormData({ 
+      ...formData, 
+      images: formData.images?.filter((_, i) => i !== index) 
+    });
+  };
 
   const handleSave = () => {
     const { id, ...dataToSave } = formData;
@@ -101,6 +117,46 @@ export default function EditExperienceDialog({ open, onOpenChange, experience, o
               placeholder="Describe your responsibilities and achievements..."
               rows={4}
             />
+          </div>
+
+          <div>
+            <Label htmlFor="images">Achievement & Award Images</Label>
+            <div className="mt-2">
+              <Input
+                id="images"
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={handleImageUpload}
+                className="hidden"
+              />
+              <label htmlFor="images">
+                <Button type="button" variant="outline" className="w-full" asChild>
+                  <span className="cursor-pointer">
+                    <Upload className="h-4 w-4 mr-2" />
+                    Upload Images
+                  </span>
+                </Button>
+              </label>
+            </div>
+            {formData.images && formData.images.length > 0 && (
+              <div className="grid grid-cols-3 gap-2 mt-3">
+                {formData.images.map((img, index) => (
+                  <div key={index} className="relative group">
+                    <img src={img} alt={`Achievement ${index + 1}`} className="w-full h-24 object-cover rounded-lg" />
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      size="icon"
+                      className="absolute top-1 right-1 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+                      onClick={() => handleRemoveImage(index)}
+                    >
+                      <X className="h-3 w-3" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
         <DialogFooter>

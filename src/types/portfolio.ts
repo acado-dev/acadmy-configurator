@@ -15,6 +15,7 @@ export interface Experience {
   endDate: string;
   current: boolean;
   description: string;
+  images?: string[];
 }
 
 export interface Education {
@@ -26,6 +27,7 @@ export interface Education {
   endDate: string;
   grade: string;
   description: string;
+  images?: string[];
 }
 
 export interface Project {
@@ -36,6 +38,7 @@ export interface Project {
   link: string;
   startDate: string;
   endDate: string;
+  images?: string[];
 }
 
 export interface Certification {
@@ -46,6 +49,7 @@ export interface Certification {
   expiryDate: string;
   credentialId: string;
   credentialUrl: string;
+  images?: string[];
 }
 
 export interface Publication {
