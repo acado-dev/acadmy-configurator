@@ -32,7 +32,9 @@ import {
   FormInput,
   Cog,
   Mail,
-  FileCode
+  FileCode,
+  Eye,
+  Award
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { AcadoLogo } from '@/components/AcadoLogo';
@@ -125,6 +127,17 @@ const Layout = () => {
         { label: 'Reports', path: '/reports', icon: FileBarChart },
         { label: 'Interested Users', path: '/interested-users', icon: UserSearch },
         { label: 'User Search', path: '/user-search', icon: Search },
+      ]
+    },
+    {
+      id: 'applications',
+      label: 'Applications',
+      icon: Users,
+      subItems: [
+        { label: 'Application Overview', path: '/applications-overview', icon: Eye },
+        { label: 'Collected Applications', path: '/applications', icon: Users },
+        { label: 'Selection Process', path: '/applications/selection-process', icon: Target },
+        { label: 'Acceptance Letters', path: '/applications/acceptance-letters', icon: Award },
       ]
     },
     {

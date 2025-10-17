@@ -14,6 +14,7 @@ import Courses from "./pages/Courses";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import NotFound from "./pages/NotFound";
+import AcceptanceLetters from '@/pages/AcceptanceLetters';
 import ProtectedRoute from "./components/ProtectedRoute";
 
 // User pages
@@ -74,6 +75,11 @@ const App = () => (
             <Route path="universities/add" element={<AddUniversity />} />
             <Route path="universities/edit/:universityId" element={<AddUniversity />} />
             <Route path="courses" element={<Courses />} />
+            {/* Applications - Master Admin */}
+            <Route path="applications-overview" element={<ApplicationsOverview />} />
+            <Route path="applications" element={<ApplicationsList />} />
+            <Route path="applications/selection-process" element={<ApplicationProcessList />} />
+            <Route path="applications/acceptance-letters" element={<AcceptanceLetters />} />
           </Route>
           
           {/* User Routes */}
