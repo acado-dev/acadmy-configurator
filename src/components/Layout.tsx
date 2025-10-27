@@ -147,6 +147,7 @@ const Layout = () => {
       subItems: [
         { label: 'Master Fields', path: '/master-fields', icon: FileText },
         { label: 'Application Form', path: '/forms', icon: FormInput },
+        { label: 'Applications', path: '/form-applications', icon: Users },
       ]
     },
     {

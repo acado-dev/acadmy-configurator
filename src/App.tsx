@@ -15,6 +15,7 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import NotFound from "./pages/NotFound";
 import AcceptanceLetters from '@/pages/AcceptanceLetters';
+import FormApplications from '@/pages/FormApplications';
 import ProtectedRoute from "./components/ProtectedRoute";
 
 // User pages
@@ -71,6 +72,7 @@ const App = () => (
             <Route path="master-fields" element={<MasterFields />} />
             <Route path="forms" element={<Forms />} />
             <Route path="forms/:formId" element={<FormEditor />} />
+            <Route path="form-applications" element={<FormApplications />} />
             <Route path="universities" element={<Universities />} />
             <Route path="universities/add" element={<AddUniversity />} />
             <Route path="universities/edit/:universityId" element={<AddUniversity />} />
