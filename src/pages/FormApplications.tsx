@@ -16,7 +16,8 @@ import {
   Clock,
   Target,
   XCircle,
-  AlertCircle
+  AlertCircle,
+  ArrowLeft
 } from 'lucide-react';
 
 const FormApplications = () => {
@@ -24,6 +25,7 @@ const FormApplications = () => {
   const { applications } = useApplicationSubmissions();
   const { forms, universities, courses } = useFormsData();
   
+  const [selectedFormId, setSelectedFormId] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedUniversity, setSelectedUniversity] = useState<string>('all');
   const [selectedCourse, setSelectedCourse] = useState<string>('all');
@@ -39,9 +41,28 @@ const FormApplications = () => {
     { value: 'rejected', label: 'Rejected', icon: XCircle, color: 'bg-red-500' },
   ];
 
-  // Filter applications
+  // Get form statistics
+  const formsWithStats = useMemo(() => {
+    return forms.map(form => {
+      const formApplications = applications.filter(app => app.formId === form.id);
+      const stats = stages.map(stage => ({
+        ...stage,
+        count: formApplications.filter(app => app.status === stage.value).length
+      }));
+      return {
+        ...form,
+        totalApplications: formApplications.length,
+        stats
+      };
+    });
+  }, [forms, applications]);
+
+  // Filter applications for selected form
   const filteredApplications = useMemo(() => {
+    if (!selectedFormId) return [];
+    
     return applications.filter(app => {
+      const matchesForm = app.formId === selectedFormId;
       const matchesSearch = 
         app.applicantName.toLowerCase().includes(searchTerm.toLowerCase()) ||
         app.applicantEmail.toLowerCase().includes(searchTerm.toLowerCase());
@@ -53,11 +74,11 @@ const FormApplications = () => {
       
       const matchesStage = selectedStage === 'all' || app.status === selectedStage;
 
-      return matchesSearch && matchesUniversity && matchesCourse && matchesStage;
+      return matchesForm && matchesSearch && matchesUniversity && matchesCourse && matchesStage;
     });
-  }, [applications, searchTerm, selectedUniversity, selectedCourse, selectedStage, courses]);
+  }, [applications, selectedFormId, searchTerm, selectedUniversity, selectedCourse, selectedStage, courses]);
 
-  // Get statistics
+  // Get statistics for selected form
   const stats = useMemo(() => {
     const total = filteredApplications.length;
     const byStage = stages.map(stage => ({
@@ -80,14 +101,109 @@ const FormApplications = () => {
     return universities.find(u => u.id === course?.universityId)?.name || 'Unknown University';
   };
 
+  const selectedForm = forms.find(f => f.id === selectedFormId);
+
+  // Show form list if no form is selected
+  if (!selectedFormId) {
+    return (
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold text-foreground">Application Forms</h1>
+            <p className="text-muted-foreground mt-1">
+              View applications collected through each form
+            </p>
+          </div>
+        </div>
+
+        {/* Forms List */}
+        <div className="grid gap-4">
+          {formsWithStats.length === 0 ? (
+            <Card>
+              <CardContent className="flex flex-col items-center justify-center py-12">
+                <FileText className="h-12 w-12 text-muted-foreground mb-4" />
+                <p className="text-lg font-medium text-foreground">No forms found</p>
+                <p className="text-sm text-muted-foreground">Create application forms to start collecting applications</p>
+              </CardContent>
+            </Card>
+          ) : (
+            formsWithStats.map(form => (
+              <Card 
+                key={form.id}
+                className="hover:shadow-md transition-shadow cursor-pointer"
+                onClick={() => setSelectedFormId(form.id)}
+              >
+                <CardContent className="p-6">
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex-1">
+                      <h3 className="text-xl font-semibold text-foreground mb-1">
+                        {form.name}
+                      </h3>
+                      <p className="text-sm text-muted-foreground">
+                        {form.description || 'No description'}
+                      </p>
+                      <div className="flex items-center gap-2 mt-2">
+                        <Badge variant="outline">
+                          {form.totalApplications} Total Applications
+                        </Badge>
+                      </div>
+                    </div>
+                    <Button variant="ghost" size="sm">
+                      <Eye className="h-4 w-4" />
+                    </Button>
+                  </div>
+
+                  {/* Stage Statistics */}
+                  <div className="grid grid-cols-3 md:grid-cols-6 gap-3">
+                    {form.stats.map(stage => {
+                      const Icon = stage.icon;
+                      return (
+                        <div key={stage.value} className="flex flex-col gap-1">
+                          <div className="flex items-center gap-2">
+                            <div className={`w-2 h-2 rounded-full ${stage.color}`} />
+                            <span className="text-xs text-muted-foreground">{stage.label}</span>
+                          </div>
+                          <span className="text-2xl font-bold text-foreground">{stage.count}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </CardContent>
+              </Card>
+            ))
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // Show applications for selected form
   return (
     <div className="space-y-6">
-      {/* Header */}
+      {/* Header with back button */}
+      <div className="flex items-center gap-4">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => {
+            setSelectedFormId(null);
+            setSearchTerm('');
+            setSelectedUniversity('all');
+            setSelectedCourse('all');
+            setSelectedStage('all');
+          }}
+        >
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Back to Forms
+        </Button>
+      </div>
+
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Collected Applications</h1>
+          <h1 className="text-3xl font-bold text-foreground">{selectedForm?.name}</h1>
           <p className="text-muted-foreground mt-1">
-            View and manage all applications collected through application forms
+            Applications collected through this form
           </p>
         </div>
       </div>
