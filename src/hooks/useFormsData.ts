@@ -77,6 +77,62 @@ const mockCourses: Course[] = [
   },
 ];
 
+// Mock forms data
+const generateMockForms = (): ApplicationForm[] => [
+  {
+    id: 'form-1',
+    name: 'MBA Application Form 2024',
+    description: 'Application form for MBA International Business program',
+    universityId: 'harvard',
+    courseIds: ['mba'],
+    categories: [],
+    fields: [],
+    isLaunched: true,
+    isActive: true,
+    createdAt: new Date('2024-01-15'),
+    updatedAt: new Date('2024-01-15'),
+  },
+  {
+    id: 'form-2',
+    name: 'Computer Science Masters Application',
+    description: 'Application form for MS in Computer Science program',
+    universityId: 'harvard',
+    courseIds: ['mscs'],
+    categories: [],
+    fields: [],
+    isLaunched: true,
+    isActive: true,
+    createdAt: new Date('2024-02-10'),
+    updatedAt: new Date('2024-02-10'),
+  },
+  {
+    id: 'form-3',
+    name: 'Engineering Exchange Application',
+    description: 'Application form for Engineering Exchange Program',
+    universityId: 'harvard',
+    courseIds: ['exchange-eng'],
+    categories: [],
+    fields: [],
+    isLaunched: true,
+    isActive: true,
+    createdAt: new Date('2024-03-05'),
+    updatedAt: new Date('2024-03-05'),
+  },
+  {
+    id: 'form-4',
+    name: 'MIT Data Science Certificate Application',
+    description: 'Application form for Data Science Certificate program',
+    universityId: 'mit',
+    courseIds: ['data-science'],
+    categories: [],
+    fields: [],
+    isLaunched: true,
+    isActive: true,
+    createdAt: new Date('2024-03-20'),
+    updatedAt: new Date('2024-03-20'),
+  },
+];
+
 export const useFormsData = () => {
   const [forms, setForms] = useState<ApplicationForm[]>([]);
   const [universities] = useState<University[]>(mockUniversities);
@@ -87,6 +143,11 @@ export const useFormsData = () => {
     const savedForms = localStorage.getItem('acado_forms');
     if (savedForms) {
       setForms(JSON.parse(savedForms));
+    } else {
+      // Initialize with mock data
+      const mockForms = generateMockForms();
+      setForms(mockForms);
+      localStorage.setItem('acado_forms', JSON.stringify(mockForms));
     }
   }, []);
 
