@@ -16,6 +16,7 @@ import Signup from "./pages/Signup";
 import NotFound from "./pages/NotFound";
 import AcceptanceLetters from '@/pages/AcceptanceLetters';
 import FormApplications from '@/pages/FormApplications';
+import ApplicationReview from "./pages/ApplicationReview";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 // User pages
@@ -43,7 +44,7 @@ import UniversityForms from '@/pages/university/UniversityForms';
 import UniversityFormBuilder from '@/pages/university/UniversityFormBuilder';
 import ApplicationProcess from '@/pages/university/ApplicationProcess';
 import ApplicationProcessList from '@/pages/university/ApplicationProcessList';
-import ApplicationReview from '@/pages/university/ApplicationReview';
+import UniversityApplicationReview from '@/pages/university/ApplicationReview';
 import ApplicationsList from '@/pages/university/ApplicationsList';
 import ApplicationsOverview from '@/pages/university/ApplicationsOverview';
 import UniversityInfo from '@/pages/university/UniversityInfo';
@@ -73,6 +74,7 @@ const App = () => (
             <Route path="forms" element={<Forms />} />
             <Route path="forms/:formId" element={<FormEditor />} />
             <Route path="form-applications" element={<FormApplications />} />
+            <Route path="form-applications/:applicationId" element={<ApplicationReview />} />
             <Route path="universities" element={<Universities />} />
             <Route path="universities/add" element={<AddUniversity />} />
             <Route path="universities/edit/:universityId" element={<AddUniversity />} />
@@ -122,7 +124,7 @@ const App = () => (
             <Route path="process-configuration/new" element={<ProcessConfiguration />} />
             <Route path="process-configuration/:courseId" element={<ProcessConfiguration />} />
             <Route path="applications" element={<ApplicationsList />} />
-            <Route path="applications/:id" element={<ApplicationReview />} />
+            <Route path="applications/:id" element={<UniversityApplicationReview />} />
             <Route path="applications-overview" element={<ApplicationsOverview />} />
             <Route path="talent" element={<TalentPool />} />
             <Route path="communications" element={<UniversityDashboard />} />

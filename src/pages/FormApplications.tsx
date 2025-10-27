@@ -469,7 +469,7 @@ const FormApplications = () => {
               <Card 
                 key={app.id} 
                 className="hover:shadow-md transition-shadow cursor-pointer"
-                onClick={() => navigate(`/applications/${app.id}`)}
+                onClick={() => navigate(`/form-applications/${app.id}`)}
               >
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
