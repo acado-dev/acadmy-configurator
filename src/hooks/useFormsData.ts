@@ -141,13 +141,17 @@ export const useFormsData = () => {
   // Load forms from localStorage
   useEffect(() => {
     const savedForms = localStorage.getItem('acado_forms');
-    if (savedForms) {
+    const dataVersion = localStorage.getItem('acado_forms_version');
+    
+    // Force reload with new mock data if version changed
+    if (savedForms && dataVersion === '2') {
       setForms(JSON.parse(savedForms));
     } else {
       // Initialize with mock data
       const mockForms = generateMockForms();
       setForms(mockForms);
       localStorage.setItem('acado_forms', JSON.stringify(mockForms));
+      localStorage.setItem('acado_forms_version', '2');
     }
   }, []);
 
