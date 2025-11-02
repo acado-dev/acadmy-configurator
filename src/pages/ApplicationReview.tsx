@@ -1,23 +1,30 @@
-import React, { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { useApplicationSubmissions } from '@/hooks/useApplicationSubmissions';
-import { useFormsData } from '@/hooks/useFormsData';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import { useToast } from '@/hooks/use-toast';
-import { 
-  ArrowLeft, 
-  User, 
-  Mail, 
-  Phone, 
-  Building2, 
+import React, { useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { useApplicationSubmissions } from "@/hooks/useApplicationSubmissions";
+import { useFormsData } from "@/hooks/useFormsData";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { useToast } from "@/hooks/use-toast";
+import {
+  ArrowLeft,
+  User,
+  Mail,
+  Phone,
+  Building2,
   GraduationCap,
   FileText,
   CheckCircle,
@@ -27,8 +34,8 @@ import {
   AlertCircle,
   MessageSquare,
   Calendar,
-  Award
-} from 'lucide-react';
+  Award,
+} from "lucide-react";
 
 const ApplicationReview = () => {
   const { applicationId } = useParams<{ applicationId: string }>();
@@ -36,26 +43,26 @@ const ApplicationReview = () => {
   const { toast } = useToast();
   const { getApplicationById, updateApplicationStatus } = useApplicationSubmissions();
   const { forms, universities, courses } = useFormsData();
-  
-  const application = getApplicationById(applicationId || '');
-  const [selectedStatus, setSelectedStatus] = useState(application?.status || 'submitted');
+
+  const application = getApplicationById(applicationId || "");
+  const [selectedStatus, setSelectedStatus] = useState(application?.status || "submitted");
   const [isCommDialogOpen, setIsCommDialogOpen] = useState(false);
   const [isInterviewDialogOpen, setIsInterviewDialogOpen] = useState(false);
   const [isDocRequestDialogOpen, setIsDocRequestDialogOpen] = useState(false);
   const [isAcceptanceDialogOpen, setIsAcceptanceDialogOpen] = useState(false);
-  
-  const [commMessage, setCommMessage] = useState('');
-  const [interviewDate, setInterviewDate] = useState('');
-  const [interviewTime, setInterviewTime] = useState('');
-  const [docRequest, setDocRequest] = useState('');
+
+  const [commMessage, setCommMessage] = useState("");
+  const [interviewDate, setInterviewDate] = useState("");
+  const [interviewTime, setInterviewTime] = useState("");
+  const [docRequest, setDocRequest] = useState("");
 
   const stages = [
-    { value: 'submitted', label: 'Submitted', icon: FileText, color: 'bg-blue-500' },
-    { value: 'under_review', label: 'In Review', icon: Clock, color: 'bg-yellow-500' },
-    { value: 'shortlisted', label: 'Shortlisted', icon: Target, color: 'bg-purple-500' },
-    { value: 'interview_scheduled', label: 'In Progress', icon: AlertCircle, color: 'bg-orange-500' },
-    { value: 'accepted', label: 'Selected', icon: CheckCircle, color: 'bg-green-500' },
-    { value: 'rejected', label: 'Rejected', icon: XCircle, color: 'bg-red-500' },
+    { value: "submitted", label: "Submitted", icon: FileText, color: "bg-blue-500" },
+    { value: "under_review", label: "In Review", icon: Clock, color: "bg-yellow-500" },
+    { value: "shortlisted", label: "Shortlisted", icon: Target, color: "bg-purple-500" },
+    { value: "interview_scheduled", label: "In Progress", icon: AlertCircle, color: "bg-orange-500" },
+    { value: "accepted", label: "Selected", icon: CheckCircle, color: "bg-green-500" },
+    { value: "rejected", label: "Rejected", icon: XCircle, color: "bg-red-500" },
   ];
 
   if (!application) {
@@ -64,7 +71,7 @@ const ApplicationReview = () => {
         <FileText className="h-16 w-16 text-muted-foreground mb-4" />
         <h2 className="text-2xl font-bold text-foreground mb-2">Application Not Found</h2>
         <p className="text-muted-foreground mb-4">The application you're looking for doesn't exist.</p>
-        <Button onClick={() => navigate('/form-applications')}>
+        <Button onClick={() => navigate("/form-applications")}>
           <ArrowLeft className="h-4 w-4 mr-2" />
           Back to Applications
         </Button>
@@ -72,10 +79,10 @@ const ApplicationReview = () => {
     );
   }
 
-  const form = forms.find(f => f.id === application.formId);
-  const course = courses.find(c => c.id === application.courseId);
-  const university = universities.find(u => u.id === application.universityId);
-  const currentStage = stages.find(s => s.value === application.status);
+  const form = forms.find((f) => f.id === application.formId);
+  const course = courses.find((c) => c.id === application.courseId);
+  const university = universities.find((u) => u.id === application.universityId);
+  const currentStage = stages.find((s) => s.value === application.status);
   const StageIcon = currentStage?.icon || FileText;
 
   const handleStatusChange = (newStatus: string) => {
@@ -83,46 +90,46 @@ const ApplicationReview = () => {
     setSelectedStatus(typedStatus);
     updateApplicationStatus(application.id, typedStatus as any);
     toast({
-      title: 'Status Updated',
-      description: `Application status changed to ${stages.find(s => s.value === newStatus)?.label}`,
+      title: "Status Updated",
+      description: `Application status changed to ${stages.find((s) => s.value === newStatus)?.label}`,
     });
   };
 
   const handleSendCommunication = () => {
     toast({
-      title: 'Communication Sent',
-      description: 'Your message has been sent to the applicant.',
+      title: "Communication Sent",
+      description: "Your message has been sent to the applicant.",
     });
-    setCommMessage('');
+    setCommMessage("");
     setIsCommDialogOpen(false);
   };
 
   const handleScheduleInterview = () => {
     toast({
-      title: 'Interview Scheduled',
+      title: "Interview Scheduled",
       description: `Interview scheduled for ${interviewDate} at ${interviewTime}`,
     });
-    setInterviewDate('');
-    setInterviewTime('');
+    setInterviewDate("");
+    setInterviewTime("");
     setIsInterviewDialogOpen(false);
   };
 
   const handleRequestDocuments = () => {
     toast({
-      title: 'Document Request Sent',
-      description: 'Document request has been sent to the applicant.',
+      title: "Document Request Sent",
+      description: "Document request has been sent to the applicant.",
     });
-    setDocRequest('');
+    setDocRequest("");
     setIsDocRequestDialogOpen(false);
   };
 
   const handleGenerateAcceptance = () => {
     toast({
-      title: 'Acceptance Letter Generated',
-      description: 'Acceptance letter has been generated and sent to the applicant.',
+      title: "Acceptance Letter Generated",
+      description: "Acceptance letter has been generated and sent to the applicant.",
     });
-    updateApplicationStatus(application.id, 'accepted');
-    setSelectedStatus('accepted');
+    updateApplicationStatus(application.id, "accepted");
+    setSelectedStatus("accepted");
     setIsAcceptanceDialogOpen(false);
   };
 
@@ -130,11 +137,7 @@ const ApplicationReview = () => {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center gap-4">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => navigate('/form-applications')}
-        >
+        <Button variant="ghost" size="sm" onClick={() => navigate("/form-applications")}>
           <ArrowLeft className="h-4 w-4 mr-2" />
           Back to Applications
         </Button>
@@ -142,10 +145,8 @@ const ApplicationReview = () => {
 
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Application Review</h1>
-          <p className="text-muted-foreground mt-1">
-            Review and manage application details
-          </p>
+          <h1 className="text-3xl font-bold text-foreground">Application Review2222</h1>
+          <p className="text-muted-foreground mt-1">Review and manage application details</p>
         </div>
         <Badge variant="outline" className="flex items-center gap-2">
           <div className={`w-2 h-2 rounded-full ${currentStage?.color}`} />
@@ -227,11 +228,15 @@ const ApplicationReview = () => {
                   <Target className="h-5 w-5 text-muted-foreground" />
                   <div>
                     <p className="text-sm text-muted-foreground">Match Score</p>
-                    <p className={`font-bold text-lg ${
-                      application.matchScore >= 80 ? 'text-green-600' : 
-                      application.matchScore >= 60 ? 'text-yellow-600' : 
-                      'text-red-600'
-                    }`}>
+                    <p
+                      className={`font-bold text-lg ${
+                        application.matchScore >= 80
+                          ? "text-green-600"
+                          : application.matchScore >= 60
+                            ? "text-yellow-600"
+                            : "text-red-600"
+                      }`}
+                    >
                       {application.matchScore}%
                     </p>
                   </div>
@@ -251,7 +256,7 @@ const ApplicationReview = () => {
                 {Object.entries(application.formData).map(([key, value]) => (
                   <div key={key} className="flex justify-between items-center border-b pb-3 last:border-0 last:pb-0">
                     <span className="text-sm font-medium text-muted-foreground capitalize">
-                      {key.replace(/([A-Z])/g, ' $1').trim()}
+                      {key.replace(/([A-Z])/g, " $1").trim()}
                     </span>
                     <span className="text-sm text-foreground font-semibold">{String(value)}</span>
                   </div>
@@ -269,24 +274,24 @@ const ApplicationReview = () => {
               <div className="flex items-center justify-between">
                 <span className="text-sm text-muted-foreground">Submitted</span>
                 <span className="text-sm font-medium text-foreground">
-                  {new Date(application.submittedAt).toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit'
+                  {new Date(application.submittedAt).toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
                   })}
                 </span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm text-muted-foreground">Last Updated</span>
                 <span className="text-sm font-medium text-foreground">
-                  {new Date(application.lastUpdated).toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit'
+                  {new Date(application.lastUpdated).toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
                   })}
                 </span>
               </div>
@@ -308,7 +313,7 @@ const ApplicationReview = () => {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {stages.map(stage => {
+                  {stages.map((stage) => {
                     const Icon = stage.icon;
                     return (
                       <SelectItem key={stage.value} value={stage.value}>
@@ -460,8 +465,8 @@ const ApplicationReview = () => {
                   </DialogHeader>
                   <div className="space-y-4">
                     <p className="text-sm text-muted-foreground">
-                      Are you sure you want to generate an acceptance letter for {application.applicantName}?
-                      This will automatically change the application status to "Selected".
+                      Are you sure you want to generate an acceptance letter for {application.applicantName}? This will
+                      automatically change the application status to "Selected".
                     </p>
                     <div className="flex justify-end gap-2">
                       <Button variant="outline" onClick={() => setIsAcceptanceDialogOpen(false)}>
