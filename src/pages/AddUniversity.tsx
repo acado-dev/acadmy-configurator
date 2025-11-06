@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, Save, Upload, Building2 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -12,6 +12,8 @@ import { toast } from '@/hooks/use-toast';
 
 const AddUniversity = () => {
   const navigate = useNavigate();
+  const { universityId } = useParams();
+  const isEditMode = !!universityId;
   const [universities, setUniversities] = useState<UniversityDetails[]>([]);
   
   const [formData, setFormData] = useState({
@@ -34,9 +36,33 @@ const AddUniversity = () => {
   React.useEffect(() => {
     const saved = localStorage.getItem('acado_universities');
     if (saved) {
-      setUniversities(JSON.parse(saved));
+      const parsedUniversities = JSON.parse(saved);
+      setUniversities(parsedUniversities);
+      
+      // Load existing data in edit mode
+      if (isEditMode) {
+        const existingUniversity = parsedUniversities.find((u: UniversityDetails) => u.id === universityId);
+        if (existingUniversity) {
+          setFormData({
+            name: existingUniversity.name || '',
+            shortName: existingUniversity.shortName || '',
+            mobileNo: existingUniversity.mobileNo || '',
+            primaryEmail: existingUniversity.primaryEmail || '',
+            organizationLevel: existingUniversity.organizationLevel || '',
+            institutionType: existingUniversity.institutionType || '',
+            description: existingUniversity.about?.description || '',
+            address: existingUniversity.address || '',
+            country: existingUniversity.location?.country || '',
+            state: existingUniversity.location?.state || '',
+            city: existingUniversity.location?.city || '',
+            parentInstitutionId: existingUniversity.parentInstitutionId || '',
+            logo: null,
+            templateImage: null,
+          });
+        }
+      }
     }
-  }, []);
+  }, [isEditMode, universityId]);
 
   const handleInputChange = (field: string, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -60,68 +86,106 @@ const AddUniversity = () => {
       return;
     }
 
-    // Create university data
-    const newUniversity: UniversityDetails = {
-      id: Date.now().toString(),
-      name: formData.name,
-      shortName: formData.shortName,
-      institutionType: formData.institutionType as InstitutionType,
-      parentInstitutionId: formData.parentInstitutionId || undefined,
-      organizationLevel: formData.organizationLevel,
-      mobileNo: formData.mobileNo,
-      primaryEmail: formData.primaryEmail,
-      address: formData.address,
-      foundedYear: new Date().getFullYear(),
-      location: {
-        city: formData.city,
-        state: formData.state,
-        country: formData.country,
-        campuses: [],
-      },
-      about: {
-        description: formData.description,
-        mission: '',
-        values: [],
-        highlights: [],
-      },
-      factsAndFigures: {
-        totalStudents: 0,
-        internationalStudents: 0,
-        staffMembers: 0,
-        alumniCount: 0,
-        internationalPartnerships: 0,
-        partnerCountries: 0,
-        graduateEmployability: 0,
-        annualGraduates: 0,
-      },
-      community: {
-        description: '',
-        studentCount: 0,
-        facultyCount: 0,
-        alumniInCountries: 0,
-        activeProjects: 0,
-      },
-      fieldsOfEducation: [],
-      socialResponsibility: {
-        description: '',
-        commitments: [],
-        initiatives: [],
-      },
-      testimonials: [],
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      isActive: true,
-      isVerified: false,
-    };
+    if (isEditMode) {
+      // Update existing university
+      const updatedUniversities = universities.map((u) => {
+        if (u.id === universityId) {
+          return {
+            ...u,
+            name: formData.name,
+            shortName: formData.shortName,
+            institutionType: formData.institutionType as InstitutionType,
+            parentInstitutionId: formData.parentInstitutionId || undefined,
+            organizationLevel: formData.organizationLevel,
+            mobileNo: formData.mobileNo,
+            primaryEmail: formData.primaryEmail,
+            address: formData.address,
+            location: {
+              ...u.location,
+              city: formData.city,
+              state: formData.state,
+              country: formData.country,
+            },
+            about: {
+              ...u.about,
+              description: formData.description,
+            },
+            updatedAt: new Date(),
+          };
+        }
+        return u;
+      });
 
-    // Save to localStorage
-    const updatedUniversities = [...universities, newUniversity];
-    localStorage.setItem('acado_universities', JSON.stringify(updatedUniversities));
+      localStorage.setItem('acado_universities', JSON.stringify(updatedUniversities));
 
-    toast({
-      title: 'Success',
-      description: 'Organization has been created successfully',
-    });
+      toast({
+        title: 'Success',
+        description: 'Organization has been updated successfully',
+      });
+    } else {
+      // Create university data
+      const newUniversity: UniversityDetails = {
+        id: Date.now().toString(),
+        name: formData.name,
+        shortName: formData.shortName,
+        institutionType: formData.institutionType as InstitutionType,
+        parentInstitutionId: formData.parentInstitutionId || undefined,
+        organizationLevel: formData.organizationLevel,
+        mobileNo: formData.mobileNo,
+        primaryEmail: formData.primaryEmail,
+        address: formData.address,
+        foundedYear: new Date().getFullYear(),
+        location: {
+          city: formData.city,
+          state: formData.state,
+          country: formData.country,
+          campuses: [],
+        },
+        about: {
+          description: formData.description,
+          mission: '',
+          values: [],
+          highlights: [],
+        },
+        factsAndFigures: {
+          totalStudents: 0,
+          internationalStudents: 0,
+          staffMembers: 0,
+          alumniCount: 0,
+          internationalPartnerships: 0,
+          partnerCountries: 0,
+          graduateEmployability: 0,
+          annualGraduates: 0,
+        },
+        community: {
+          description: '',
+          studentCount: 0,
+          facultyCount: 0,
+          alumniInCountries: 0,
+          activeProjects: 0,
+        },
+        fieldsOfEducation: [],
+        socialResponsibility: {
+          description: '',
+          commitments: [],
+          initiatives: [],
+        },
+        testimonials: [],
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        isActive: true,
+        isVerified: false,
+      };
+
+      // Save to localStorage
+      const updatedUniversities = [...universities, newUniversity];
+      localStorage.setItem('acado_universities', JSON.stringify(updatedUniversities));
+
+      toast({
+        title: 'Success',
+        description: 'Organization has been created successfully',
+      });
+    }
 
     navigate('/universities');
   };
@@ -145,15 +209,17 @@ const AddUniversity = () => {
             <ArrowLeft className="w-4 h-4" />
           </Button>
           <div>
-            <h1 className="text-3xl font-bold">Create Organization</h1>
+            <h1 className="text-3xl font-bold">
+              {isEditMode ? 'Edit Organization' : 'Create Organization'}
+            </h1>
             <p className="text-muted-foreground mt-1">
-              Add basic information to create a new institution
+              {isEditMode ? 'Update organization information' : 'Add basic information to create a new institution'}
             </p>
           </div>
         </div>
         <Button className="gap-2" onClick={handleSubmit}>
           <Save className="w-4 h-4" />
-          Save Organization
+          {isEditMode ? 'Update Organization' : 'Save Organization'}
         </Button>
       </div>
 

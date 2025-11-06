@@ -322,23 +322,34 @@ const Universities = () => {
                       <span>{university.factsAndFigures.totalStudents.toLocaleString()} students</span>
                     </div>
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex flex-col gap-2">
+                    <div className="flex gap-2">
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="flex-1"
+                        onClick={() => navigate(`/universities/edit/${university.id}`)}
+                      >
+                        <Edit className="w-3 h-3 mr-1" />
+                        Edit
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="text-destructive"
+                        onClick={() => setDeleteUniversityId(university.id)}
+                      >
+                        <Trash2 className="w-3 h-3" />
+                      </Button>
+                    </div>
                     <Button 
-                      variant="outline" 
+                      variant="secondary" 
                       size="sm" 
-                      className="flex-1"
+                      className="w-full gap-2"
                       onClick={() => navigate(`/universities/${university.id}/details`)}
                     >
-                      <Edit className="w-3 h-3 mr-1" />
-                      Edit
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="text-destructive"
-                      onClick={() => setDeleteUniversityId(university.id)}
-                    >
-                      <Trash2 className="w-3 h-3" />
+                      <Eye className="w-3 h-3" />
+                      Manage Details
                     </Button>
                   </div>
                 </div>
