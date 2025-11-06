@@ -11,6 +11,7 @@ import FormEditor from "./pages/FormEditor";
 import Universities from "./pages/Universities";
 import AddUniversity from "./pages/AddUniversity";
 import UniversityDetails from "./pages/UniversityDetails";
+import UniversityView from "./pages/UniversityView";
 import Courses from "./pages/Courses";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
@@ -79,6 +80,7 @@ const App = () => (
             <Route path="universities" element={<Universities />} />
             <Route path="universities/add" element={<AddUniversity />} />
             <Route path="universities/edit/:universityId" element={<AddUniversity />} />
+            <Route path="universities/:universityId/view" element={<UniversityView />} />
             <Route path="universities/:universityId/details" element={<UniversityDetails />} />
             <Route path="courses" element={<Courses />} />
             {/* Applications - Master Admin */}

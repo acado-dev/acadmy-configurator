@@ -307,7 +307,12 @@ const Universities = () => {
                 </div>
                 <div className="p-6">
                   <div className="flex items-start justify-between mb-2">
-                    <h3 className="font-semibold text-lg flex-1">{university.name}</h3>
+                    <h3 
+                      className="font-semibold text-lg flex-1 cursor-pointer hover:text-primary transition-colors"
+                      onClick={() => navigate(`/universities/${university.id}/view`)}
+                    >
+                      {university.name}
+                    </h3>
                     <Badge className={getTypeColor(university.institutionType)}>
                       {university.institutionType}
                     </Badge>
