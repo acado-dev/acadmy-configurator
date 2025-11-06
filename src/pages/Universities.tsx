@@ -301,61 +301,106 @@ const Universities = () => {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredUniversities.map((university) => (
-              <Card key={university.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-                <div className="h-32 bg-gradient-to-br from-primary to-primary-hover flex items-center justify-center">
-                  <Building2 className="w-12 h-12 text-white opacity-50" />
-                </div>
-                <div className="p-6">
-                  <div className="flex items-start justify-between mb-2">
-                    <h3 
-                      className="font-semibold text-lg flex-1 cursor-pointer hover:text-primary transition-colors"
-                      onClick={() => navigate(`/universities/${university.id}/view`)}
-                    >
-                      {university.name}
-                    </h3>
-                    <Badge className={getTypeColor(university.institutionType)}>
+              <Card 
+                key={university.id} 
+                className="group overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer border-2 hover:border-primary/50"
+              >
+                <div 
+                  className="h-40 bg-gradient-to-br from-primary/80 to-primary relative overflow-hidden"
+                  onClick={() => navigate(`/universities/${university.id}/view`)}
+                >
+                  <div className="absolute inset-0 bg-black/10 group-hover:bg-black/5 transition-colors" />
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <Building2 className="w-16 h-16 text-white/40 group-hover:text-white/60 transition-all group-hover:scale-110 duration-300" />
+                  </div>
+                  <div className="absolute top-3 right-3">
+                    <Badge className={`${getTypeColor(university.institutionType)} shadow-lg`}>
                       {university.institutionType}
                     </Badge>
                   </div>
-                  <div className="space-y-2 mb-4">
-                    <div className="flex items-center gap-2 text-sm">
-                      <MapPin className="w-4 h-4 text-muted-foreground" />
-                      <span>{university.location.city}, {university.location.country}</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-sm">
-                      <Users className="w-4 h-4 text-muted-foreground" />
-                      <span>{university.factsAndFigures.totalStudents.toLocaleString()} students</span>
-                    </div>
+                </div>
+                <div className="p-6">
+                  <div 
+                    className="mb-4"
+                    onClick={() => navigate(`/universities/${university.id}/view`)}
+                  >
+                    <h3 className="font-bold text-xl mb-1 group-hover:text-primary transition-colors line-clamp-2">
+                      {university.name}
+                    </h3>
+                    {university.shortName && (
+                      <p className="text-sm text-muted-foreground">({university.shortName})</p>
+                    )}
                   </div>
+                  
+                  <div className="space-y-2.5 mb-5">
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <MapPin className="w-4 h-4 flex-shrink-0" />
+                      <span className="truncate">{university.location.city}, {university.location.country}</span>
+                    </div>
+                    {university.factsAndFigures.totalStudents > 0 && (
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <Users className="w-4 h-4 flex-shrink-0" />
+                        <span>{university.factsAndFigures.totalStudents.toLocaleString()} students</span>
+                      </div>
+                    )}
+                    {university.primaryEmail && (
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <GraduationCap className="w-4 h-4 flex-shrink-0" />
+                        <span className="truncate">{university.primaryEmail}</span>
+                      </div>
+                    )}
+                  </div>
+                  
                   <div className="flex flex-col gap-2">
+                    <Button 
+                      variant="default"
+                      size="sm" 
+                      className="w-full gap-2 group/btn"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/universities/${university.id}/view`);
+                      }}
+                    >
+                      <Eye className="w-4 h-4 group-hover/btn:scale-110 transition-transform" />
+                      View Details
+                    </Button>
                     <div className="flex gap-2">
                       <Button 
                         variant="outline" 
                         size="sm" 
-                        className="flex-1"
-                        onClick={() => navigate(`/universities/edit/${university.id}`)}
+                        className="flex-1 gap-1"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(`/universities/edit/${university.id}`);
+                        }}
                       >
-                        <Edit className="w-3 h-3 mr-1" />
+                        <Edit className="w-3 h-3" />
                         Edit
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="flex-1 gap-1"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(`/universities/${university.id}/details`);
+                        }}
+                      >
+                        <Building2 className="w-3 h-3" />
+                        Manage
                       </Button>
                       <Button
                         variant="outline"
                         size="sm"
-                        className="text-destructive"
-                        onClick={() => setDeleteUniversityId(university.id)}
+                        className="text-destructive hover:bg-destructive hover:text-destructive-foreground"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setDeleteUniversityId(university.id);
+                        }}
                       >
                         <Trash2 className="w-3 h-3" />
                       </Button>
                     </div>
-                    <Button 
-                      variant="secondary" 
-                      size="sm" 
-                      className="w-full gap-2"
-                      onClick={() => navigate(`/universities/${university.id}/details`)}
-                    >
-                      <Eye className="w-3 h-3" />
-                      Manage Details
-                    </Button>
                   </div>
                 </div>
               </Card>
