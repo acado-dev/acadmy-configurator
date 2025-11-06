@@ -14,6 +14,7 @@ import AddUniversity from "./pages/AddUniversity";
 import UniversityDetails from "./pages/UniversityDetails";
 import UniversityView from "./pages/UniversityView";
 import Courses from "./pages/Courses";
+import Users from "./pages/Users";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import NotFound from "./pages/NotFound";
@@ -92,6 +93,7 @@ const App = () => {
               <Route path="universities/:universityId/view" element={<UniversityView />} />
               <Route path="universities/:universityId/details" element={<UniversityDetails />} />
               <Route path="courses" element={<Courses />} />
+              <Route path="users" element={<Users />} />
               {/* Applications - Master Admin */}
               <Route path="applications-overview" element={<ApplicationsOverview />} />
               <Route path="applications" element={<ApplicationsList />} />

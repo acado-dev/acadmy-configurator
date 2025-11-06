@@ -36,6 +36,7 @@ const userSchema = z.object({
   password: z.string().min(6, 'Password must be at least 6 characters'),
   userType: z.enum(['Learner', 'Faculty', 'Staff']),
   status: z.enum(['active', 'inactive']),
+  organization: z.string().optional(),
   mobileNo: z.string().optional(),
   studentIdStaffId: z.string().optional(),
   address: z.string().optional(),
@@ -54,6 +55,8 @@ interface AddUserDialogProps {
   onOpenChange: (open: boolean) => void;
   onSubmit: (user: any) => void;
   editUser?: User | null;
+  organizations?: string[];
+  isMasterAdmin?: boolean;
 }
 
 export const AddUserDialog: React.FC<AddUserDialogProps> = ({
@@ -61,6 +64,8 @@ export const AddUserDialog: React.FC<AddUserDialogProps> = ({
   onOpenChange,
   onSubmit,
   editUser,
+  organizations = [],
+  isMasterAdmin = false,
 }) => {
   const form = useForm<UserFormData>({
     resolver: zodResolver(userSchema),
@@ -71,6 +76,7 @@ export const AddUserDialog: React.FC<AddUserDialogProps> = ({
       password: '',
       userType: 'Learner',
       status: 'active',
+      organization: '',
       mobileNo: '',
       studentIdStaffId: '',
       address: '',
@@ -92,6 +98,7 @@ export const AddUserDialog: React.FC<AddUserDialogProps> = ({
         password: editUser.password,
         userType: editUser.userType,
         status: editUser.status,
+        organization: (editUser as any).organization || '',
         mobileNo: editUser.mobileNo || '',
         studentIdStaffId: editUser.studentIdStaffId || '',
         address: editUser.address || '',
@@ -110,6 +117,7 @@ export const AddUserDialog: React.FC<AddUserDialogProps> = ({
         password: '',
         userType: 'Learner',
         status: 'active',
+        organization: '',
         mobileNo: '',
         studentIdStaffId: '',
         address: '',
@@ -245,6 +253,31 @@ export const AddUserDialog: React.FC<AddUserDialogProps> = ({
                   </FormItem>
                 )}
               />
+
+              {isMasterAdmin && organizations.length > 0 && (
+                <FormField
+                  control={form.control}
+                  name="organization"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Organization *</FormLabel>
+                      <Select onValueChange={field.onChange} value={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select organization" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {organizations.map((org) => (
+                            <SelectItem key={org} value={org}>{org}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
 
               <FormField
                 control={form.control}

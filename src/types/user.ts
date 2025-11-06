@@ -10,6 +10,7 @@ export interface User {
   password: string;
   userType: UserType;
   status: UserStatus;
+  organization?: string;
   mobileNo?: string;
   studentIdStaffId?: string;
   address?: string;
