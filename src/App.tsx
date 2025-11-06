@@ -1,3 +1,4 @@
+import React from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -56,94 +57,102 @@ import ProcessConfiguration from '@/pages/university/ProcessConfiguration';
 
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          {/* Admin Routes */}
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/" element={
-            <ProtectedRoute>
-              <Layout />
-            </ProtectedRoute>
-          }>
-            <Route index element={<Dashboard />} />
-            <Route path="master-fields" element={<MasterFields />} />
-            <Route path="forms" element={<Forms />} />
-            <Route path="forms/:formId" element={<FormEditor />} />
-            <Route path="form-applications" element={<FormApplications />} />
-            <Route path="form-applications/:applicationId" element={<ApplicationReview />} />
-            <Route path="universities" element={<Universities />} />
-            <Route path="universities/add" element={<AddUniversity />} />
-            <Route path="universities/edit/:universityId" element={<AddUniversity />} />
-            <Route path="universities/:universityId/view" element={<UniversityView />} />
-            <Route path="universities/:universityId/details" element={<UniversityDetails />} />
-            <Route path="courses" element={<Courses />} />
-            {/* Applications - Master Admin */}
-            <Route path="applications-overview" element={<ApplicationsOverview />} />
-            <Route path="applications" element={<ApplicationsList />} />
-            <Route path="applications/selection-process" element={<ApplicationProcessList />} />
-            <Route path="applications/acceptance-letters" element={<AcceptanceLetters />} />
-          </Route>
-          
-          {/* User Routes */}
-          <Route path="/user/login" element={<UserLogin />} />
-          <Route path="/user/register" element={<UserRegister />} />
-          <Route path="/user" element={
-            <UserProtectedRoute>
-              <UserLayout />
-            </UserProtectedRoute>
-          }>
-            <Route path="dashboard" element={<UserDashboard />} />
-            <Route path="courses" element={<CourseListing />} />
-            <Route path="courses/:courseId" element={<CourseDetail />} />
-            <Route path="apply/:formId" element={<ApplicationWizard />} />
-            <Route path="portfolio" element={<Portfolio />} />
-          </Route>
-          
-          {/* University Admin Routes */}
-          <Route path="/university/login" element={<UniversityLogin />} />
-          <Route path="/university" element={
-            <UniversityProtectedRoute>
-              <UniversityLayout />
-            </UniversityProtectedRoute>
-          }>
-            <Route index element={<UniversityDashboard />} />
-            <Route path="dashboard" element={<UniversityDashboard />} />
-            <Route path="info" element={<UniversityInfo />} />
-            <Route path="courses" element={<UniversityCourses />} />
-            <Route path="courses/new" element={<UniversityCourses />} />
-            <Route path="courses/:courseId" element={<UniversityCourses />} />
-            <Route path="courses/:courseId/edit" element={<UniversityCourses />} />
-            <Route path="forms" element={<UniversityForms />} />
-            <Route path="forms/new" element={<UniversityFormBuilder />} />
-            <Route path="forms/:formId" element={<UniversityFormBuilder />} />
-            <Route path="application-process/:courseId" element={<ApplicationProcess />} />
-            <Route path="application-process-list" element={<ApplicationProcessList />} />
-            <Route path="process-steps" element={<ProcessSteps />} />
-            <Route path="process-configuration/new" element={<ProcessConfiguration />} />
-            <Route path="process-configuration/:courseId" element={<ProcessConfiguration />} />
-            <Route path="applications" element={<ApplicationsList />} />
-            <Route path="applications/:id" element={<UniversityApplicationReview />} />
-            <Route path="applications-overview" element={<ApplicationsOverview />} />
-            <Route path="talent" element={<TalentPool />} />
-            <Route path="communications" element={<UniversityDashboard />} />
-            <Route path="users" element={<UniversityDashboard />} />
-            <Route path="settings" element={<UniversityDashboard />} />
-          </Route>
-          
-          {/* Public Profile View */}
-          <Route path="/profile/:username" element={<ProfileView />} />
-          
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+const App = () => {
+  // Enrich existing universities so the view page shows full details even for previously added entries
+  React.useEffect(() => {
+    // Dynamically import to avoid bundling issues if localStorage is not available in some environments
+    import('@/data/enrichUniversities').then((m) => m.enrichUniversitiesWithDemoDetails?.());
+  }, []);
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            {/* Admin Routes */}
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/" element={
+              <ProtectedRoute>
+                <Layout />
+              </ProtectedRoute>
+            }>
+              <Route index element={<Dashboard />} />
+              <Route path="master-fields" element={<MasterFields />} />
+              <Route path="forms" element={<Forms />} />
+              <Route path="forms/:formId" element={<FormEditor />} />
+              <Route path="form-applications" element={<FormApplications />} />
+              <Route path="form-applications/:applicationId" element={<ApplicationReview />} />
+              <Route path="universities" element={<Universities />} />
+              <Route path="universities/add" element={<AddUniversity />} />
+              <Route path="universities/edit/:universityId" element={<AddUniversity />} />
+              <Route path="universities/:universityId/view" element={<UniversityView />} />
+              <Route path="universities/:universityId/details" element={<UniversityDetails />} />
+              <Route path="courses" element={<Courses />} />
+              {/* Applications - Master Admin */}
+              <Route path="applications-overview" element={<ApplicationsOverview />} />
+              <Route path="applications" element={<ApplicationsList />} />
+              <Route path="applications/selection-process" element={<ApplicationProcessList />} />
+              <Route path="applications/acceptance-letters" element={<AcceptanceLetters />} />
+            </Route>
+            
+            {/* User Routes */}
+            <Route path="/user/login" element={<UserLogin />} />
+            <Route path="/user/register" element={<UserRegister />} />
+            <Route path="/user" element={
+              <UserProtectedRoute>
+                <UserLayout />
+              </UserProtectedRoute>
+            }>
+              <Route path="dashboard" element={<UserDashboard />} />
+              <Route path="courses" element={<CourseListing />} />
+              <Route path="courses/:courseId" element={<CourseDetail />} />
+              <Route path="apply/:formId" element={<ApplicationWizard />} />
+              <Route path="portfolio" element={<Portfolio />} />
+            </Route>
+            
+            {/* University Admin Routes */}
+            <Route path="/university/login" element={<UniversityLogin />} />
+            <Route path="/university" element={
+              <UniversityProtectedRoute>
+                <UniversityLayout />
+              </UniversityProtectedRoute>
+            }>
+              <Route index element={<UniversityDashboard />} />
+              <Route path="dashboard" element={<UniversityDashboard />} />
+              <Route path="info" element={<UniversityInfo />} />
+              <Route path="courses" element={<UniversityCourses />} />
+              <Route path="courses/new" element={<UniversityCourses />} />
+              <Route path="courses/:courseId" element={<UniversityCourses />} />
+              <Route path="courses/:courseId/edit" element={<UniversityCourses />} />
+              <Route path="forms" element={<UniversityForms />} />
+              <Route path="forms/new" element={<UniversityFormBuilder />} />
+              <Route path="forms/:formId" element={<UniversityFormBuilder />} />
+              <Route path="application-process/:courseId" element={<ApplicationProcess />} />
+              <Route path="application-process-list" element={<ApplicationProcessList />} />
+              <Route path="process-steps" element={<ProcessSteps />} />
+              <Route path="process-configuration/new" element={<ProcessConfiguration />} />
+              <Route path="process-configuration/:courseId" element={<ProcessConfiguration />} />
+              <Route path="applications" element={<ApplicationsList />} />
+              <Route path="applications/:id" element={<UniversityApplicationReview />} />
+              <Route path="applications-overview" element={<ApplicationsOverview />} />
+              <Route path="talent" element={<TalentPool />} />
+              <Route path="communications" element={<UniversityDashboard />} />
+              <Route path="users" element={<UniversityDashboard />} />
+              <Route path="settings" element={<UniversityDashboard />} />
+            </Route>
+            
+            {/* Public Profile View */}
+            <Route path="/profile/:username" element={<ProfileView />} />
+            
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
+  );
+};
 
 export default App;

@@ -480,6 +480,25 @@ const UniversityView = () => {
 
         {/* Additional Tab */}
         <TabsContent value="additional" className="space-y-6">
+          {university.brochureUrl && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Downloads</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <a
+                  href={university.brochureUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 text-primary hover:underline"
+                >
+                  <FileText className="w-4 h-4" />
+                  View Brochure
+                </a>
+              </CardContent>
+            </Card>
+          )}
+
           {university.faq && (
             <Card>
               <CardHeader>
