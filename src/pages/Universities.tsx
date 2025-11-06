@@ -323,7 +323,12 @@ const Universities = () => {
                     </div>
                   </div>
                   <div className="flex gap-2">
-                    <Button variant="outline" size="sm" className="flex-1">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="flex-1"
+                      onClick={() => navigate(`/universities/${university.id}/details`)}
+                    >
                       <Edit className="w-3 h-3 mr-1" />
                       Edit
                     </Button>

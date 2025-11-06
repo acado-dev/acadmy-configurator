@@ -14,6 +14,8 @@ export interface UniversityDetails {
   templateImage?: string;
   brochureUrl?: string;
   website?: string;
+  rating?: string;
+  rank?: string;
   
   // Organization/Institution specific
   institutionType: InstitutionType;
@@ -90,6 +92,12 @@ export interface UniversityDetails {
   whyChooseUs?: {
     reasons: WhyReason[];
   };
+  
+  // Detailed Information Sections
+  whyThisUniversity?: string;
+  admission?: string;
+  placements?: string;
+  faq?: string;
   
   // Meta Information
   createdAt: Date;
