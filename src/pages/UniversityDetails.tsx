@@ -47,7 +47,7 @@ const UniversityDetails = () => {
           admission: found.admission || '',
           placements: found.placements || '',
           faq: found.faq || '',
-          testimonial: found.testimonials?.[0]?.text || ''
+          testimonial: found.testimonials?.[0] || ''
         });
       }
     }
@@ -65,6 +65,7 @@ const UniversityDetails = () => {
             name: formData.fullName,
             rating: formData.rating,
             rank: formData.rank,
+            brochureUrl: formData.brochure ? URL.createObjectURL(formData.brochure) : u.brochureUrl,
             about: {
               ...u.about,
               description: formData.about
@@ -73,6 +74,7 @@ const UniversityDetails = () => {
             admission: formData.admission,
             placements: formData.placements,
             faq: formData.faq,
+            testimonials: formData.testimonial ? [formData.testimonial] : u.testimonials || [],
             updatedAt: new Date()
           };
         }
