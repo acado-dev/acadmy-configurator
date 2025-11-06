@@ -5,6 +5,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -15,12 +16,14 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { UniversityDetails } from '@/types/university';
+import { UniversityDetails, InstitutionType } from '@/types/university';
 
 const Universities = () => {
   const navigate = useNavigate();
   const [universities, setUniversities] = useState<UniversityDetails[]>([]);
   const [deleteUniversityId, setDeleteUniversityId] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filterType, setFilterType] = useState<InstitutionType | 'all'>('all');
 
   useEffect(() => {
     const savedUniversities = localStorage.getItem('acado_universities');
@@ -34,6 +37,7 @@ const Universities = () => {
       {
         id: 'u-jamk',
         name: 'Jamk University of Applied Sciences',
+        institutionType: 'University',
         tagline: 'Openness, Innovation, Responsibility, Collaboration',
         foundedYear: 1994,
         logo: '',
@@ -93,6 +97,7 @@ const Universities = () => {
       {
         id: 'u-oxford',
         name: 'University of Oxford',
+        institutionType: 'University',
         tagline: 'Dominus Illuminatio Mea',
         foundedYear: 1096,
         logo: '',
@@ -145,6 +150,7 @@ const Universities = () => {
       {
         id: 'u-mit',
         name: 'Massachusetts Institute of Technology (MIT)',
+        institutionType: 'University',
         tagline: 'Mens et Manus',
         foundedYear: 1861,
         logo: '',
@@ -210,45 +216,102 @@ const Universities = () => {
     }
   };
 
+  // Filter universities by type and search
+  const filteredUniversities = universities.filter(university => {
+    const matchesSearch = university.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          university.location.city.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          university.location.country.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesType = filterType === 'all' || university.institutionType === filterType;
+    return matchesSearch && matchesType;
+  });
+
+  const getTypeColor = (type: InstitutionType) => {
+    switch (type) {
+      case 'University':
+        return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300';
+      case 'COE':
+        return 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300';
+      case 'Industry':
+        return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300';
+      case 'School':
+        return 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300';
+      default:
+        return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300';
+    }
+  };
+
   return (
     <>
       <div className="space-y-6">
         <div className="flex justify-between items-start">
           <div>
-            <h1 className="text-3xl font-bold">Universities</h1>
-            <p className="text-muted-foreground mt-1">Manage partner universities and their profiles</p>
+            <h1 className="text-3xl font-bold">Organizations</h1>
+            <p className="text-muted-foreground mt-1">Manage institutions and their profiles</p>
           </div>
           <Button variant="gradient" className="gap-2" onClick={() => navigate('/universities/add')}>
             <Plus className="w-4 h-4" />
-            Add University
+            Add Organization
           </Button>
         </div>
 
-        <Card className="p-4">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <Input placeholder="Search universities..." className="pl-10" />
-          </div>
-        </Card>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Card className="p-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Input 
+                placeholder="Search institutions..." 
+                className="pl-10"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+          </Card>
+          
+          <Card className="p-4">
+            <Select value={filterType} onValueChange={(value: any) => setFilterType(value)}>
+              <SelectTrigger>
+                <SelectValue placeholder="Filter by Type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Types</SelectItem>
+                <SelectItem value="University">University</SelectItem>
+                <SelectItem value="COE">COE (Center of Excellence)</SelectItem>
+                <SelectItem value="Industry">Industry</SelectItem>
+                <SelectItem value="School">School</SelectItem>
+              </SelectContent>
+            </Select>
+          </Card>
+        </div>
 
-        {universities.length === 0 ? (
+        {filteredUniversities.length === 0 ? (
           <Card className="p-12 text-center">
             <Building2 className="w-16 h-16 mx-auto text-muted-foreground mb-4" />
-            <h3 className="text-lg font-semibold mb-2">No universities added yet</h3>
-            <p className="text-muted-foreground mb-4">Start by adding your first partner university</p>
-            <Button variant="outline" onClick={() => navigate('/universities/add')}>
-              Add Your First University
-            </Button>
+            <h3 className="text-lg font-semibold mb-2">
+              {universities.length === 0 ? 'No institutions added yet' : 'No institutions match your filters'}
+            </h3>
+            <p className="text-muted-foreground mb-4">
+              {universities.length === 0 ? 'Start by adding your first institution' : 'Try adjusting your search or filter criteria'}
+            </p>
+            {universities.length === 0 && (
+              <Button variant="outline" onClick={() => navigate('/universities/add')}>
+                Add Your First Institution
+              </Button>
+            )}
           </Card>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {universities.map((university) => (
+            {filteredUniversities.map((university) => (
               <Card key={university.id} className="overflow-hidden hover:shadow-lg transition-shadow">
                 <div className="h-32 bg-gradient-to-br from-primary to-primary-hover flex items-center justify-center">
                   <Building2 className="w-12 h-12 text-white opacity-50" />
                 </div>
                 <div className="p-6">
-                  <h3 className="font-semibold text-lg mb-2">{university.name}</h3>
+                  <div className="flex items-start justify-between mb-2">
+                    <h3 className="font-semibold text-lg flex-1">{university.name}</h3>
+                    <Badge className={getTypeColor(university.institutionType)}>
+                      {university.institutionType}
+                    </Badge>
+                  </div>
                   <div className="space-y-2 mb-4">
                     <div className="flex items-center gap-2 text-sm">
                       <MapPin className="w-4 h-4 text-muted-foreground" />

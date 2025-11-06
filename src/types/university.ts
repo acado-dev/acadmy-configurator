@@ -1,15 +1,27 @@
 // Comprehensive University Types based on ACADO structure
 
+export type InstitutionType = 'University' | 'COE' | 'Industry' | 'School';
+
 export interface UniversityDetails {
   id: string;
   // Basic Information
   name: string;
+  shortName?: string;
   tagline?: string;
   foundedYear: number;
   logo?: string;
   coverImage?: string;
+  templateImage?: string;
   brochureUrl?: string;
   website?: string;
+  
+  // Organization/Institution specific
+  institutionType: InstitutionType;
+  parentInstitutionId?: string;
+  organizationLevel?: string;
+  mobileNo?: string;
+  primaryEmail?: string;
+  address?: string;
   
   // Location
   location: {
