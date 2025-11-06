@@ -58,78 +58,100 @@ const UniversityView = () => {
 
   return (
     <div className="space-y-6 animate-fade-in">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start gap-4">
-        <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" onClick={() => navigate('/universities')} className="hover-scale">
-            <ArrowLeft className="w-4 h-4" />
-          </Button>
-          <div>
-            <div className="flex items-center gap-3 flex-wrap">
-              <h1 className="text-3xl font-bold">{university.name}</h1>
-              <Badge className={getTypeColor(university.institutionType)}>
-                {university.institutionType}
-              </Badge>
-              {university.isVerified && (
-                <Badge variant="outline" className="gap-1">
-                  <Award className="w-3 h-3" />
-                  Verified
+      {/* Compact Header */}
+      <div className="flex items-center gap-4">
+        <Button variant="ghost" size="icon" onClick={() => navigate('/universities')} className="hover-scale">
+          <ArrowLeft className="w-4 h-4" />
+        </Button>
+        <div className="flex-1">
+          <div className="flex items-center gap-3 flex-wrap">
+            <div className="h-14 w-14 rounded-lg bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center">
+              <Building2 className="w-7 h-7 text-primary" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2 flex-wrap">
+                <h1 className="text-2xl font-bold">{university.name}</h1>
+                <Badge className={getTypeColor(university.institutionType)}>
+                  {university.institutionType}
                 </Badge>
+                {university.isVerified && (
+                  <Badge variant="outline" className="gap-1">
+                    <Award className="w-3 h-3" />
+                    Verified
+                  </Badge>
+                )}
+              </div>
+              {university.tagline && (
+                <p className="text-sm text-muted-foreground mt-1 italic">"{university.tagline}"</p>
               )}
             </div>
-            <p className="text-muted-foreground mt-1">Complete Organization Profile</p>
           </div>
         </div>
         <div className="flex gap-2 flex-wrap">
           <Button 
             variant="outline" 
+            size="sm"
             onClick={() => navigate(`/universities/edit/${university.id}`)}
             className="gap-2"
           >
-            <Edit className="w-4 h-4" />
-            Edit Basic Info
+            <Edit className="w-3.5 h-3.5" />
+            Edit
           </Button>
           <Button 
+            size="sm"
             onClick={() => navigate(`/universities/${university.id}/details`)}
             className="gap-2"
           >
-            <Edit className="w-4 h-4" />
-            Manage Details
+            <Building2 className="w-3.5 h-3.5" />
+            Manage
           </Button>
         </div>
       </div>
 
-      {/* Cover Image & Logo */}
-      <Card className="relative overflow-hidden group">
-        <div className="h-56 bg-gradient-to-br from-primary via-primary-hover to-primary/80 flex items-center justify-center relative overflow-hidden">
-          <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PHBhdGggZD0iTTM2IDE4YzAtMy4zMTQgMi42ODYtNiA2LTZzNiAyLjY4NiA2IDYtMi42ODYgNi02IDYtNi0yLjY4Ni02LTZ6TTAgMThjMC0zLjMxNCAyLjY4Ni02IDYtNnM2IDIuNjg2IDYgNi0yLjY4NiA2LTYgNi02LTIuNjg2LTYtNnptMTggMzZjMC0zLjMxNCAyLjY4Ni02IDYtNnM2IDIuNjg2IDYgNi0yLjY4NiA2LTYgNi02LTIuNjg2LTYtNnoiLz48L2c+PC9nPjwvc3ZnPg==')] opacity-30" />
-          <Building2 className="w-20 h-20 text-white/40 group-hover:scale-110 transition-transform duration-300" />
-        </div>
-        <div className="p-6">
-          <div className="flex flex-col md:flex-row items-start gap-6">
-            <div className="h-28 w-28 bg-background rounded-lg shadow-xl border-4 border-background flex items-center justify-center -mt-20">
-              <Building2 className="w-14 h-14 text-primary" />
-            </div>
-            <div className="flex-1">
-              <h2 className="text-2xl md:text-3xl font-bold">{university.name}</h2>
-              {university.shortName && (
-                <p className="text-lg text-muted-foreground">({university.shortName})</p>
-              )}
-              {university.tagline && (
-                <p className="text-sm text-muted-foreground mt-2 italic border-l-4 border-primary pl-3">
-                  "{university.tagline}"
-                </p>
-              )}
-              {university.foundedYear && (
-                <div className="flex items-center gap-2 mt-3 text-sm text-muted-foreground">
-                  <Calendar className="w-4 h-4" />
-                  <span>Founded in {university.foundedYear}</span>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </Card>
+      {/* Metric Cards Row */}
+      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+        {university.rating && (
+          <Card className="p-4 text-center hover:shadow-md transition-shadow">
+            <Award className="w-6 h-6 text-yellow-500 mx-auto mb-2" />
+            <p className="text-2xl font-bold">{university.rating}</p>
+            <p className="text-xs text-muted-foreground">Rating</p>
+          </Card>
+        )}
+        {university.rank && (
+          <Card className="p-4 text-center hover:shadow-md transition-shadow">
+            <p className="text-2xl font-bold text-primary">#{university.rank}</p>
+            <p className="text-xs text-muted-foreground">Rank</p>
+          </Card>
+        )}
+        {university.factsAndFigures.totalStudents > 0 && (
+          <Card className="p-4 text-center hover:shadow-md transition-shadow">
+            <Users className="w-6 h-6 text-primary mx-auto mb-2" />
+            <p className="text-2xl font-bold">{(university.factsAndFigures.totalStudents / 1000).toFixed(1)}k</p>
+            <p className="text-xs text-muted-foreground">Students</p>
+          </Card>
+        )}
+        {university.factsAndFigures.internationalStudents > 0 && (
+          <Card className="p-4 text-center hover:shadow-md transition-shadow">
+            <Globe className="w-6 h-6 text-primary mx-auto mb-2" />
+            <p className="text-2xl font-bold">{(university.factsAndFigures.internationalStudents / 1000).toFixed(1)}k</p>
+            <p className="text-xs text-muted-foreground">International</p>
+          </Card>
+        )}
+        {university.foundedYear && (
+          <Card className="p-4 text-center hover:shadow-md transition-shadow">
+            <Calendar className="w-6 h-6 text-primary mx-auto mb-2" />
+            <p className="text-2xl font-bold">{university.foundedYear}</p>
+            <p className="text-xs text-muted-foreground">Founded</p>
+          </Card>
+        )}
+        {university.factsAndFigures.graduateEmployability > 0 && (
+          <Card className="p-4 text-center hover:shadow-md transition-shadow">
+            <GraduationCap className="w-6 h-6 text-primary mx-auto mb-2" />
+            <p className="text-2xl font-bold">{university.factsAndFigures.graduateEmployability}%</p>
+            <p className="text-xs text-muted-foreground">Employability</p>
+          </Card>
+        )}
+      </div>
 
       {/* Main Content in Tabs */}
       <Tabs defaultValue="overview" className="w-full">

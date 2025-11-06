@@ -299,113 +299,104 @@ const Universities = () => {
             )}
           </Card>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredUniversities.map((university) => (
-              <Card 
-                key={university.id} 
-                className="group overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer border-2 hover:border-primary/50"
-              >
+          <Card>
+            <div className="divide-y">
+              {filteredUniversities.map((university, index) => (
                 <div 
-                  className="h-40 bg-gradient-to-br from-primary/80 to-primary relative overflow-hidden"
-                  onClick={() => navigate(`/universities/${university.id}/view`)}
+                  key={university.id}
+                  className={`flex items-center gap-4 p-4 hover:bg-muted/50 transition-colors ${
+                    index % 2 === 0 ? 'bg-background' : 'bg-muted/20'
+                  }`}
                 >
-                  <div className="absolute inset-0 bg-black/10 group-hover:bg-black/5 transition-colors" />
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <Building2 className="w-16 h-16 text-white/40 group-hover:text-white/60 transition-all group-hover:scale-110 duration-300" />
-                  </div>
-                  <div className="absolute top-3 right-3">
-                    <Badge className={`${getTypeColor(university.institutionType)} shadow-lg`}>
-                      {university.institutionType}
-                    </Badge>
-                  </div>
-                </div>
-                <div className="p-6">
+                  {/* Logo Thumbnail */}
                   <div 
-                    className="mb-4"
+                    className="h-20 w-20 flex-shrink-0 rounded-lg bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center cursor-pointer hover:scale-105 transition-transform"
                     onClick={() => navigate(`/universities/${university.id}/view`)}
                   >
-                    <h3 className="font-bold text-xl mb-1 group-hover:text-primary transition-colors line-clamp-2">
-                      {university.name}
-                    </h3>
-                    {university.shortName && (
-                      <p className="text-sm text-muted-foreground">({university.shortName})</p>
-                    )}
+                    <Building2 className="w-8 h-8 text-primary" />
                   </div>
-                  
-                  <div className="space-y-2.5 mb-5">
+
+                  {/* Name & Location */}
+                  <div 
+                    className="flex-1 min-w-0 cursor-pointer"
+                    onClick={() => navigate(`/universities/${university.id}/view`)}
+                  >
+                    <div className="flex items-center gap-2 mb-1">
+                      <h3 className="font-semibold text-lg truncate hover:text-primary transition-colors">
+                        {university.name}
+                      </h3>
+                      <Badge className={`${getTypeColor(university.institutionType)} flex-shrink-0`}>
+                        {university.institutionType}
+                      </Badge>
+                    </div>
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <MapPin className="w-4 h-4 flex-shrink-0" />
+                      <MapPin className="w-3.5 h-3.5 flex-shrink-0" />
                       <span className="truncate">{university.location.city}, {university.location.country}</span>
                     </div>
-                    {university.factsAndFigures.totalStudents > 0 && (
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <Users className="w-4 h-4 flex-shrink-0" />
-                        <span>{university.factsAndFigures.totalStudents.toLocaleString()} students</span>
+                  </div>
+
+                  {/* Rating & Stats */}
+                  <div className="hidden md:flex items-center gap-6 px-4">
+                    {university.rating && (
+                      <div className="text-center">
+                        <div className="text-sm text-muted-foreground mb-1">Rating</div>
+                        <div className="font-semibold text-primary">{university.rating}</div>
                       </div>
                     )}
-                    {university.primaryEmail && (
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <GraduationCap className="w-4 h-4 flex-shrink-0" />
-                        <span className="truncate">{university.primaryEmail}</span>
+                    {university.rank && (
+                      <div className="text-center">
+                        <div className="text-sm text-muted-foreground mb-1">Rank</div>
+                        <div className="font-semibold">#{university.rank}</div>
+                      </div>
+                    )}
+                    {university.factsAndFigures.totalStudents > 0 && (
+                      <div className="text-center">
+                        <div className="text-sm text-muted-foreground mb-1">Students</div>
+                        <div className="font-semibold">{(university.factsAndFigures.totalStudents / 1000).toFixed(1)}k</div>
                       </div>
                     )}
                   </div>
-                  
-                  <div className="flex flex-col gap-2">
+
+                  {/* CTA Buttons */}
+                  <div className="flex items-center gap-2 flex-shrink-0">
                     <Button 
                       variant="default"
                       size="sm" 
-                      className="w-full gap-2 group/btn"
+                      className="gap-1"
                       onClick={(e) => {
                         e.stopPropagation();
                         navigate(`/universities/${university.id}/view`);
                       }}
                     >
-                      <Eye className="w-4 h-4 group-hover/btn:scale-110 transition-transform" />
-                      View Details
+                      <Eye className="w-3.5 h-3.5" />
+                      View
                     </Button>
-                    <div className="flex gap-2">
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
-                        className="flex-1 gap-1"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          navigate(`/universities/edit/${university.id}`);
-                        }}
-                      >
-                        <Edit className="w-3 h-3" />
-                        Edit
-                      </Button>
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
-                        className="flex-1 gap-1"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          navigate(`/universities/${university.id}/details`);
-                        }}
-                      >
-                        <Building2 className="w-3 h-3" />
-                        Manage
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="text-destructive hover:bg-destructive hover:text-destructive-foreground"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setDeleteUniversityId(university.id);
-                        }}
-                      >
-                        <Trash2 className="w-3 h-3" />
-                      </Button>
-                    </div>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/universities/edit/${university.id}`);
+                      }}
+                    >
+                      <Edit className="w-3.5 h-3.5" />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="text-destructive hover:bg-destructive hover:text-destructive-foreground"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setDeleteUniversityId(university.id);
+                      }}
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </Button>
                   </div>
                 </div>
-              </Card>
-            ))}
-          </div>
+              ))}
+            </div>
+          </Card>
         )}
       </div>
 
