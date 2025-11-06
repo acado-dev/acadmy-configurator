@@ -54,6 +54,7 @@ import UniversityInfo from '@/pages/university/UniversityInfo';
 import TalentPool from '@/pages/university/TalentPool';
 import ProcessSteps from '@/pages/university/ProcessSteps';
 import ProcessConfiguration from '@/pages/university/ProcessConfiguration';
+import UserManagement from '@/pages/university/UserManagement';
 
 const queryClient = new QueryClient();
 
@@ -140,7 +141,7 @@ const App = () => {
               <Route path="applications-overview" element={<ApplicationsOverview />} />
               <Route path="talent" element={<TalentPool />} />
               <Route path="communications" element={<UniversityDashboard />} />
-              <Route path="users" element={<UniversityDashboard />} />
+              <Route path="users" element={<UserManagement />} />
               <Route path="settings" element={<UniversityDashboard />} />
             </Route>
             
