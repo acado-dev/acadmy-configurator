@@ -28,6 +28,7 @@ import { User, UserType, UserStatus } from '@/types/user';
 import { AddUserDialog } from '@/components/users/AddUserDialog';
 import { BulkImportDialog } from '@/components/users/BulkImportDialog';
 import { useToast } from '@/hooks/use-toast';
+import { initializeSampleUsers } from '@/data/sampleUsers';
 
 const Users = () => {
   const [users, setUsers] = useState<User[]>([]);
@@ -42,6 +43,7 @@ const Users = () => {
   const { toast } = useToast();
 
   useEffect(() => {
+    initializeSampleUsers();
     loadUsers();
     loadOrganizations();
   }, []);
