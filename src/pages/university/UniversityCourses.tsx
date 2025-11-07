@@ -185,40 +185,10 @@ const UniversityCourses = () => {
             <Badge variant="secondary">{getTypeName(course.courseTypeId)}</Badge>
             <Badge variant="outline">{getLevelName(course.courseLevelId)}</Badge>
           </div>
-          <div className="flex items-center gap-2">
-            <Switch
-              checked={course.isActive}
-              onCheckedChange={() => handleToggleActive(course)}
-            />
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon">
-                  <MoreVertical className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => navigate(`/university/courses/${course.id}/edit`)}>
-                  <Edit className="h-4 w-4 mr-2" />
-                  Edit Course
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate(`/university/forms/${course.applicationFormId || 'new'}?courseId=${course.id}`)}>
-                  <FileText className="h-4 w-4 mr-2" />
-                  {course.applicationFormId ? 'Edit Form' : 'Create Form'}
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate(`/university/application-process/${course.id}`)}>
-                  <Target className="h-4 w-4 mr-2" />
-                  {course.matchingCriteriaConfigured ? 'Edit Criteria' : 'Set Criteria'}
-                </DropdownMenuItem>
-                <DropdownMenuItem 
-                  onClick={() => setCourseToDelete(course)}
-                  className="text-destructive"
-                >
-                  <Trash2 className="h-4 w-4 mr-2" />
-                  Delete
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
+          <Switch
+            checked={course.isActive}
+            onCheckedChange={() => handleToggleActive(course)}
+          />
         </div>
 
         {course.thumbnail && (
@@ -240,26 +210,36 @@ const UniversityCourses = () => {
           </p>
         </div>
 
-        <div className="bg-primary/10 rounded-lg p-3 flex items-center justify-between">
-          <div className="flex items-center gap-2">
+        <div className="bg-primary/10 rounded-lg p-3">
+          <div className="flex items-center gap-2 mb-3">
             <Users className="h-5 w-5 text-primary" />
-            <div>
+            <div className="flex-1">
               <p className="text-xs text-muted-foreground">Collected Applications</p>
               <p className="text-2xl font-bold text-primary">{course.applications || 0}</p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          
+          <div className="flex items-center gap-2 pt-3 border-t border-primary/20">
             <FileText className="h-4 w-4 text-muted-foreground" />
-            <div>
-              <p className="text-xs text-muted-foreground">Form Status</p>
+            <div className="flex-1">
+              <p className="text-xs text-muted-foreground">Application Form</p>
               <p className="text-sm font-medium">
-                {course.applicationFormId ? '✓ Configured' : '✗ Not Set'}
+                {course.applicationFormId ? '✓ Configured' : '✗ Not Configured'}
               </p>
             </div>
+            {!course.applicationFormId && (
+              <Button 
+                size="sm" 
+                variant="secondary"
+                onClick={() => navigate(`/university/forms/new?courseId=${course.id}`)}
+              >
+                Setup
+              </Button>
+            )}
           </div>
         </div>
 
-        <div className="flex flex-wrap gap-2">
+        <div className="flex gap-2">
           <Button
             variant="default"
             size="sm"
@@ -274,44 +254,17 @@ const UniversityCourses = () => {
             size="sm"
             onClick={() => navigate(`/university/courses/${course.id}/edit`)}
           >
-            <Edit className="w-3 h-3 mr-1" />
-            Edit
+            <Edit className="w-4 h-4" />
           </Button>
           <Button
             variant="outline"
             size="sm"
             onClick={() => setCourseToDelete(course)}
-            className="text-destructive"
+            className="text-destructive hover:text-destructive"
           >
-            <Trash2 className="w-3 h-3" />
+            <Trash2 className="w-4 h-4" />
           </Button>
         </div>
-
-        {!course.applicationFormId && (
-          <Button 
-            size="sm" 
-            variant="secondary"
-            className="w-full"
-            onClick={() => navigate(`/university/forms/new?courseId=${course.id}`)}
-          >
-            <FileText className="h-3 w-3 mr-1" />
-            Setup Application Form
-          </Button>
-        )}
-
-        {course.applicationLink && (
-          <div className="flex items-center gap-2 text-xs pt-2 border-t">
-            <Link2 className="h-3 w-3 text-muted-foreground" />
-            <a 
-              href={course.applicationLink} 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="text-primary hover:underline truncate"
-            >
-              Direct Application Link
-            </a>
-          </div>
-        )}
       </div>
     </Card>
   );
