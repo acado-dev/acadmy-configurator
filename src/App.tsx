@@ -56,6 +56,7 @@ import TalentPool from '@/pages/university/TalentPool';
 import ProcessSteps from '@/pages/university/ProcessSteps';
 import ProcessConfiguration from '@/pages/university/ProcessConfiguration';
 import UserManagement from '@/pages/university/UserManagement';
+import CourseCategories from '@/pages/CourseCategories';
 
 const queryClient = new QueryClient();
 
@@ -93,6 +94,7 @@ const App = () => {
               <Route path="universities/:universityId/view" element={<UniversityView />} />
               <Route path="universities/:universityId/details" element={<UniversityDetails />} />
               <Route path="courses" element={<Courses />} />
+              <Route path="course-category" element={<CourseCategories />} />
               <Route path="users" element={<Users />} />
               {/* Applications - Master Admin */}
               <Route path="applications-overview" element={<ApplicationsOverview />} />
