@@ -31,7 +31,7 @@ import UserLayout from '@/components/UserLayout';
 import UserProtectedRoute from '@/components/UserProtectedRoute';
 import UserDashboard from '@/pages/user/UserDashboard';
 import CourseListing from '@/pages/user/CourseListing';
-import CourseDetail from '@/pages/user/CourseDetail';
+import UserCourseDetail from '@/pages/user/CourseDetail';
 import ApplicationWizard from '@/pages/user/ApplicationWizard';
 import Portfolio from '@/pages/user/Portfolio';
 import ProfileView from '@/pages/ProfileView';
@@ -121,7 +121,7 @@ const App = () => {
             }>
               <Route path="dashboard" element={<UserDashboard />} />
               <Route path="courses" element={<CourseListing />} />
-              <Route path="courses/:courseId" element={<CourseDetail />} />
+              <Route path="courses/:courseId" element={<UserCourseDetail />} />
               <Route path="apply/:formId" element={<ApplicationWizard />} />
               <Route path="portfolio" element={<Portfolio />} />
             </Route>
