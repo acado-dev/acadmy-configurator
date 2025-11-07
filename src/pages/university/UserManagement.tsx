@@ -1,63 +1,62 @@
-import React, { useState, useEffect } from 'react';
-import { Plus, Search, Upload, Download, MoreHorizontal, Mail, KeyRound, Trash2, Edit, Power, PowerOff } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
+import React, { useState, useEffect } from "react";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
+  Plus,
+  Search,
+  Upload,
+  Download,
+  MoreHorizontal,
+  Mail,
+  KeyRound,
+  Trash2,
+  Edit,
+  Power,
+  PowerOff,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { User, UserType, UserStatus } from '@/types/user';
-import { AddUserDialog } from '@/components/users/AddUserDialog';
-import { BulkImportDialog } from '@/components/users/BulkImportDialog';
-import { useToast } from '@/hooks/use-toast';
-import { initializeUniversityUsers } from '@/data/sampleUsers';
+} from "@/components/ui/dropdown-menu";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { User, UserType, UserStatus } from "@/types/user";
+import { AddUserDialog } from "@/components/users/AddUserDialog";
+import { BulkImportDialog } from "@/components/users/BulkImportDialog";
+import { useToast } from "@/hooks/use-toast";
+import { initializeUniversityUsers } from "@/data/sampleUsers";
 
 const UserManagement = () => {
   const [users, setUsers] = useState<User[]>([]);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [typeFilter, setTypeFilter] = useState<UserType | 'all'>('all');
-  const [statusFilter, setStatusFilter] = useState<UserStatus | 'all'>('all');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [typeFilter, setTypeFilter] = useState<UserType | "all">("all");
+  const [statusFilter, setStatusFilter] = useState<UserStatus | "all">("all");
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isBulkImportOpen, setIsBulkImportOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
-    initializeUniversityUsers('Stanford University');
+    initializeUniversityUsers("Stanford University");
     loadUsers();
   }, []);
 
   const loadUsers = () => {
-    const storedUsers = localStorage.getItem('universityUsers');
+    const storedUsers = localStorage.getItem("universityUsers");
     if (storedUsers) {
       setUsers(JSON.parse(storedUsers));
     }
   };
 
   const saveUsers = (updatedUsers: User[]) => {
-    localStorage.setItem('universityUsers', JSON.stringify(updatedUsers));
+    localStorage.setItem("universityUsers", JSON.stringify(updatedUsers));
     setUsers(updatedUsers);
   };
 
-  const handleAddUser = (user: Omit<User, 'id' | 'createdAt' | 'updatedAt'>) => {
+  const handleAddUser = (user: Omit<User, "id" | "createdAt" | "updatedAt">) => {
     const newUser: User = {
       ...user,
       id: crypto.randomUUID(),
@@ -66,65 +65,67 @@ const UserManagement = () => {
     };
     saveUsers([...users, newUser]);
     toast({
-      title: 'User added',
+      title: "User added",
       description: `${newUser.name} has been added successfully.`,
     });
   };
 
   const handleEditUser = (user: User) => {
-    const updatedUsers = users.map(u => 
-      u.id === user.id ? { ...user, updatedAt: new Date().toISOString() } : u
-    );
+    const updatedUsers = users.map((u) => (u.id === user.id ? { ...user, updatedAt: new Date().toISOString() } : u));
     saveUsers(updatedUsers);
     setEditingUser(null);
     toast({
-      title: 'User updated',
+      title: "User updated",
       description: `${user.name} has been updated successfully.`,
     });
   };
 
   const handleDeleteUser = (userId: string) => {
-    const user = users.find(u => u.id === userId);
-    saveUsers(users.filter(u => u.id !== userId));
+    const user = users.find((u) => u.id === userId);
+    saveUsers(users.filter((u) => u.id !== userId));
     toast({
-      title: 'User deleted',
+      title: "User deleted",
       description: `${user?.name} has been deleted.`,
-      variant: 'destructive',
+      variant: "destructive",
     });
   };
 
   const handleToggleStatus = (userId: string) => {
-    const updatedUsers = users.map(u => 
-      u.id === userId 
-        ? { ...u, status: u.status === 'active' ? 'inactive' as UserStatus : 'active' as UserStatus, updatedAt: new Date().toISOString() }
-        : u
+    const updatedUsers = users.map((u) =>
+      u.id === userId
+        ? {
+            ...u,
+            status: u.status === "active" ? ("inactive" as UserStatus) : ("active" as UserStatus),
+            updatedAt: new Date().toISOString(),
+          }
+        : u,
     );
     saveUsers(updatedUsers);
-    const user = updatedUsers.find(u => u.id === userId);
+    const user = updatedUsers.find((u) => u.id === userId);
     toast({
-      title: user?.status === 'active' ? 'User activated' : 'User deactivated',
+      title: user?.status === "active" ? "User activated" : "User deactivated",
       description: `${user?.name} is now ${user?.status}.`,
     });
   };
 
   const handleResetPassword = (userId: string) => {
-    const user = users.find(u => u.id === userId);
+    const user = users.find((u) => u.id === userId);
     toast({
-      title: 'Password reset',
+      title: "Password reset",
       description: `Password reset link sent to ${user?.email}`,
     });
   };
 
   const handleSendCredentials = (userId: string) => {
-    const user = users.find(u => u.id === userId);
+    const user = users.find((u) => u.id === userId);
     toast({
-      title: 'Credentials sent',
+      title: "Credentials sent",
       description: `Login credentials sent to ${user?.email}`,
     });
   };
 
-  const handleBulkImport = (importedUsers: Omit<User, 'id' | 'createdAt' | 'updatedAt'>[]) => {
-    const newUsers: User[] = importedUsers.map(user => ({
+  const handleBulkImport = (importedUsers: Omit<User, "id" | "createdAt" | "updatedAt">[]) => {
+    const newUsers: User[] = importedUsers.map((user) => ({
       ...user,
       id: crypto.randomUUID(),
       createdAt: new Date().toISOString(),
@@ -132,46 +133,58 @@ const UserManagement = () => {
     }));
     saveUsers([...users, ...newUsers]);
     toast({
-      title: 'Bulk import successful',
+      title: "Bulk import successful",
       description: `${newUsers.length} users imported successfully.`,
     });
   };
 
-  const filteredUsers = users.filter(user => {
-    const matchesSearch = 
+  const filteredUsers = users.filter((user) => {
+    const matchesSearch =
       user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
       user.username.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesType = typeFilter === 'all' || user.userType === typeFilter;
-    const matchesStatus = statusFilter === 'all' || user.status === statusFilter;
+    const matchesType = typeFilter === "all" || user.userType === typeFilter;
+    const matchesStatus = statusFilter === "all" || user.status === statusFilter;
     return matchesSearch && matchesType && matchesStatus;
   });
 
   const exportUsers = () => {
     const csv = [
-      ['Name', 'Email', 'Username', 'User Type', 'Status', 'Mobile No', 'Student/Staff ID', 'Date of Birth', 'Gender'].join(','),
-      ...filteredUsers.map(u => [
-        u.name,
-        u.email,
-        u.username,
-        u.userType,
-        u.status,
-        u.mobileNo || '',
-        u.studentIdStaffId || '',
-        u.dateOfBirth || '',
-        u.gender || ''
-      ].join(','))
-    ].join('\n');
-    
-    const blob = new Blob([csv], { type: 'text/csv' });
+      [
+        "Name",
+        "Email",
+        "Username",
+        "User Type",
+        "Status",
+        "Mobile No",
+        "Student/Staff ID",
+        "Date of Birth",
+        "Gender",
+      ].join(","),
+      ...filteredUsers.map((u) =>
+        [
+          u.name,
+          u.email,
+          u.username,
+          u.userType,
+          u.status,
+          u.mobileNo || "",
+          u.studentIdStaffId || "",
+          u.dateOfBirth || "",
+          u.gender || "",
+        ].join(","),
+      ),
+    ].join("\n");
+
+    const blob = new Blob([csv], { type: "text/csv" });
     const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
-    a.download = `users-${new Date().toISOString().split('T')[0]}.csv`;
+    a.download = `users-${new Date().toISOString().split("T")[0]}.csv`;
     a.click();
     toast({
-      title: 'Export successful',
-      description: 'Users exported to CSV file.',
+      title: "Export successful",
+      description: "Users exported to CSV file.",
     });
   };
 
@@ -179,7 +192,7 @@ const UserManagement = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold">User Management</h1>
+          <h1 className="text-3xl font-bold">User Management22222</h1>
           <p className="text-muted-foreground mt-1">Manage learners, faculty, and staff</p>
         </div>
       </div>
@@ -194,7 +207,7 @@ const UserManagement = () => {
             className="pl-10"
           />
         </div>
-        <Select value={typeFilter} onValueChange={(value) => setTypeFilter(value as UserType | 'all')}>
+        <Select value={typeFilter} onValueChange={(value) => setTypeFilter(value as UserType | "all")}>
           <SelectTrigger className="w-full sm:w-[180px]">
             <SelectValue placeholder="User Type" />
           </SelectTrigger>
@@ -205,7 +218,7 @@ const UserManagement = () => {
             <SelectItem value="Staff">Staff</SelectItem>
           </SelectContent>
         </Select>
-        <Select value={statusFilter} onValueChange={(value) => setStatusFilter(value as UserStatus | 'all')}>
+        <Select value={statusFilter} onValueChange={(value) => setStatusFilter(value as UserStatus | "all")}>
           <SelectTrigger className="w-full sm:w-[180px]">
             <SelectValue placeholder="Status" />
           </SelectTrigger>
@@ -262,11 +275,9 @@ const UserManagement = () => {
                     <Badge variant="outline">{user.userType}</Badge>
                   </TableCell>
                   <TableCell>
-                    <Badge variant={user.status === 'active' ? 'default' : 'secondary'}>
-                      {user.status}
-                    </Badge>
+                    <Badge variant={user.status === "active" ? "default" : "secondary"}>{user.status}</Badge>
                   </TableCell>
-                  <TableCell>{user.studentIdStaffId || '-'}</TableCell>
+                  <TableCell>{user.studentIdStaffId || "-"}</TableCell>
                   <TableCell className="text-right">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
@@ -275,12 +286,17 @@ const UserManagement = () => {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => { setEditingUser(user); setIsAddDialogOpen(true); }}>
+                        <DropdownMenuItem
+                          onClick={() => {
+                            setEditingUser(user);
+                            setIsAddDialogOpen(true);
+                          }}
+                        >
                           <Edit className="h-4 w-4 mr-2" />
                           Edit
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => handleToggleStatus(user.id)}>
-                          {user.status === 'active' ? (
+                          {user.status === "active" ? (
                             <>
                               <PowerOff className="h-4 w-4 mr-2" />
                               Deactivate
@@ -300,10 +316,7 @@ const UserManagement = () => {
                           <Mail className="h-4 w-4 mr-2" />
                           Send Credentials
                         </DropdownMenuItem>
-                        <DropdownMenuItem 
-                          onClick={() => handleDeleteUser(user.id)}
-                          className="text-destructive"
-                        >
+                        <DropdownMenuItem onClick={() => handleDeleteUser(user.id)} className="text-destructive">
                           <Trash2 className="h-4 w-4 mr-2" />
                           Delete
                         </DropdownMenuItem>
@@ -327,11 +340,7 @@ const UserManagement = () => {
         editUser={editingUser}
       />
 
-      <BulkImportDialog
-        open={isBulkImportOpen}
-        onOpenChange={setIsBulkImportOpen}
-        onImport={handleBulkImport}
-      />
+      <BulkImportDialog open={isBulkImportOpen} onOpenChange={setIsBulkImportOpen} onImport={handleBulkImport} />
     </div>
   );
 };
