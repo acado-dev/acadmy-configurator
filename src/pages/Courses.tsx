@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Search, Trash2, Copy, ListChecks, Eye, Edit, Filter, X } from 'lucide-react';
+import { Plus, Search, Trash2, Copy, ListChecks, Eye, Edit, Filter, X, FileText } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -348,14 +348,22 @@ const Courses = () => {
               </div>
 
               <div className="flex flex-wrap gap-1">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => navigate(`/courses/${course.id}`)}
-                >
-                  <Eye className="w-3 h-3 mr-1" />
-                  View
-                </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => navigate(`/courses/${course.id}`)}
+          >
+            <Eye className="w-3 h-3 mr-1" />
+            View
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => navigate(`/courses/${course.id}/campaign`)}
+          >
+            <FileText className="w-3 h-3 mr-1" />
+            Campaign
+          </Button>
                 <Button
                   variant="outline"
                   size="sm"

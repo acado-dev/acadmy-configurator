@@ -240,6 +240,14 @@ const UniversityCourses = () => {
           <Button
             variant="outline"
             size="sm"
+            onClick={() => navigate(`/university/courses/${course.id}/campaign`)}
+          >
+            <FileText className="w-3 h-3 mr-1" />
+            Campaign
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
             onClick={() => handleDuplicate(course)}
           >
             <Copy className="w-3 h-3 mr-1" />

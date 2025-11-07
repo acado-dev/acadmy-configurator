@@ -63,6 +63,7 @@ import CourseCategories from '@/pages/CourseCategories';
 import CourseLevels from '@/pages/CourseLevels';
 import CourseTypes from '@/pages/CourseTypes';
 import LearningOutcomes from '@/pages/LearningOutcomes';
+import CourseCampaign from '@/pages/CourseCampaign';
 
 const queryClient = new QueryClient();
 
@@ -103,6 +104,7 @@ const App = () => {
               <Route path="courses/add" element={<AddEditCourse />} />
               <Route path="courses/edit/:courseId" element={<AddEditCourse />} />
               <Route path="courses/:courseId" element={<AdminCourseDetail />} />
+              <Route path="courses/:courseId/campaign" element={<CourseCampaign />} />
               <Route path="course-category" element={<CourseCategories />} />
               <Route path="course-level" element={<CourseLevels />} />
               <Route path="course-type" element={<CourseTypes />} />
@@ -143,6 +145,7 @@ const App = () => {
               <Route path="courses" element={<UniversityCourses />} />
               <Route path="courses/new" element={<UniversityAddEditCourse />} />
               <Route path="courses/:courseId/edit" element={<UniversityAddEditCourse />} />
+              <Route path="courses/:courseId/campaign" element={<CourseCampaign />} />
               <Route path="forms" element={<UniversityForms />} />
               <Route path="forms/new" element={<UniversityFormBuilder />} />
               <Route path="forms/:formId" element={<UniversityFormBuilder />} />
