@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Save, X, Upload, Image as ImageIcon, Video } from 'lucide-react';
+import { ArrowLeft, Save, X, Upload, Image as ImageIcon, Video, Link2 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Course } from '@/types/course';
 import { CourseCategory } from '@/types/courseCategory';
 import { CourseLevel } from '@/types/courseLevel';
@@ -26,8 +27,11 @@ const AddEditCourse = () => {
   const [shortName, setShortName] = useState('');
   const [courseCode, setCourseCode] = useState('');
   const [thumbnail, setThumbnail] = useState('');
+  const [thumbnailMode, setThumbnailMode] = useState<'upload' | 'url'>('url');
   const [bannerImage, setBannerImage] = useState('');
+  const [bannerMode, setBannerMode] = useState<'upload' | 'url'>('url');
   const [videoUrl, setVideoUrl] = useState('');
+  const [videoMode, setVideoMode] = useState<'upload' | 'url'>('url');
   const [description, setDescription] = useState('');
   const [keywords, setKeywords] = useState('');
   const [courseCategoryId, setCourseCategoryId] = useState('');
@@ -129,6 +133,21 @@ const AddEditCourse = () => {
 
     setLoading(false);
     navigate('/courses');
+  };
+
+  const handleFileUpload = (file: File, type: 'thumbnail' | 'banner' | 'video') => {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const base64String = reader.result as string;
+      if (type === 'thumbnail') {
+        setThumbnail(base64String);
+      } else if (type === 'banner') {
+        setBannerImage(base64String);
+      } else {
+        setVideoUrl(base64String);
+      }
+    };
+    reader.readAsDataURL(file);
   };
 
   const activeCategories = categories.filter(c => c.isActive);
@@ -315,57 +334,161 @@ const AddEditCourse = () => {
             </div>
             <Separator />
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="thumbnail" className="flex items-center gap-2">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Thumbnail Upload/URL */}
+              <div className="space-y-3">
+                <Label className="flex items-center gap-2 text-base">
                   <ImageIcon className="w-4 h-4" />
-                  Thumbnail Image URL
+                  Thumbnail Image
                 </Label>
-                <Input
-                  id="thumbnail"
-                  value={thumbnail}
-                  onChange={(e) => setThumbnail(e.target.value)}
-                  placeholder="https://example.com/thumbnail.jpg"
-                  type="url"
-                />
+                <Tabs value={thumbnailMode} onValueChange={(v) => setThumbnailMode(v as 'upload' | 'url')}>
+                  <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="url" className="gap-2">
+                      <Link2 className="w-3 h-3" />
+                      URL
+                    </TabsTrigger>
+                    <TabsTrigger value="upload" className="gap-2">
+                      <Upload className="w-3 h-3" />
+                      Upload
+                    </TabsTrigger>
+                  </TabsList>
+                  <TabsContent value="url" className="space-y-2">
+                    <Input
+                      value={thumbnail}
+                      onChange={(e) => setThumbnail(e.target.value)}
+                      placeholder="https://example.com/thumbnail.jpg"
+                      type="url"
+                    />
+                  </TabsContent>
+                  <TabsContent value="upload" className="space-y-2">
+                    <div className="border-2 border-dashed rounded-lg p-6 text-center hover:border-primary/50 transition-colors cursor-pointer"
+                      onClick={() => document.getElementById('thumbnail-upload')?.click()}
+                    >
+                      <Upload className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
+                      <p className="text-sm text-muted-foreground">Click to upload or drag and drop</p>
+                      <p className="text-xs text-muted-foreground mt-1">PNG, JPG up to 10MB</p>
+                      <Input
+                        id="thumbnail-upload"
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) handleFileUpload(file, 'thumbnail');
+                        }}
+                      />
+                    </div>
+                  </TabsContent>
+                </Tabs>
                 {thumbnail && (
-                  <div className="mt-2 rounded-md border overflow-hidden">
+                  <div className="rounded-md border overflow-hidden">
                     <img src={thumbnail} alt="Thumbnail preview" className="w-full h-32 object-cover" />
                   </div>
                 )}
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="bannerImage" className="flex items-center gap-2">
+              {/* Banner Upload/URL */}
+              <div className="space-y-3">
+                <Label className="flex items-center gap-2 text-base">
                   <ImageIcon className="w-4 h-4" />
-                  Banner Image URL
+                  Banner Image
                 </Label>
-                <Input
-                  id="bannerImage"
-                  value={bannerImage}
-                  onChange={(e) => setBannerImage(e.target.value)}
-                  placeholder="https://example.com/banner.jpg"
-                  type="url"
-                />
+                <Tabs value={bannerMode} onValueChange={(v) => setBannerMode(v as 'upload' | 'url')}>
+                  <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="url" className="gap-2">
+                      <Link2 className="w-3 h-3" />
+                      URL
+                    </TabsTrigger>
+                    <TabsTrigger value="upload" className="gap-2">
+                      <Upload className="w-3 h-3" />
+                      Upload
+                    </TabsTrigger>
+                  </TabsList>
+                  <TabsContent value="url" className="space-y-2">
+                    <Input
+                      value={bannerImage}
+                      onChange={(e) => setBannerImage(e.target.value)}
+                      placeholder="https://example.com/banner.jpg"
+                      type="url"
+                    />
+                  </TabsContent>
+                  <TabsContent value="upload" className="space-y-2">
+                    <div className="border-2 border-dashed rounded-lg p-6 text-center hover:border-primary/50 transition-colors cursor-pointer"
+                      onClick={() => document.getElementById('banner-upload')?.click()}
+                    >
+                      <Upload className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
+                      <p className="text-sm text-muted-foreground">Click to upload or drag and drop</p>
+                      <p className="text-xs text-muted-foreground mt-1">PNG, JPG up to 10MB</p>
+                      <Input
+                        id="banner-upload"
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) handleFileUpload(file, 'banner');
+                        }}
+                      />
+                    </div>
+                  </TabsContent>
+                </Tabs>
                 {bannerImage && (
-                  <div className="mt-2 rounded-md border overflow-hidden">
+                  <div className="rounded-md border overflow-hidden">
                     <img src={bannerImage} alt="Banner preview" className="w-full h-32 object-cover" />
                   </div>
                 )}
               </div>
 
-              <div className="space-y-2 md:col-span-2">
-                <Label htmlFor="videoUrl" className="flex items-center gap-2">
+              {/* Video Upload/URL */}
+              <div className="space-y-3 md:col-span-2">
+                <Label className="flex items-center gap-2 text-base">
                   <Video className="w-4 h-4" />
-                  Course Video URL
+                  Course Video
                 </Label>
-                <Input
-                  id="videoUrl"
-                  value={videoUrl}
-                  onChange={(e) => setVideoUrl(e.target.value)}
-                  placeholder="https://youtube.com/embed/..."
-                  type="url"
-                />
+                <Tabs value={videoMode} onValueChange={(v) => setVideoMode(v as 'upload' | 'url')}>
+                  <TabsList className="grid w-full grid-cols-2 max-w-md">
+                    <TabsTrigger value="url" className="gap-2">
+                      <Link2 className="w-3 h-3" />
+                      URL
+                    </TabsTrigger>
+                    <TabsTrigger value="upload" className="gap-2">
+                      <Upload className="w-3 h-3" />
+                      Upload
+                    </TabsTrigger>
+                  </TabsList>
+                  <TabsContent value="url" className="space-y-2">
+                    <Input
+                      value={videoUrl}
+                      onChange={(e) => setVideoUrl(e.target.value)}
+                      placeholder="https://youtube.com/embed/... or video URL"
+                      type="url"
+                    />
+                  </TabsContent>
+                  <TabsContent value="upload" className="space-y-2">
+                    <div className="border-2 border-dashed rounded-lg p-8 text-center hover:border-primary/50 transition-colors cursor-pointer"
+                      onClick={() => document.getElementById('video-upload')?.click()}
+                    >
+                      <Video className="w-10 h-10 mx-auto mb-2 text-muted-foreground" />
+                      <p className="text-sm text-muted-foreground">Click to upload or drag and drop</p>
+                      <p className="text-xs text-muted-foreground mt-1">MP4, WebM up to 100MB</p>
+                      <Input
+                        id="video-upload"
+                        type="file"
+                        accept="video/*"
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) handleFileUpload(file, 'video');
+                        }}
+                      />
+                    </div>
+                  </TabsContent>
+                </Tabs>
+                {videoUrl && videoUrl.startsWith('data:video') && (
+                  <div className="rounded-md border overflow-hidden">
+                    <video src={videoUrl} controls className="w-full h-48" />
+                  </div>
+                )}
               </div>
             </div>
           </div>
