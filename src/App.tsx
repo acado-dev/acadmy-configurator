@@ -14,6 +14,7 @@ import AddUniversity from "./pages/AddUniversity";
 import UniversityDetails from "./pages/UniversityDetails";
 import UniversityView from "./pages/UniversityView";
 import Courses from "./pages/Courses";
+import AdminCourseDetail from "./pages/CourseDetail";
 import Users from "./pages/Users";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
@@ -97,6 +98,7 @@ const App = () => {
               <Route path="universities/:universityId/view" element={<UniversityView />} />
               <Route path="universities/:universityId/details" element={<UniversityDetails />} />
               <Route path="courses" element={<Courses />} />
+              <Route path="courses/:courseId" element={<AdminCourseDetail />} />
               <Route path="course-category" element={<CourseCategories />} />
               <Route path="course-level" element={<CourseLevels />} />
               <Route path="course-type" element={<CourseTypes />} />
