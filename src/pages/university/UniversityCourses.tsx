@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Switch } from '@/components/ui/switch';
 import {
   Search,
   Plus,
@@ -15,14 +14,11 @@ import {
   Eye,
   FileText,
   Users,
-  Calendar,
   Target,
   MoreVertical,
-  GraduationCap,
   Filter,
   X,
-  Link2,
-  Info
+  Link2
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -79,8 +75,6 @@ const UniversityCourses = () => {
           courseLevelId: '1',
           courseTypeId: '1',
           description: 'Advanced business administration program',
-          duration: '2 years',
-          intake: 'Fall 2024',
           applications: 87,
           applicationFormId: 'form-1',
           matchingCriteriaConfigured: true,
@@ -97,14 +91,11 @@ const UniversityCourses = () => {
           courseLevelId: '2',
           courseTypeId: '2',
           description: 'International exchange program for computer science students',
-          duration: '1 semester',
-          intake: 'Spring 2024',
           applications: 45,
           applicationFormId: 'form-2',
           matchingCriteriaConfigured: true,
           isActive: true,
           applicationLink: 'https://apply.university.edu/cs-exchange',
-          informationCollected: 'Academic records, language proficiency'
         },
         {
           id: '3',
@@ -115,14 +106,10 @@ const UniversityCourses = () => {
           courseLevelId: '1',
           courseTypeId: '3',
           description: 'Foundation program for engineering students',
-          duration: '1 year',
-          intake: 'Fall 2024',
-          applications: 62,
+          applications: 0,
           applicationFormId: null,
           matchingCriteriaConfigured: false,
           isActive: false,
-          applicationLink: '',
-          informationCollected: ''
         }
       ];
       localStorage.setItem('universityCourses', JSON.stringify(sampleCourses));
@@ -189,6 +176,134 @@ const UniversityCourses = () => {
 
   const hasActiveFilters = filterCategory || filterLevel || filterType || searchTerm;
 
+  const renderCourseCard = (course: any) => (
+    <Card key={course.id} className="p-6 hover-lift">
+      <div className="space-y-4">
+        <div className="flex justify-between items-start gap-2">
+          <div className="flex flex-wrap gap-1">
+            <Badge variant="secondary">{getTypeName(course.courseTypeId)}</Badge>
+            <Badge variant="outline">{getLevelName(course.courseLevelId)}</Badge>
+            <Badge variant={course.isActive ? "default" : "secondary"}>
+              {course.isActive ? "Active" : "Draft"}
+            </Badge>
+          </div>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <MoreVertical className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => navigate(`/university/courses/${course.id}/edit`)}>
+                <Edit className="h-4 w-4 mr-2" />
+                Edit Course
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigate(`/university/forms/${course.applicationFormId || 'new'}?courseId=${course.id}`)}>
+                <FileText className="h-4 w-4 mr-2" />
+                {course.applicationFormId ? 'Edit Form' : 'Create Form'}
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigate(`/university/application-process/${course.id}`)}>
+                <Target className="h-4 w-4 mr-2" />
+                {course.matchingCriteriaConfigured ? 'Edit Criteria' : 'Set Criteria'}
+              </DropdownMenuItem>
+              <DropdownMenuItem 
+                onClick={() => setCourseToDelete(course)}
+                className="text-destructive"
+              >
+                <Trash2 className="h-4 w-4 mr-2" />
+                Delete
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+
+        {course.thumbnail && (
+          <img
+            src={course.thumbnail}
+            alt={course.name}
+            className="w-full h-32 object-cover rounded-md"
+          />
+        )}
+
+        <div>
+          <h3 className="font-semibold text-lg">{course.name}</h3>
+          <p className="text-sm text-muted-foreground">{course.shortName}</p>
+          {course.courseCode && (
+            <p className="text-xs text-muted-foreground mt-1">Code: {course.courseCode}</p>
+          )}
+          <p className="text-sm text-muted-foreground mt-2 line-clamp-2">
+            {course.description}
+          </p>
+        </div>
+
+        <div className="grid grid-cols-2 gap-3 p-3 bg-accent/50 rounded-lg">
+          <div className="flex items-center gap-2">
+            <Users className="h-4 w-4 text-primary" />
+            <div>
+              <p className="text-xs text-muted-foreground">Applications</p>
+              <p className="text-lg font-bold">{course.applications || 0}</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <FileText className="h-4 w-4 text-primary" />
+            <div>
+              <p className="text-xs text-muted-foreground">Form</p>
+              <p className="text-sm font-medium">
+                {course.applicationFormId ? '✓ Set' : '✗ None'}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {course.applicationLink && (
+          <div className="flex items-center gap-2 text-xs">
+            <Link2 className="h-3 w-3 text-muted-foreground" />
+            <a 
+              href={course.applicationLink} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-primary hover:underline truncate"
+            >
+              Application Link
+            </a>
+          </div>
+        )}
+
+        <div className="flex flex-wrap gap-2">
+          <Button
+            variant="default"
+            size="sm"
+            onClick={() => navigate(`/university/applications?courseId=${course.id}`)}
+            className="flex-1"
+          >
+            <Eye className="w-3 h-3 mr-1" />
+            View Applications ({course.applications || 0})
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => navigate(`/university/courses/${course.id}/edit`)}
+          >
+            <Edit className="w-3 h-3 mr-1" />
+            Edit
+          </Button>
+        </div>
+
+        {!course.applicationFormId && (
+          <Button 
+            size="sm" 
+            variant="secondary"
+            className="w-full"
+            onClick={() => navigate(`/university/forms/new?courseId=${course.id}`)}
+          >
+            <FileText className="h-3 w-3 mr-1" />
+            Setup Application Form
+          </Button>
+        )}
+      </div>
+    </Card>
+  );
+
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto p-6">
@@ -203,7 +318,7 @@ const UniversityCourses = () => {
           </Button>
         </div>
 
-        <Card className="p-4 space-y-4">
+        <Card className="p-4 space-y-4 mb-6">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
             <Input
@@ -318,164 +433,12 @@ const UniversityCourses = () => {
           </TabsList>
 
           <TabsContent value="all" className="space-y-4">
-            <div className="grid grid-cols-1 gap-4">
-              {filteredCourses.map((course) => (
-                <Card key={course.id} className="hover:shadow-lg transition-shadow">
-                  <CardHeader>
-                    <div className="flex justify-between items-start">
-                      <div className="flex-1">
-                        <CardTitle className="flex items-center gap-2">
-                          <GraduationCap className="h-5 w-5" />
-                          {course.name}
-                        </CardTitle>
-                        <CardDescription className="mt-1">
-                          {course.courseCode && `Code: ${course.courseCode} • `}
-                          {course.intake || 'No intake specified'}
-                        </CardDescription>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Badge variant="secondary">{getTypeName(course.courseTypeId)}</Badge>
-                        <Badge variant="outline">{getLevelName(course.courseLevelId)}</Badge>
-                        <Switch
-                          checked={course.isActive}
-                          onCheckedChange={() => handleToggleActive(course)}
-                        />
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon">
-                              <MoreVertical className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem onClick={() => navigate(`/university/courses/${course.id}/edit`)}>
-                              <Edit className="h-4 w-4 mr-2" />
-                              Edit Course
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => navigate(`/university/forms/${course.applicationFormId || 'new'}?courseId=${course.id}`)}>
-                              <FileText className="h-4 w-4 mr-2" />
-                              {course.applicationFormId ? 'Edit Form' : 'Create Form'}
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => navigate(`/university/application-process/${course.id}`)}>
-                              <Target className="h-4 w-4 mr-2" />
-                              {course.matchingCriteriaConfigured ? 'Edit Criteria' : 'Set Criteria'}
-                            </DropdownMenuItem>
-                            <DropdownMenuItem 
-                              onClick={() => setCourseToDelete(course)}
-                              className="text-destructive"
-                            >
-                              <Trash2 className="h-4 w-4 mr-2" />
-                              Delete
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                        <div className="flex items-start gap-2">
-                          <Calendar className="h-4 w-4 text-muted-foreground mt-1" />
-                          <div>
-                            <p className="text-sm font-medium">Duration</p>
-                            <p className="text-sm text-muted-foreground">{course.duration || 'Not specified'}</p>
-                          </div>
-                        </div>
-                        <div className="flex items-start gap-2">
-                          <Users className="h-4 w-4 text-muted-foreground mt-1" />
-                          <div>
-                            <p className="text-sm font-medium">Applications</p>
-                            <p className="text-sm text-muted-foreground">{course.applications || 0}</p>
-                          </div>
-                        </div>
-                        <div className="flex items-start gap-2">
-                          <FileText className="h-4 w-4 text-muted-foreground mt-1" />
-                          <div>
-                            <p className="text-sm font-medium">Application Form</p>
-                            <p className="text-sm text-muted-foreground">
-                              {course.applicationFormId ? '✓ Configured' : '✗ Not Set'}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="flex items-start gap-2">
-                          <Target className="h-4 w-4 text-muted-foreground mt-1" />
-                          <div>
-                            <p className="text-sm font-medium">Matching Criteria</p>
-                            <p className="text-sm text-muted-foreground">
-                              {course.matchingCriteriaConfigured ? '✓ Configured' : '✗ Not Set'}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-
-                      {course.applicationLink && (
-                        <div className="flex items-start gap-2 p-3 bg-accent/50 rounded-lg">
-                          <Link2 className="h-4 w-4 text-primary mt-1" />
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium">Application Link</p>
-                            <a 
-                              href={course.applicationLink} 
-                              target="_blank" 
-                              rel="noopener noreferrer"
-                              className="text-xs text-primary hover:underline truncate block"
-                            >
-                              {course.applicationLink}
-                            </a>
-                          </div>
-                        </div>
-                      )}
-
-                      {course.informationCollected && (
-                        <div className="flex items-start gap-2 p-3 bg-accent/50 rounded-lg">
-                          <Info className="h-4 w-4 text-primary mt-1" />
-                          <div className="flex-1">
-                            <p className="text-sm font-medium">Information Collected</p>
-                            <p className="text-xs text-muted-foreground mt-1">{course.informationCollected}</p>
-                          </div>
-                        </div>
-                      )}
-
-                      <div className="flex flex-wrap gap-2 pt-2">
-                        <Button 
-                          size="sm" 
-                          onClick={() => navigate(`/university/applications?courseId=${course.id}`)}
-                        >
-                          <Users className="h-3 w-3 mr-1" />
-                          View Applications
-                        </Button>
-                        {!course.applicationFormId && (
-                          <Button 
-                            size="sm" 
-                            variant="outline"
-                            onClick={() => navigate(`/university/forms/new?courseId=${course.id}`)}
-                          >
-                            <FileText className="h-3 w-3 mr-1" />
-                            Setup Form
-                          </Button>
-                        )}
-                        {course.applicationFormId && !course.matchingCriteriaConfigured && (
-                          <Button 
-                            size="sm" 
-                            variant="outline"
-                            onClick={() => navigate(`/university/application-process/${course.id}`)}
-                          >
-                            <Target className="h-3 w-3 mr-1" />
-                            Setup Criteria
-                          </Button>
-                        )}
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {filteredCourses.map((course) => renderCourseCard(course))}
             </div>
-          </TabsContent>
-
-          <TabsContent value="all" className="space-y-4">
-            {filteredCourses.length === 0 ? (
+            {filteredCourses.length === 0 && (
               <Card className="p-12">
                 <div className="text-center text-muted-foreground">
-                  <GraduationCap className="h-12 w-12 mx-auto mb-4 opacity-50" />
                   <p>No courses found</p>
                   {hasActiveFilters ? (
                     <p className="text-sm mt-1">Try adjusting your filters or search query</p>
@@ -484,10 +447,13 @@ const UniversityCourses = () => {
                   )}
                 </div>
               </Card>
-            ) : null}
+            )}
           </TabsContent>
 
           <TabsContent value="active" className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {filteredCourses.map((course) => renderCourseCard(course))}
+            </div>
             {filteredCourses.length === 0 && (
               <Card className="p-12">
                 <div className="text-center text-muted-foreground">
@@ -498,6 +464,9 @@ const UniversityCourses = () => {
           </TabsContent>
 
           <TabsContent value="draft" className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {filteredCourses.map((course) => renderCourseCard(course))}
+            </div>
             {filteredCourses.length === 0 && (
               <Card className="p-12">
                 <div className="text-center text-muted-foreground">
