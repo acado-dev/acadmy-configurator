@@ -46,6 +46,7 @@ import UniversityLayout from '@/components/UniversityLayout';
 import UniversityProtectedRoute from '@/components/UniversityProtectedRoute';
 import UniversityDashboard from '@/pages/university/UniversityDashboard';
 import UniversityCourses from '@/pages/university/UniversityCourses';
+import UniversityAddEditCourse from '@/pages/university/UniversityAddEditCourse';
 import UniversityForms from '@/pages/university/UniversityForms';
 import UniversityFormBuilder from '@/pages/university/UniversityFormBuilder';
 import ApplicationProcess from '@/pages/university/ApplicationProcess';
@@ -140,9 +141,8 @@ const App = () => {
               <Route path="dashboard" element={<UniversityDashboard />} />
               <Route path="info" element={<UniversityInfo />} />
               <Route path="courses" element={<UniversityCourses />} />
-              <Route path="courses/new" element={<UniversityCourses />} />
-              <Route path="courses/:courseId" element={<UniversityCourses />} />
-              <Route path="courses/:courseId/edit" element={<UniversityCourses />} />
+              <Route path="courses/new" element={<UniversityAddEditCourse />} />
+              <Route path="courses/:courseId/edit" element={<UniversityAddEditCourse />} />
               <Route path="forms" element={<UniversityForms />} />
               <Route path="forms/new" element={<UniversityFormBuilder />} />
               <Route path="forms/:formId" element={<UniversityFormBuilder />} />
