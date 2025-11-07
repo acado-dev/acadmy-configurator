@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Search, Edit, Trash2, Copy, ListChecks, Eye } from 'lucide-react';
+import { Plus, Search, Trash2, Copy, ListChecks, Eye, Edit } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -12,7 +12,6 @@ import { CourseLevel } from '@/types/courseLevel';
 import { CourseType } from '@/types/courseType';
 import { LearningOutcome } from '@/types/learningOutcome';
 import { University } from '@/types/application';
-import AddEditCourseDialog from '@/components/courses/AddEditCourseDialog';
 import LearningOutcomeAssignDialog from '@/components/courses/LearningOutcomeAssignDialog';
 import { toast } from '@/hooks/use-toast';
 import {
@@ -35,7 +34,6 @@ const Courses = () => {
   const [organizations, setOrganizations] = useState<University[]>([]);
   const [learningOutcomes, setLearningOutcomes] = useState<LearningOutcome[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [isAddEditOpen, setIsAddEditOpen] = useState(false);
   const [isAssignOutcomesOpen, setIsAssignOutcomesOpen] = useState(false);
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
   const [courseToDelete, setCourseToDelete] = useState<Course | null>(null);
@@ -83,32 +81,6 @@ const Courses = () => {
     setLearningOutcomes(JSON.parse(storedOutcomes || '[]'));
   };
 
-  const handleAddEdit = (courseData: Omit<Course, 'id' | 'createdAt' | 'updatedAt'>) => {
-    const now = new Date().toISOString();
-    
-    if (selectedCourse) {
-      const updated = courses.map((c) =>
-        c.id === selectedCourse.id
-          ? { ...courseData, id: c.id, createdAt: c.createdAt, updatedAt: now }
-          : c
-      );
-      setCourses(updated);
-      localStorage.setItem('courses', JSON.stringify(updated));
-      toast({ title: 'Success', description: 'Course updated successfully' });
-    } else {
-      const newCourse: Course = {
-        ...courseData,
-        id: Date.now().toString(),
-        createdAt: now,
-        updatedAt: now,
-      };
-      const updated = [...courses, newCourse];
-      setCourses(updated);
-      localStorage.setItem('courses', JSON.stringify(updated));
-      toast({ title: 'Success', description: 'Course added successfully' });
-    }
-    setSelectedCourse(null);
-  };
 
   const handleDelete = () => {
     if (!courseToDelete) return;
@@ -182,10 +154,7 @@ const Courses = () => {
         <Button
           variant="gradient"
           className="gap-2"
-          onClick={() => {
-            setSelectedCourse(null);
-            setIsAddEditOpen(true);
-          }}
+          onClick={() => navigate('/courses/add')}
         >
           <Plus className="w-4 h-4" />
           Add Course
@@ -253,10 +222,7 @@ const Courses = () => {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => {
-                    setSelectedCourse(course);
-                    setIsAddEditOpen(true);
-                  }}
+                  onClick={() => navigate(`/courses/edit/${course.id}`)}
                 >
                   <Edit className="w-3 h-3 mr-1" />
                   Edit
@@ -304,20 +270,6 @@ const Courses = () => {
           </div>
         </Card>
       )}
-
-      <AddEditCourseDialog
-        isOpen={isAddEditOpen}
-        onClose={() => {
-          setIsAddEditOpen(false);
-          setSelectedCourse(null);
-        }}
-        onSave={handleAddEdit}
-        course={selectedCourse}
-        categories={categories}
-        levels={levels}
-        types={types}
-        organizations={organizations}
-      />
 
       {selectedCourse && (
         <LearningOutcomeAssignDialog
