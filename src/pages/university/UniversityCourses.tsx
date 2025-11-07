@@ -19,7 +19,9 @@ import {
   MoreVertical,
   Filter,
   X,
-  Link2
+  Link2,
+  Copy,
+  ListChecks
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -164,6 +166,22 @@ const UniversityCourses = () => {
     });
   };
 
+  const handleDuplicate = (course: any) => {
+    const newCourse: any = {
+      ...course,
+      id: Date.now().toString(),
+      name: `${course.name} (Copy)`,
+      shortName: `${course.shortName} (Copy)`,
+      applications: 0,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+    const updated = [...courses, newCourse];
+    setCourses(updated);
+    localStorage.setItem('universityCourses', JSON.stringify(updated));
+    toast({ title: 'Success', description: 'Course duplicated successfully' });
+  };
+
   const getCategoryName = (id: string) => categories.find((c) => c.id === id)?.name || 'N/A';
   const getLevelName = (id: string) => levels.find((l) => l.id === id)?.name || 'N/A';
   const getTypeName = (id: string) => types.find((t) => t.id === id)?.name || 'N/A';
@@ -249,12 +267,40 @@ const UniversityCourses = () => {
             <Eye className="w-4 h-4 mr-2" />
             View Applications
           </Button>
+        </div>
+
+        <div className="flex flex-wrap gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => navigate(`/university/courses/${course.id}`)}
+          >
+            <Eye className="w-3 h-3 mr-1" />
+            View
+          </Button>
           <Button
             variant="outline"
             size="sm"
             onClick={() => navigate(`/university/courses/${course.id}/edit`)}
           >
-            <Edit className="w-4 h-4" />
+            <Edit className="w-3 h-3 mr-1" />
+            Edit
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => handleDuplicate(course)}
+          >
+            <Copy className="w-3 h-3 mr-1" />
+            Duplicate
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => navigate(`/university/courses/${course.id}/outcomes`)}
+          >
+            <ListChecks className="w-3 h-3 mr-1" />
+            Outcomes
           </Button>
           <Button
             variant="outline"
@@ -262,7 +308,7 @@ const UniversityCourses = () => {
             onClick={() => setCourseToDelete(course)}
             className="text-destructive hover:text-destructive"
           >
-            <Trash2 className="w-4 h-4" />
+            <Trash2 className="w-3 h-3" />
           </Button>
         </div>
       </div>
