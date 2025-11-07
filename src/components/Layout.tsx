@@ -84,6 +84,7 @@ const Layout = () => {
       subItems: [
         { label: 'Course Category', path: '/course-category', icon: Hash },
         { label: 'Course Level', path: '/course-level', icon: LayoutDashboard },
+        { label: 'Course Type', path: '/course-type', icon: Award },
         { label: 'Learning Outcome', path: '/learning-outcome', icon: Target },
         { label: 'Courses', path: '/courses', icon: BookOpen },
       ]
