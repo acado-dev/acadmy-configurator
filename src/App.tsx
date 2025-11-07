@@ -57,6 +57,7 @@ import ProcessSteps from '@/pages/university/ProcessSteps';
 import ProcessConfiguration from '@/pages/university/ProcessConfiguration';
 import UserManagement from '@/pages/university/UserManagement';
 import CourseCategories from '@/pages/CourseCategories';
+import CourseLevels from '@/pages/CourseLevels';
 
 const queryClient = new QueryClient();
 
@@ -95,6 +96,7 @@ const App = () => {
               <Route path="universities/:universityId/details" element={<UniversityDetails />} />
               <Route path="courses" element={<Courses />} />
               <Route path="course-category" element={<CourseCategories />} />
+              <Route path="course-level" element={<CourseLevels />} />
               <Route path="users" element={<Users />} />
               {/* Applications - Master Admin */}
               <Route path="applications-overview" element={<ApplicationsOverview />} />
