@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Search, Trash2, Copy, ListChecks, Eye, Edit } from 'lucide-react';
+import { Plus, Search, Trash2, Copy, ListChecks, Eye, Edit, Filter, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Course } from '@/types/course';
 import { CourseCategory } from '@/types/courseCategory';
 import { CourseLevel } from '@/types/courseLevel';
@@ -34,6 +35,10 @@ const Courses = () => {
   const [organizations, setOrganizations] = useState<University[]>([]);
   const [learningOutcomes, setLearningOutcomes] = useState<LearningOutcome[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [filterCategory, setFilterCategory] = useState('');
+  const [filterLevel, setFilterLevel] = useState('');
+  const [filterType, setFilterType] = useState('');
+  const [filterOrganization, setFilterOrganization] = useState('');
   const [isAssignOutcomesOpen, setIsAssignOutcomesOpen] = useState(false);
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
   const [courseToDelete, setCourseToDelete] = useState<Course | null>(null);
@@ -138,11 +143,28 @@ const Courses = () => {
   const getTypeName = (id: string) => types.find((t) => t.id === id)?.name || 'N/A';
   const getOrganizationName = (id: string) => organizations.find((o) => o.id === id)?.name || 'N/A';
 
-  const filteredCourses = courses.filter((course) =>
-    course.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    course.shortName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    course.courseCode?.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredCourses = courses.filter((course) => {
+    const matchesSearch = course.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      course.shortName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      course.courseCode?.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    const matchesCategory = !filterCategory || course.courseCategoryId === filterCategory;
+    const matchesLevel = !filterLevel || course.courseLevelId === filterLevel;
+    const matchesType = !filterType || course.courseTypeId === filterType;
+    const matchesOrganization = !filterOrganization || course.organizationId === filterOrganization;
+    
+    return matchesSearch && matchesCategory && matchesLevel && matchesType && matchesOrganization;
+  });
+
+  const clearFilters = () => {
+    setFilterCategory('');
+    setFilterLevel('');
+    setFilterType('');
+    setFilterOrganization('');
+    setSearchQuery('');
+  };
+
+  const hasActiveFilters = filterCategory || filterLevel || filterType || filterOrganization || searchQuery;
 
   return (
     <div className="space-y-6">
@@ -161,16 +183,131 @@ const Courses = () => {
         </Button>
       </div>
 
-      <Card className="p-4">
+      <Card className="p-4 space-y-4">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input
-            placeholder="Search courses..."
+            placeholder="Search courses by name, short name, or code..."
             className="pl-10"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
+
+        <div className="flex items-center gap-2">
+          <Filter className="w-4 h-4 text-muted-foreground" />
+          <span className="text-sm font-medium">Filters:</span>
+          <div className="flex-1 grid grid-cols-2 md:grid-cols-4 gap-2">
+            <Select value={filterCategory} onValueChange={setFilterCategory}>
+              <SelectTrigger className="h-9">
+                <SelectValue placeholder="Category" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Categories</SelectItem>
+                {categories.filter(c => c.isActive).map((cat) => (
+                  <SelectItem key={cat.id} value={cat.id}>
+                    {cat.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <Select value={filterLevel} onValueChange={setFilterLevel}>
+              <SelectTrigger className="h-9">
+                <SelectValue placeholder="Level" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Levels</SelectItem>
+                {levels.filter(l => l.isActive).map((level) => (
+                  <SelectItem key={level.id} value={level.id}>
+                    {level.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <Select value={filterType} onValueChange={setFilterType}>
+              <SelectTrigger className="h-9">
+                <SelectValue placeholder="Type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Types</SelectItem>
+                {types.filter(t => t.isActive).map((type) => (
+                  <SelectItem key={type.id} value={type.id}>
+                    {type.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <Select value={filterOrganization} onValueChange={setFilterOrganization}>
+              <SelectTrigger className="h-9">
+                <SelectValue placeholder="Organization" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Organizations</SelectItem>
+                {organizations.map((org) => (
+                  <SelectItem key={org.id} value={org.id}>
+                    {org.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          {hasActiveFilters && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={clearFilters}
+              className="gap-2"
+            >
+              <X className="w-4 h-4" />
+              Clear
+            </Button>
+          )}
+        </div>
+
+        {hasActiveFilters && (
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="text-xs text-muted-foreground">Active filters:</span>
+            {filterCategory && (
+              <Badge variant="secondary" className="gap-1">
+                Category: {getCategoryName(filterCategory)}
+                <X
+                  className="w-3 h-3 cursor-pointer"
+                  onClick={() => setFilterCategory('')}
+                />
+              </Badge>
+            )}
+            {filterLevel && (
+              <Badge variant="secondary" className="gap-1">
+                Level: {getLevelName(filterLevel)}
+                <X
+                  className="w-3 h-3 cursor-pointer"
+                  onClick={() => setFilterLevel('')}
+                />
+              </Badge>
+            )}
+            {filterType && (
+              <Badge variant="secondary" className="gap-1">
+                Type: {getTypeName(filterType)}
+                <X
+                  className="w-3 h-3 cursor-pointer"
+                  onClick={() => setFilterType('')}
+                />
+              </Badge>
+            )}
+            {filterOrganization && (
+              <Badge variant="secondary" className="gap-1">
+                Org: {getOrganizationName(filterOrganization)}
+                <X
+                  className="w-3 h-3 cursor-pointer"
+                  onClick={() => setFilterOrganization('')}
+                />
+              </Badge>
+            )}
+          </div>
+        )}
       </Card>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -264,8 +401,10 @@ const Courses = () => {
         <Card className="p-12">
           <div className="text-center text-muted-foreground">
             <p>No courses found</p>
-            {searchQuery && (
-              <p className="text-sm mt-1">Try adjusting your search query</p>
+            {hasActiveFilters ? (
+              <p className="text-sm mt-1">Try adjusting your filters or search query</p>
+            ) : (
+              <p className="text-sm mt-1">Get started by creating your first course</p>
             )}
           </div>
         </Card>
