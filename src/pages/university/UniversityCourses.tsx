@@ -228,6 +228,49 @@ const UniversityCourses = () => {
           </p>
         </div>
 
+        <div className="flex flex-wrap gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => navigate(`/university/courses/${course.id}`)}
+          >
+            <Eye className="w-3 h-3 mr-1" />
+            View
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => handleDuplicate(course)}
+          >
+            <Copy className="w-3 h-3 mr-1" />
+            Duplicate
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => navigate(`/university/courses/${course.id}/outcomes`)}
+          >
+            <ListChecks className="w-3 h-3 mr-1" />
+            Outcomes
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => navigate(`/university/courses/${course.id}/edit`)}
+          >
+            <Edit className="w-3 h-3 mr-1" />
+            Edit
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setCourseToDelete(course)}
+            className="text-destructive hover:text-destructive"
+          >
+            <Trash2 className="w-3 h-3" />
+          </Button>
+        </div>
+
         <div className="bg-primary/10 rounded-lg p-3">
           <div className="flex items-center gap-2 mb-3">
             <Users className="h-5 w-5 text-primary" />
@@ -257,60 +300,15 @@ const UniversityCourses = () => {
           </div>
         </div>
 
-        <div className="flex gap-2">
-          <Button
-            variant="default"
-            size="sm"
-            onClick={() => navigate(`/university/applications?courseId=${course.id}`)}
-            className="flex-1"
-          >
-            <Eye className="w-4 h-4 mr-2" />
-            View Applications
-          </Button>
-        </div>
-
-        <div className="flex flex-wrap gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => navigate(`/university/courses/${course.id}`)}
-          >
-            <Eye className="w-3 h-3 mr-1" />
-            View
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => navigate(`/university/courses/${course.id}/edit`)}
-          >
-            <Edit className="w-3 h-3 mr-1" />
-            Edit
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => handleDuplicate(course)}
-          >
-            <Copy className="w-3 h-3 mr-1" />
-            Duplicate
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => navigate(`/university/courses/${course.id}/outcomes`)}
-          >
-            <ListChecks className="w-3 h-3 mr-1" />
-            Outcomes
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setCourseToDelete(course)}
-            className="text-destructive hover:text-destructive"
-          >
-            <Trash2 className="w-3 h-3" />
-          </Button>
-        </div>
+        <Button
+          variant="default"
+          size="sm"
+          onClick={() => navigate(`/university/applications?courseId=${course.id}`)}
+          className="w-full"
+        >
+          <Eye className="w-4 h-4 mr-2" />
+          View Applications
+        </Button>
       </div>
     </Card>
   );
