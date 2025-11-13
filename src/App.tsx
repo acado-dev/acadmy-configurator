@@ -69,6 +69,8 @@ import CreateCommunityPost from '@/pages/CreateCommunityPost';
 import Wall from '@/pages/Wall';
 import CreateWallPost from '@/pages/CreateWallPost';
 import Reels from '@/pages/Reels';
+import Events from '@/pages/Events';
+import CreateEvent from '@/pages/CreateEvent';
 
 const queryClient = new QueryClient();
 
@@ -125,6 +127,10 @@ const App = () => {
               <Route path="wall/edit/:id" element={<CreateWallPost />} />
               {/* Reels */}
               <Route path="reels" element={<Reels />} />
+              {/* Events */}
+              <Route path="events" element={<Events />} />
+              <Route path="events/create" element={<CreateEvent />} />
+              <Route path="events/edit/:id" element={<CreateEvent />} />
               {/* Applications - Master Admin */}
               <Route path="applications-overview" element={<ApplicationsOverview />} />
               <Route path="applications" element={<ApplicationsList />} />
