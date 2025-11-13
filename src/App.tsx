@@ -64,6 +64,8 @@ import CourseLevels from '@/pages/CourseLevels';
 import CourseTypes from '@/pages/CourseTypes';
 import LearningOutcomes from '@/pages/LearningOutcomes';
 import CourseCampaign from '@/pages/CourseCampaign';
+import CommunityPosts from '@/pages/CommunityPosts';
+import CreateCommunityPost from '@/pages/CreateCommunityPost';
 
 const queryClient = new QueryClient();
 
@@ -110,6 +112,10 @@ const App = () => {
               <Route path="course-type" element={<CourseTypes />} />
               <Route path="learning-outcome" element={<LearningOutcomes />} />
               <Route path="users" element={<Users />} />
+              {/* Community Posts */}
+              <Route path="communities" element={<CommunityPosts />} />
+              <Route path="communities/create" element={<CreateCommunityPost />} />
+              <Route path="communities/edit/:postId" element={<CreateCommunityPost />} />
               {/* Applications - Master Admin */}
               <Route path="applications-overview" element={<ApplicationsOverview />} />
               <Route path="applications" element={<ApplicationsList />} />
