@@ -66,6 +66,8 @@ import LearningOutcomes from '@/pages/LearningOutcomes';
 import CourseCampaign from '@/pages/CourseCampaign';
 import CommunityPosts from '@/pages/CommunityPosts';
 import CreateCommunityPost from '@/pages/CreateCommunityPost';
+import Wall from '@/pages/Wall';
+import CreateWallPost from '@/pages/CreateWallPost';
 
 const queryClient = new QueryClient();
 
@@ -116,6 +118,10 @@ const App = () => {
               <Route path="communities" element={<CommunityPosts />} />
               <Route path="communities/create" element={<CreateCommunityPost />} />
               <Route path="communities/edit/:postId" element={<CreateCommunityPost />} />
+              {/* Wall */}
+              <Route path="wall" element={<Wall />} />
+              <Route path="wall/create" element={<CreateWallPost />} />
+              <Route path="wall/edit/:id" element={<CreateWallPost />} />
               {/* Applications - Master Admin */}
               <Route path="applications-overview" element={<ApplicationsOverview />} />
               <Route path="applications" element={<ApplicationsList />} />
