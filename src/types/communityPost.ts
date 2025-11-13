@@ -1,4 +1,4 @@
-export type ContentType = 'Notes' | 'Blog' | 'Announcement' | 'Article';
+export type ContentType = 'notes' | 'video';
 
 export interface CommunityCategory {
   id: string;

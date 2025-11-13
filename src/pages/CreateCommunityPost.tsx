@@ -31,7 +31,7 @@ const STORAGE_KEYS = {
   CATEGORIES: "communityCategories",
 };
 
-const contentTypes: ContentType[] = ["Notes", "Blog", "Announcement", "Article"];
+const contentTypes: ContentType[] = ["notes", "video"];
 
 export default function CreateCommunityPost() {
   const navigate = useNavigate();
@@ -42,7 +42,7 @@ export default function CreateCommunityPost() {
   const [formData, setFormData] = useState<Partial<CommunityPost>>({
     title: "",
     description: "",
-    contentType: "Blog",
+    contentType: "notes",
     categoryId: "",
     thumbnail: "",
     media: "",
@@ -129,7 +129,7 @@ export default function CreateCommunityPost() {
       id: isEditMode ? postId! : Date.now().toString(),
       title: formData.title.trim(),
       description: formData.description || "",
-      contentType: formData.contentType || "Blog",
+      contentType: formData.contentType || "notes",
       categoryId: formData.categoryId,
       thumbnail: formData.thumbnail,
       media: formData.media,
@@ -248,7 +248,7 @@ export default function CreateCommunityPost() {
           <div className="space-y-2">
             <Label htmlFor="contentType">Content Type</Label>
             <Select
-              value={formData.contentType || "Blog"}
+              value={formData.contentType || "notes"}
               onValueChange={(value: ContentType) =>
                 setFormData({ ...formData, contentType: value })
               }
@@ -259,7 +259,7 @@ export default function CreateCommunityPost() {
               <SelectContent>
                 {contentTypes.map((type) => (
                   <SelectItem key={type} value={type}>
-                    {type}
+                    {type.charAt(0).toUpperCase() + type.slice(1)}
                   </SelectItem>
                 ))}
               </SelectContent>
