@@ -1,4 +1,4 @@
-export type ContentType = 'notes' | 'video';
+export type ContentType = 'images' | 'notes' | 'videos';
 
 export interface CommunityCategory {
   id: string;

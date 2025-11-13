@@ -31,7 +31,7 @@ const STORAGE_KEYS = {
   CATEGORIES: "communityCategories",
 };
 
-const contentTypes: ContentType[] = ["notes", "video"];
+const contentTypes: ContentType[] = ["images", "notes", "videos"];
 
 export default function CreateCommunityPost() {
   const navigate = useNavigate();
@@ -167,6 +167,32 @@ export default function CreateCommunityPost() {
           toast({
             title: "Error",
             description: "Only .jpg, .jpeg, and .png files are allowed for thumbnail",
+            variant: "destructive",
+          });
+          return;
+        }
+      }
+
+      if (field === "media") {
+        const contentType = formData.contentType;
+        let validTypes: string[] = [];
+        let errorMessage = "";
+
+        if (contentType === "images") {
+          validTypes = ["image/jpeg", "image/jpg", "image/png", "image/gif", "image/svg+xml", "image/webp"];
+          errorMessage = "Only .jpg, .jpeg, .png, .gif, .svg, and .webp files are allowed for images";
+        } else if (contentType === "notes") {
+          validTypes = ["application/pdf", "application/vnd.ms-powerpoint", "application/vnd.openxmlformats-officedocument.presentationml.presentation", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"];
+          errorMessage = "Only .pdf, .ppt, .pptx, .doc, and .docx files are allowed for notes";
+        } else if (contentType === "videos") {
+          validTypes = ["video/mp4", "video/quicktime", "video/x-msvideo", "video/x-matroska", "video/webm"];
+          errorMessage = "Only .mp4, .mov, .avi, .mkv, and .webm files are allowed for videos";
+        }
+
+        if (validTypes.length > 0 && !validTypes.includes(file.type)) {
+          toast({
+            title: "Error",
+            description: errorMessage,
             variant: "destructive",
           });
           return;
@@ -320,10 +346,28 @@ export default function CreateCommunityPost() {
             <Label htmlFor="media">
               Upload Media <span className="text-destructive">*</span>
             </Label>
-            <Input id="media" type="file" onChange={handleFileUpload("media")} />
+            <Input 
+              id="media" 
+              type="file" 
+              accept={
+                formData.contentType === "images" 
+                  ? ".jpg,.jpeg,.png,.gif,.svg,.webp"
+                  : formData.contentType === "notes"
+                  ? ".pdf,.ppt,.pptx,.doc,.docx"
+                  : formData.contentType === "videos"
+                  ? ".mp4,.mov,.avi,.mkv,.webm"
+                  : undefined
+              }
+              onChange={handleFileUpload("media")} 
+            />
             {formData.media && (
               <p className="text-sm text-muted-foreground">File uploaded successfully</p>
             )}
+            <p className="text-xs text-muted-foreground">
+              {formData.contentType === "images" && "Supported formats: .jpg, .jpeg, .png, .gif, .svg, .webp"}
+              {formData.contentType === "notes" && "Supported formats: .pdf, .ppt, .pptx, .doc, .docx"}
+              {formData.contentType === "videos" && "Supported formats: .mp4, .mov, .avi, .mkv, .webm"}
+            </p>
           </div>
 
           {/* Pin Post */}
