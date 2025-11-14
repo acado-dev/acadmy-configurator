@@ -73,6 +73,7 @@ import Events from '@/pages/Events';
 import CreateEvent from '@/pages/CreateEvent';
 import Scholarships from '@/pages/Scholarships';
 import CreateScholarship from '@/pages/CreateScholarship';
+import Analytics from '@/pages/Analytics';
 
 const queryClient = new QueryClient();
 
@@ -138,6 +139,10 @@ const App = () => {
               <Route path="scholarships" element={<Scholarships />} />
               <Route path="scholarships/create" element={<CreateScholarship />} />
               <Route path="scholarships/edit/:id" element={<CreateScholarship />} />
+              
+              {/* Analytics & Reports */}
+              <Route path="analytics" element={<Analytics />} />
+              
               {/* Applications - Master Admin */}
               <Route path="applications-overview" element={<ApplicationsOverview />} />
               <Route path="applications" element={<ApplicationsList />} />
