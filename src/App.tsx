@@ -71,6 +71,8 @@ import CreateWallPost from '@/pages/CreateWallPost';
 import Reels from '@/pages/Reels';
 import Events from '@/pages/Events';
 import CreateEvent from '@/pages/CreateEvent';
+import Scholarships from '@/pages/Scholarships';
+import CreateScholarship from '@/pages/CreateScholarship';
 
 const queryClient = new QueryClient();
 
@@ -131,6 +133,11 @@ const App = () => {
               <Route path="events" element={<Events />} />
               <Route path="events/create" element={<CreateEvent />} />
               <Route path="events/edit/:id" element={<CreateEvent />} />
+              
+              {/* Scholarships */}
+              <Route path="scholarships" element={<Scholarships />} />
+              <Route path="scholarships/create" element={<CreateScholarship />} />
+              <Route path="scholarships/edit/:id" element={<CreateScholarship />} />
               {/* Applications - Master Admin */}
               <Route path="applications-overview" element={<ApplicationsOverview />} />
               <Route path="applications" element={<ApplicationsList />} />
