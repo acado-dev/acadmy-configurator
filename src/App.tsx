@@ -76,6 +76,7 @@ import CreateScholarship from '@/pages/CreateScholarship';
 import Analytics from '@/pages/Analytics';
 import Reports from '@/pages/Reports';
 import InterestedUsers from '@/pages/InterestedUsers';
+import UserSearch from '@/pages/UserSearch';
 import MailTemplate from '@/pages/MailTemplate';
 import BulkEmail from '@/pages/BulkEmail';
 
@@ -148,6 +149,7 @@ const App = () => {
               <Route path="analytics" element={<Analytics />} />
               <Route path="reports" element={<Reports />} />
               <Route path="interested-users" element={<InterestedUsers />} />
+              <Route path="user-search" element={<UserSearch />} />
               
               {/* Settings */}
               <Route path="mail-template" element={<MailTemplate />} />
