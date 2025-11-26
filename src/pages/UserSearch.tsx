@@ -21,7 +21,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { User } from "@/types/user";
-import { initializeSampleUsers } from "@/data/sampleUsers";
+import { sampleUsers } from "@/data/sampleUsers";
 import {
   Assessment,
   Assignment,
@@ -204,13 +204,15 @@ const UserSearch = () => {
   const [showResults, setShowResults] = useState(false);
   const [allUsers, setAllUsers] = useState<User[]>([]);
 
-  // Initialize users from localStorage
+  // Initialize users with IDs from sample data
   useEffect(() => {
-    initializeSampleUsers();
-    const storedUsers = localStorage.getItem('masterAdminUsers');
-    if (storedUsers) {
-      setAllUsers(JSON.parse(storedUsers));
-    }
+    const usersWithIds: User[] = sampleUsers.map(user => ({
+      ...user,
+      id: crypto.randomUUID(),
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    }));
+    setAllUsers(usersWithIds);
   }, []);
 
   // Collapsible states
