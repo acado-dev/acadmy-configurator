@@ -203,6 +203,8 @@ const UserSearch = () => {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [showResults, setShowResults] = useState(false);
   const [allUsers, setAllUsers] = useState<User[]>([]);
+  const [activeView, setActiveView] = useState<'details' | 'assessments' | 'assignments' | 'login' | 'failed' | 'programs'>('details');
+  const [searchType, setSearchType] = useState<'name' | 'email' | 'mobile' | 'enrollment'>('email');
 
   // Initialize users with IDs from sample data
   useEffect(() => {
@@ -352,30 +354,54 @@ const UserSearch = () => {
             <Card>
               <CardHeader className="border-b">
                 <div className="flex items-start justify-between">
-                  <div>
+                  <div className="flex-1">
                     <CardTitle className="text-2xl">Student Details</CardTitle>
-                    <div className="flex gap-4 mt-2 text-sm text-muted-foreground">
-                      <label className="flex items-center gap-2">
-                        <input type="radio" name="searchType" defaultChecked />
-                        Name
+                    <div className="flex gap-4 mt-3 text-sm">
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input 
+                          type="radio" 
+                          name="searchType" 
+                          checked={searchType === 'name'}
+                          onChange={() => setSearchType('name')}
+                          className="cursor-pointer"
+                        />
+                        <span className="text-foreground">Name</span>
                       </label>
-                      <label className="flex items-center gap-2">
-                        <input type="radio" name="searchType" />
-                        Email
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input 
+                          type="radio" 
+                          name="searchType" 
+                          checked={searchType === 'email'}
+                          onChange={() => setSearchType('email')}
+                          className="cursor-pointer"
+                        />
+                        <span className="text-foreground">Email</span>
                       </label>
-                      <label className="flex items-center gap-2">
-                        <input type="radio" name="searchType" />
-                        Mobile No
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input 
+                          type="radio" 
+                          name="searchType" 
+                          checked={searchType === 'mobile'}
+                          onChange={() => setSearchType('mobile')}
+                          className="cursor-pointer"
+                        />
+                        <span className="text-foreground">Mobile No</span>
                       </label>
-                      <label className="flex items-center gap-2">
-                        <input type="radio" name="searchType" />
-                        Enrollment No
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input 
+                          type="radio" 
+                          name="searchType" 
+                          checked={searchType === 'enrollment'}
+                          onChange={() => setSearchType('enrollment')}
+                          className="cursor-pointer"
+                        />
+                        <span className="text-foreground">Enrollment No</span>
                       </label>
                     </div>
-                    <p className="text-muted-foreground mt-2">{selectedUser.email}</p>
+                    <p className="text-foreground mt-3 font-medium">{selectedUser.email}</p>
                   </div>
-                  <Avatar className="h-24 w-24">
-                    <AvatarFallback className="bg-primary text-primary-foreground text-2xl">
+                  <Avatar className="h-28 w-28">
+                    <AvatarFallback className="bg-muted text-foreground text-3xl">
                       {selectedUser.name.charAt(0)}
                     </AvatarFallback>
                   </Avatar>
@@ -383,48 +409,61 @@ const UserSearch = () => {
               </CardHeader>
               <CardContent className="pt-6">
                 <div className="flex flex-wrap gap-2">
-                  <Button variant="default" size="sm">
+                  <Button 
+                    variant={activeView === 'details' ? 'default' : 'secondary'} 
+                    size="sm"
+                    onClick={() => setActiveView('details')}
+                  >
                     View Details
                   </Button>
-                  <Button variant="default" size="sm">
+                  <Button 
+                    variant={activeView === 'assessments' ? 'default' : 'secondary'} 
+                    size="sm"
+                    onClick={() => setActiveView('assessments')}
+                  >
                     View Assessment
                   </Button>
-                  <Button variant="default" size="sm">
+                  <Button 
+                    variant={activeView === 'assignments' ? 'default' : 'secondary'} 
+                    size="sm"
+                    onClick={() => setActiveView('assignments')}
+                  >
                     View Assignments
                   </Button>
-                  <Button variant="default" size="sm">
+                  <Button 
+                    variant={activeView === 'login' ? 'default' : 'secondary'} 
+                    size="sm"
+                    onClick={() => setActiveView('login')}
+                  >
                     Login History
                   </Button>
-                  <Button variant="default" size="sm">
+                  <Button 
+                    variant={activeView === 'failed' ? 'default' : 'secondary'} 
+                    size="sm"
+                    onClick={() => setActiveView('failed')}
+                  >
                     Failed Logins
                   </Button>
-                  <Button variant="default" size="sm">
+                  <Button 
+                    variant={activeView === 'programs' ? 'default' : 'secondary'} 
+                    size="sm"
+                    onClick={() => setActiveView('programs')}
+                  >
                     Assign Program
                   </Button>
-                  <Button variant="secondary" size="sm">
+                  <Button variant="outline" size="sm" className="ml-auto">
                     Reset Password
                   </Button>
-                  <Button variant="secondary" size="sm">
+                  <Button variant="outline" size="sm">
                     Make Mentor
                   </Button>
                 </div>
               </CardContent>
             </Card>
 
-            {/* Tabs for Different Views */}
-            <Card>
-              <CardContent className="pt-6">
-                <Tabs defaultValue="details" className="w-full">
-                  <TabsList className="grid w-full grid-cols-6">
-                    <TabsTrigger value="details">Details</TabsTrigger>
-                    <TabsTrigger value="assessments">Assessments</TabsTrigger>
-                    <TabsTrigger value="assignments">Assignments</TabsTrigger>
-                    <TabsTrigger value="login">Login History</TabsTrigger>
-                    <TabsTrigger value="failed">Failed Logins</TabsTrigger>
-                    <TabsTrigger value="programs">Programs</TabsTrigger>
-                  </TabsList>
-
-                  <TabsContent value="details" className="space-y-4 mt-6">
+            {/* Content Based on Active View */}
+            {activeView === 'details' && (
+              <div className="space-y-4">
                     {/* Personal Details */}
                     <Collapsible
                       open={openSections.personal}
@@ -685,9 +724,18 @@ const UserSearch = () => {
                         </CollapsibleContent>
                       </Card>
                     </Collapsible>
-                  </TabsContent>
+                  </div>
+            )}
 
-                  <TabsContent value="assessments" className="mt-6">
+            {activeView === 'assessments' && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Assessments Assigned to {selectedUser.name}</CardTitle>
+                  <p className="text-sm text-muted-foreground mt-2">
+                    Total Assessments: {assessments.length} | Completed: {assessments.filter(a => a.status === 'Completed').length}
+                  </p>
+                </CardHeader>
+                <CardContent>
                     <Table>
                       <TableHeader>
                         <TableRow>
@@ -728,9 +776,19 @@ const UserSearch = () => {
                         ))}
                       </TableBody>
                     </Table>
-                  </TabsContent>
+                  </CardContent>
+                </Card>
+            )}
 
-                  <TabsContent value="assignments" className="mt-6">
+            {activeView === 'assignments' && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Assignments Assigned to {selectedUser.name}</CardTitle>
+                  <p className="text-sm text-muted-foreground mt-2">
+                    Total Assignments: {assignments.length} | Graded: {assignments.filter(a => a.status === 'Graded').length}
+                  </p>
+                </CardHeader>
+                <CardContent>
                     <Table>
                       <TableHeader>
                         <TableRow>
@@ -771,9 +829,19 @@ const UserSearch = () => {
                         ))}
                       </TableBody>
                     </Table>
-                  </TabsContent>
+                  </CardContent>
+                </Card>
+            )}
 
-                  <TabsContent value="login" className="mt-6">
+            {activeView === 'login' && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Login History for {selectedUser.name}</CardTitle>
+                  <p className="text-sm text-muted-foreground mt-2">
+                    Recent login activities and session information
+                  </p>
+                </CardHeader>
+                <CardContent>
                     <Table>
                       <TableHeader>
                         <TableRow>
@@ -798,9 +866,19 @@ const UserSearch = () => {
                         ))}
                       </TableBody>
                     </Table>
-                  </TabsContent>
+                  </CardContent>
+                </Card>
+            )}
 
-                  <TabsContent value="failed" className="mt-6">
+            {activeView === 'failed' && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Failed Login Attempts for {selectedUser.name}</CardTitle>
+                  <p className="text-sm text-muted-foreground mt-2">
+                    Security log of unsuccessful login attempts
+                  </p>
+                </CardHeader>
+                <CardContent>
                     <Table>
                       <TableHeader>
                         <TableRow>
@@ -825,9 +903,19 @@ const UserSearch = () => {
                         ))}
                       </TableBody>
                     </Table>
-                  </TabsContent>
+                  </CardContent>
+                </Card>
+            )}
 
-                  <TabsContent value="programs" className="mt-6">
+            {activeView === 'programs' && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Programs Enrolled by {selectedUser.name}</CardTitle>
+                  <p className="text-sm text-muted-foreground mt-2">
+                    Course enrollments and completion status
+                  </p>
+                </CardHeader>
+                <CardContent>
                     <Table>
                       <TableHeader>
                         <TableRow>
@@ -862,10 +950,9 @@ const UserSearch = () => {
                         ))}
                       </TableBody>
                     </Table>
-                  </TabsContent>
-                </Tabs>
-              </CardContent>
-            </Card>
+                  </CardContent>
+                </Card>
+            )}
 
             {/* Learning Progress */}
             <Card>
