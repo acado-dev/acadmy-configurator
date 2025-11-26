@@ -215,6 +215,11 @@ const UserSearch = () => {
       updatedAt: new Date().toISOString(),
     }));
     setAllUsers(usersWithIds);
+    
+    // Auto-select first user to show the interface immediately
+    if (usersWithIds.length > 0) {
+      setSelectedUser(usersWithIds[0]);
+    }
   }, []);
 
   // Collapsible states
