@@ -74,6 +74,8 @@ import CreateEvent from '@/pages/CreateEvent';
 import Scholarships from '@/pages/Scholarships';
 import CreateScholarship from '@/pages/CreateScholarship';
 import Analytics from '@/pages/Analytics';
+import Reports from '@/pages/Reports';
+import InterestedUsers from '@/pages/InterestedUsers';
 
 const queryClient = new QueryClient();
 
@@ -142,6 +144,8 @@ const App = () => {
               
               {/* Analytics & Reports */}
               <Route path="analytics" element={<Analytics />} />
+              <Route path="reports" element={<Reports />} />
+              <Route path="interested-users" element={<InterestedUsers />} />
               
               {/* Applications - Master Admin */}
               <Route path="applications-overview" element={<ApplicationsOverview />} />
