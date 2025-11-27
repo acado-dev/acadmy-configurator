@@ -107,7 +107,6 @@ const Layout = () => {
         { label: 'Communities', path: '/communities', icon: Users },
         { label: 'Reels', path: '/reels', icon: Rss },
         { label: 'Events', path: '/events', icon: Calendar },
-        { label: 'Volunteering', path: '/volunteering', icon: Heart },
         { label: 'Scholarships', path: '/scholarships', icon: Gift },
       ]
     },
