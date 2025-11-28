@@ -90,15 +90,6 @@ const Layout = () => {
       ]
     },
     {
-      id: 'content-management',
-      label: 'Content Management',
-      icon: Library,
-      subItems: [
-        { label: 'Content Category', path: '/content-category', icon: Hash },
-        { label: 'Content', path: '/content', icon: FileText },
-      ]
-    },
-    {
       id: 'engagement-builder',
       label: 'Engagement Builder',
       icon: Globe,
