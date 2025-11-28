@@ -79,6 +79,7 @@ import InterestedUsers from '@/pages/InterestedUsers';
 import UserSearch from '@/pages/UserSearch';
 import MailTemplate from '@/pages/MailTemplate';
 import BulkEmail from '@/pages/BulkEmail';
+import ContentCategories from '@/pages/ContentCategories';
 
 const queryClient = new QueryClient();
 
@@ -129,6 +130,8 @@ const App = () => {
               <Route path="communities" element={<CommunityPosts />} />
               <Route path="communities/create" element={<CreateCommunityPost />} />
               <Route path="communities/edit/:postId" element={<CreateCommunityPost />} />
+              {/* Content Management */}
+              <Route path="content-category" element={<ContentCategories />} />
               {/* Wall */}
               <Route path="wall" element={<Wall />} />
               <Route path="wall/create" element={<CreateWallPost />} />
