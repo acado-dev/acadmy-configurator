@@ -56,6 +56,7 @@ import ApplicationsList from '@/pages/university/ApplicationsList';
 import ApplicationsOverview from '@/pages/university/ApplicationsOverview';
 import UniversityInfo from '@/pages/university/UniversityInfo';
 import TalentPool from '@/pages/university/TalentPool';
+import TalentPoolDashboard from '@/pages/TalentPoolDashboard';
 import ProcessSteps from '@/pages/university/ProcessSteps';
 import ProcessConfiguration from '@/pages/university/ProcessConfiguration';
 import UserManagement from '@/pages/university/UserManagement';
@@ -163,6 +164,10 @@ const App = () => {
               <Route path="applications" element={<ApplicationsList />} />
               <Route path="applications/selection-process" element={<ApplicationProcessList />} />
               <Route path="applications/acceptance-letters" element={<AcceptanceLetters />} />
+              
+              {/* Talent Pool - Master Admin */}
+              <Route path="talent-pool" element={<TalentPoolDashboard />} />
+              <Route path="talent-pool/candidates" element={<TalentPool />} />
             </Route>
             
             {/* User Routes */}
@@ -205,6 +210,8 @@ const App = () => {
               <Route path="applications" element={<ApplicationsList />} />
               <Route path="applications/:id" element={<UniversityApplicationReview />} />
               <Route path="applications-overview" element={<ApplicationsOverview />} />
+              <Route path="talent-pool" element={<TalentPoolDashboard />} />
+              <Route path="talent-pool/candidates" element={<TalentPool />} />
               <Route path="talent" element={<TalentPool />} />
               <Route path="communications" element={<UniversityDashboard />} />
               <Route path="users" element={<UserManagement />} />

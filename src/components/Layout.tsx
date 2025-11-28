@@ -106,7 +106,8 @@ const Layout = () => {
       label: 'Talent Management',
       icon: Briefcase,
       subItems: [
-        { label: 'Talent Pool', path: '/talent-pool', icon: UserCheck },
+        { label: 'Dashboard', path: '/talent-pool', icon: LayoutDashboard },
+        { label: 'Candidates', path: '/talent-pool/candidates', icon: UserCheck },
         { label: 'Job Opportunities', path: '/job-opportunities', icon: Briefcase },
       ]
     },

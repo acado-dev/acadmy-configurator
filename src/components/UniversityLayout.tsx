@@ -96,7 +96,8 @@ const UniversityLayout = () => {
       label: 'Talent Pool',
       icon: Users,
       subItems: [
-        { label: 'Browse Talent', path: '/university/talent', icon: UserSearch },
+        { label: 'Dashboard', path: '/university/talent-pool', icon: LayoutDashboard },
+        { label: 'Candidates', path: '/university/talent-pool/candidates', icon: UserSearch },
         { label: 'Saved Profiles', path: '/university/saved-profiles', icon: User },
         { label: 'Communications', path: '/university/talent-communications', icon: MessagesSquare },
       ]
