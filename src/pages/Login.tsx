@@ -28,7 +28,7 @@ const Login = () => {
       });
       // Add small delay to ensure localStorage is set
       setTimeout(() => {
-        navigate("/dashboard");
+          navigate("/");
       }, 100);
     } else if (email && password) {
       // Accept any credentials for demo
@@ -40,7 +40,7 @@ const Login = () => {
       });
       // Add small delay to ensure localStorage is set
       setTimeout(() => {
-        navigate("/dashboard");
+        navigate("/");
       }, 100);
     } else {
       toast({
