@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { 
   BookOpen, 
   FileText, 
   User, 
-  TrendingUp,
   Clock,
   CheckCircle,
   AlertCircle,
@@ -13,11 +12,14 @@ import {
   MessageSquare,
   Download,
   Bell,
-  FileCheck,
-  Inbox,
   ArrowRight,
   ExternalLink,
-  Mail
+  Mail,
+  Award,
+  AlertTriangle,
+  Calendar,
+  XCircle,
+  FileCheck
 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -33,188 +35,189 @@ import {
 } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { toast } from 'sonner';
+import { useApplicationSubmissions, ApplicationSubmission } from '@/hooks/useApplicationSubmissions';
+import { useUserNotifications } from '@/hooks/useUserNotifications';
+
+const APPLICATION_STAGES = [
+  'submitted',
+  'under_review',
+  'shortlisted',
+  'interview_scheduled',
+  'accepted',
+] as const;
+
+const STAGE_LABELS: Record<string, string> = {
+  submitted: 'Submitted',
+  under_review: 'Under Review',
+  shortlisted: 'Shortlisted',
+  interview_scheduled: 'Interview',
+  accepted: 'Accepted',
+  rejected: 'Rejected',
+  waitlisted: 'Waitlisted',
+};
 
 const UserDashboard = () => {
   const navigate = useNavigate();
   const [acceptanceDialog, setAcceptanceDialog] = useState(false);
-  const [selectedAcceptance, setSelectedAcceptance] = useState<any>(null);
+  const [offerDialog, setOfferDialog] = useState(false);
+  const [selectedOffer, setSelectedOffer] = useState<ApplicationSubmission | null>(null);
   const userAuth = localStorage.getItem("userAuth");
   const user = userAuth ? JSON.parse(userAuth) : null;
   
-  // Enhanced stats with university and course applications
+  const { applications } = useApplicationSubmissions();
+  const { notifications, unreadCount, actionRequired, markAsRead } = useUserNotifications();
+
+  // Compute stats from real data
+  const uniqueUniversities = new Set(applications.map(a => a.universityId)).size;
+  const acceptedApps = applications.filter(a => a.status === 'accepted');
   const stats = {
     profileCompletion: 65,
-    coursesApplied: 4,
-    universitiesApplied: 3,
-    acceptanceLetters: 2,
-  };
-  
-  // Enhanced applications with status and communications
-  const applications = [
-    {
-      id: "1",
-      courseName: "Artificial Intelligence – AI Now-a-Days",
-      universityName: "Metropolia University",
-      universityId: "uni-1",
-      status: "accepted",
-      lastUpdated: "2024-01-15",
-      hasAcceptanceLetter: true,
-      communications: [
-        { type: 'success', message: 'Congratulations! You have been accepted', date: '2024-01-15' },
-        { type: 'info', message: 'Please submit enrollment confirmation by Feb 1st', date: '2024-01-16' }
-      ],
-      nextSteps: ['Submit enrollment confirmation', 'Pay registration fee', 'Submit visa documents']
-    },
-    {
-      id: "2",
-      courseName: "Business Management",
-      universityName: "Oxford University",
-      universityId: "uni-2",
-      status: "under-review",
-      lastUpdated: "2024-01-10",
-      progress: 100,
-      communications: [
-        { type: 'info', message: 'Application received and under review', date: '2024-01-10' },
-        { type: 'warning', message: 'Additional transcript required', date: '2024-01-12' }
-      ],
-      documentsRequired: ['Official transcript', 'English proficiency certificate']
-    },
-    {
-      id: "3",
-      courseName: "Data Science Fundamentals",
-      universityName: "MIT",
-      universityId: "uni-3",
-      status: "accepted",
-      lastUpdated: "2024-01-14",
-      hasAcceptanceLetter: true,
-      communications: [
-        { type: 'success', message: 'You have been accepted to the program', date: '2024-01-14' }
-      ],
-      nextSteps: ['Accept offer by Jan 30th', 'Submit housing preferences']
-    },
-    {
-      id: "4",
-      courseName: "Healthcare Management",
-      universityName: "Harvard University",
-      universityId: "uni-2",
-      status: "draft",
-      lastUpdated: "2024-01-18",
-      progress: 45,
-      communications: []
-    }
-  ];
-  
-  const acceptedApplications = applications.filter(app => app.status === 'accepted');
-  const pendingCommunications = applications.filter(app => 
-    app.communications && app.communications.length > 0
-  );
-
-  const handleDownloadAcceptance = (application: any) => {
-    toast.success(`Downloading acceptance letter for ${application.courseName}`);
-    // In real app, this would download the actual PDF
-  };
-
-  const handleViewAcceptance = (application: any) => {
-    setSelectedAcceptance(application);
-    setAcceptanceDialog(true);
+    coursesApplied: applications.length,
+    universitiesApplied: uniqueUniversities,
+    acceptanceLetters: acceptedApps.length,
   };
 
   const getStatusBadge = (status: string) => {
-    const variants: Record<string, { variant: "default" | "secondary" | "outline" | "destructive"; icon: any; label: string }> = {
-      'accepted': { variant: 'default', icon: CheckCircle, label: 'Accepted' },
-      'under-review': { variant: 'secondary', icon: Clock, label: 'Under Review' },
-      'draft': { variant: 'outline', icon: FileText, label: 'Draft' },
-      'rejected': { variant: 'destructive', icon: AlertCircle, label: 'Rejected' },
-      'submitted': { variant: 'default', icon: FileCheck, label: 'Submitted' }
+    const config: Record<string, { variant: "default" | "secondary" | "outline" | "destructive"; icon: any; color?: string }> = {
+      accepted: { variant: 'default', icon: CheckCircle },
+      shortlisted: { variant: 'secondary', icon: Award },
+      under_review: { variant: 'secondary', icon: Clock },
+      interview_scheduled: { variant: 'secondary', icon: Calendar },
+      submitted: { variant: 'outline', icon: FileCheck },
+      rejected: { variant: 'destructive', icon: XCircle },
+      waitlisted: { variant: 'outline', icon: AlertCircle },
     };
-    
-    const { variant, icon: Icon, label } = variants[status] || variants['draft'];
+    const { variant, icon: Icon } = config[status] || config.submitted;
     return (
       <Badge variant={variant} className="gap-1">
         <Icon className="h-3 w-3" />
-        {label}
+        {STAGE_LABELS[status] || status}
       </Badge>
     );
   };
 
+  const getStageProgress = (status: string) => {
+    const idx = APPLICATION_STAGES.indexOf(status as any);
+    if (status === 'rejected') return 100;
+    if (idx === -1) return 10;
+    return ((idx + 1) / APPLICATION_STAGES.length) * 100;
+  };
+
+  const handleDownloadOffer = (app: ApplicationSubmission) => {
+    toast.success(`Downloading offer letter for ${app.courseName}`);
+  };
+
+  const handleAcceptOffer = (app: ApplicationSubmission) => {
+    toast.success(`Offer accepted for ${app.courseName}! Enrollment confirmed.`);
+    setOfferDialog(false);
+  };
+
   return (
     <div className="container mx-auto px-4 py-8">
-      {/* Welcome Header with Notifications */}
+      {/* Welcome Header */}
       <div className="mb-8 flex justify-between items-start">
         <div>
           <h1 className="text-3xl font-bold mb-2">
             Welcome back, {user?.name || user?.email?.split('@')[0]}!
           </h1>
           <p className="text-muted-foreground">
-            Track your applications and discover new opportunities
+            Track your applications, notifications, and opportunities
           </p>
         </div>
-        {acceptedApplications.length > 0 && (
-          <Badge variant="default" className="gap-1 animate-pulse bg-green-600 text-white">
-            <Bell className="h-3 w-3" />
-            {acceptedApplications.length} Acceptance{acceptedApplications.length > 1 ? 's' : ''}!
-          </Badge>
-        )}
+        <div className="flex items-center gap-2">
+          {actionRequired.length > 0 && (
+            <Badge variant="destructive" className="gap-1 animate-pulse">
+              <AlertTriangle className="h-3 w-3" />
+              {actionRequired.length} action{actionRequired.length > 1 ? 's' : ''} needed
+            </Badge>
+          )}
+          <Button
+            variant="outline"
+            size="sm"
+            className="relative"
+            onClick={() => navigate('/user/notifications')}
+          >
+            <Bell className="h-4 w-4" />
+            {unreadCount > 0 && (
+              <span className="absolute -top-1.5 -right-1.5 bg-destructive text-destructive-foreground text-[10px] font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                {unreadCount}
+              </span>
+            )}
+          </Button>
+        </div>
       </div>
 
-      {/* Enhanced Stats Grid */}
+      {/* Action Required Banner */}
+      {actionRequired.length > 0 && (
+        <Card className="mb-6 border-destructive/50 bg-destructive/5">
+          <CardContent className="p-4">
+            <h3 className="font-semibold flex items-center gap-2 text-destructive mb-3">
+              <AlertTriangle className="h-4 w-4" />
+              Action Required
+            </h3>
+            <div className="space-y-2">
+              {actionRequired.slice(0, 3).map(notif => (
+                <div
+                  key={notif.id}
+                  className="flex items-center justify-between p-3 bg-background rounded-lg border cursor-pointer hover:shadow-sm transition"
+                  onClick={() => {
+                    markAsRead(notif.id);
+                    if (notif.actionRoute) navigate(notif.actionRoute);
+                  }}
+                >
+                  <div className="flex-1">
+                    <p className="text-sm font-medium">{notif.title}</p>
+                    <p className="text-xs text-muted-foreground">{notif.courseName} • {notif.universityName}</p>
+                  </div>
+                  <Button size="sm" variant="outline">
+                    {notif.actionLabel || 'View'}
+                    <ArrowRight className="ml-1 h-3 w-3" />
+                  </Button>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Stats Grid */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
-        <Card>
+        <Card className="cursor-pointer hover:shadow-md transition" onClick={() => navigate('/user/applications')}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Courses Applied</CardTitle>
+            <CardTitle className="text-sm font-medium">Applications</CardTitle>
             <GraduationCap className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold mb-2">{stats.coursesApplied}</div>
-            <p className="text-xs text-muted-foreground">
-              Across all universities
-            </p>
-            <Button 
-              variant="link" 
-              className="px-0 mt-2"
-              onClick={() => navigate("/user/applications")}
-            >
-              View Applications →
-            </Button>
+            <div className="text-2xl font-bold">{stats.coursesApplied}</div>
+            <p className="text-xs text-muted-foreground">Across {stats.universitiesApplied} universities</p>
           </CardContent>
         </Card>
         
-        <Card>
+        <Card className="cursor-pointer hover:shadow-md transition" onClick={() => setAcceptanceDialog(true)}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Universities Applied</CardTitle>
-            <Building2 className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.universitiesApplied}</div>
-            <p className="text-xs text-muted-foreground">
-              Different institutions
-            </p>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Acceptance Letters</CardTitle>
-            <Mail className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium">Offer Letters</CardTitle>
+            <Award className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-600">{stats.acceptanceLetters}</div>
             <p className="text-xs text-muted-foreground">
-              Congratulations! 🎉
+              {stats.acceptanceLetters > 0 ? 'Congratulations! 🎉' : 'Pending decisions'}
             </p>
-            {stats.acceptanceLetters > 0 && (
-              <Button 
-                variant="link" 
-                className="px-0 mt-2"
-                onClick={() => setAcceptanceDialog(true)}
-              >
-                View Letters →
-              </Button>
-            )}
+          </CardContent>
+        </Card>
+
+        <Card className="cursor-pointer hover:shadow-md transition" onClick={() => navigate('/user/notifications')}>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Notifications</CardTitle>
+            <Bell className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{unreadCount}</div>
+            <p className="text-xs text-muted-foreground">Unread messages</p>
           </CardContent>
         </Card>
         
-        <Card>
+        <Card className="cursor-pointer hover:shadow-md transition" onClick={() => navigate('/user/portfolio')}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Profile Completion</CardTitle>
             <User className="h-4 w-4 text-muted-foreground" />
@@ -222,43 +225,36 @@ const UserDashboard = () => {
           <CardContent>
             <div className="text-2xl font-bold mb-2">{stats.profileCompletion}%</div>
             <Progress value={stats.profileCompletion} className="h-2" />
-            <Button 
-              variant="link" 
-              className="px-0 mt-2"
-              onClick={() => navigate("/user/portfolio")}
-            >
-              Complete Profile →
-            </Button>
           </CardContent>
         </Card>
       </div>
 
-      {/* Application Status & Communications */}
+      {/* Application Pipeline */}
       <Card className="mb-8">
         <CardHeader>
-          <CardTitle>Application Status & Communications</CardTitle>
-          <CardDescription>
-            Track your applications and university messages
-          </CardDescription>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle>Application Pipeline</CardTitle>
+              <CardDescription>Track your applications through each stage</CardDescription>
+            </div>
+            <Button variant="outline" size="sm" onClick={() => navigate('/user/applications')}>
+              View All <ArrowRight className="ml-1 h-3 w-3" />
+            </Button>
+          </div>
         </CardHeader>
         <CardContent>
-          <Tabs defaultValue="all" className="w-full">
-            <TabsList className="grid w-full grid-cols-4">
-              <TabsTrigger value="all">All ({applications.length})</TabsTrigger>
-              <TabsTrigger value="accepted">
-                Accepted ({acceptedApplications.length})
-              </TabsTrigger>
-              <TabsTrigger value="pending">
-                Pending ({applications.filter(a => a.status === 'under-review').length})
-              </TabsTrigger>
-              <TabsTrigger value="action-required">
-                Action Required ({applications.filter(a => a.documentsRequired).length})
-              </TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="all" className="space-y-4">
+          {applications.length === 0 ? (
+            <div className="text-center py-8 text-muted-foreground">
+              <FileText className="h-12 w-12 mx-auto mb-4 opacity-30" />
+              <p>No applications yet. Start exploring courses!</p>
+              <Button className="mt-4" onClick={() => navigate('/user/courses')}>
+                Browse Courses
+              </Button>
+            </div>
+          ) : (
+            <div className="space-y-4">
               {applications.map((app) => (
-                <div key={app.id} className="border rounded-lg p-4">
+                <div key={app.id} className="border rounded-lg p-4 hover:shadow-sm transition">
                   <div className="flex items-start justify-between mb-3">
                     <div>
                       <h4 className="font-semibold">{app.courseName}</h4>
@@ -266,164 +262,122 @@ const UserDashboard = () => {
                     </div>
                     <div className="flex items-center gap-2">
                       {getStatusBadge(app.status)}
-                      {app.hasAcceptanceLetter && (
+                      {app.status === 'accepted' && (
                         <Button
                           size="sm"
                           variant="outline"
-                          onClick={() => handleViewAcceptance(app)}
+                          className="text-green-600 border-green-200 hover:bg-green-50"
+                          onClick={() => {
+                            setSelectedOffer(app);
+                            setOfferDialog(true);
+                          }}
                         >
                           <Download className="h-3 w-3 mr-1" />
-                          Letter
+                          Offer Letter
                         </Button>
                       )}
                     </div>
                   </div>
-                  
-                  {/* Communications */}
-                  {app.communications && app.communications.length > 0 && (
-                    <div className="mb-3 space-y-2">
-                      {app.communications.slice(0, 2).map((comm, idx) => (
-                        <div key={idx} className="flex items-start gap-2 text-sm">
-                          <MessageSquare className={`h-4 w-4 mt-0.5 ${
-                            comm.type === 'success' ? 'text-green-600' :
-                            comm.type === 'warning' ? 'text-yellow-600' : 'text-blue-600'
-                          }`} />
-                          <div className="flex-1">
-                            <p>{comm.message}</p>
-                            <span className="text-xs text-muted-foreground">{comm.date}</span>
+
+                  {/* Stage Progress Bar */}
+                  <div className="mb-3">
+                    <div className="flex items-center justify-between mb-1.5">
+                      {APPLICATION_STAGES.map((stage, idx) => {
+                        const currentIdx = APPLICATION_STAGES.indexOf(app.status as any);
+                        const isActive = idx <= currentIdx;
+                        const isCurrent = stage === app.status;
+                        return (
+                          <div key={stage} className="flex flex-col items-center flex-1">
+                            <div className={`h-2 w-full rounded-full ${idx === 0 ? 'rounded-l-full' : ''} ${idx === APPLICATION_STAGES.length - 1 ? 'rounded-r-full' : ''} ${
+                              app.status === 'rejected' ? 'bg-destructive/30' :
+                              isActive ? 'bg-primary' : 'bg-muted'
+                            }`} />
+                            <span className={`text-[10px] mt-1 ${isCurrent ? 'font-bold text-primary' : 'text-muted-foreground'}`}>
+                              {STAGE_LABELS[stage]}
+                            </span>
                           </div>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
-                  )}
-                  
-                  {/* Required Documents */}
-                  {app.documentsRequired && app.documentsRequired.length > 0 && (
-                    <div className="mb-3 p-2 bg-yellow-50 dark:bg-yellow-900/20 rounded-md">
-                      <p className="text-sm font-medium text-yellow-800 dark:text-yellow-200 mb-1">
-                        Documents Required:
-                      </p>
-                      <ul className="text-sm text-yellow-700 dark:text-yellow-300 list-disc list-inside">
-                        {app.documentsRequired.map((doc, idx) => (
-                          <li key={idx}>{doc}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                  
-                  {/* Next Steps */}
-                  {app.nextSteps && app.nextSteps.length > 0 && (
-                    <div className="mb-3 p-2 bg-blue-50 dark:bg-blue-900/20 rounded-md">
-                      <p className="text-sm font-medium text-blue-800 dark:text-blue-200 mb-1">
-                        Next Steps:
-                      </p>
-                      <ul className="text-sm text-blue-700 dark:text-blue-300 space-y-1">
-                        {app.nextSteps.map((step, idx) => (
-                          <li key={idx} className="flex items-center gap-1">
-                            <ArrowRight className="h-3 w-3" />
-                            {step}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                  
-                  {/* Action Buttons */}
-                  <div className="flex gap-2">
+                  </div>
+
+                  {/* Match Score */}
+                  <div className="flex items-center gap-4 text-sm">
+                    <span className="text-muted-foreground">
+                      Match Score: <span className={`font-semibold ${
+                        app.matchScore > 80 ? 'text-green-600' : 
+                        app.matchScore >= 50 ? 'text-yellow-600' : 'text-red-600'
+                      }`}>{app.matchScore}%</span>
+                    </span>
+                    <span className="text-muted-foreground">
+                      Submitted: {new Date(app.submittedAt).toLocaleDateString()}
+                    </span>
+                  </div>
+
+                  <div className="flex gap-2 mt-3">
                     <Button
-                      variant={app.status === 'draft' ? 'default' : 'outline'}
+                      variant="outline"
                       size="sm"
                       onClick={() => navigate(`/user/applications/${app.id}`)}
                     >
-                      {app.status === 'draft' ? 'Continue Application' : 'View Details'}
+                      View Details
                     </Button>
-                    {app.communications && app.communications.length > 0 && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => navigate(`/user/communications/${app.id}`)}
-                      >
-                        <Inbox className="h-3 w-3 mr-1" />
-                        Messages ({app.communications.length})
-                      </Button>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </TabsContent>
-            
-            <TabsContent value="accepted" className="space-y-4">
-              {acceptedApplications.map((app) => (
-                <div key={app.id} className="border rounded-lg p-4 bg-green-50 dark:bg-green-900/20">
-                  <div className="flex items-start justify-between mb-3">
-                    <div>
-                      <h4 className="font-semibold">{app.courseName}</h4>
-                      <p className="text-sm text-muted-foreground">{app.universityName}</p>
-                    </div>
-                      <Button
-                        size="sm"
-                        variant="default"
-                        className="bg-green-600 hover:bg-green-700 text-white"
-                        onClick={() => handleViewAcceptance(app)}
-                      >
-                      <Download className="h-3 w-3 mr-1" />
-                      Acceptance Letter
-                    </Button>
-                  </div>
-                  {app.nextSteps && app.nextSteps.length > 0 && (
-                    <div className="space-y-1">
-                      <p className="text-sm font-medium">Complete these steps:</p>
-                      {app.nextSteps.map((step, idx) => (
-                        <p key={idx} className="text-sm text-muted-foreground flex items-center gap-1">
-                          <ArrowRight className="h-3 w-3" />
-                          {step}
-                        </p>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              ))}
-            </TabsContent>
-            
-            <TabsContent value="pending" className="space-y-4">
-              {applications
-                .filter(app => app.status === 'under-review')
-                .map((app) => (
-                  <div key={app.id} className="border rounded-lg p-4">
-                    <h4 className="font-semibold">{app.courseName}</h4>
-                    <p className="text-sm text-muted-foreground mb-2">{app.universityName}</p>
-                    <p className="text-sm">Application submitted and under review</p>
-                    <p className="text-xs text-muted-foreground mt-1">Last updated: {app.lastUpdated}</p>
-                  </div>
-                ))}
-            </TabsContent>
-            
-            <TabsContent value="action-required" className="space-y-4">
-              {applications
-                .filter(app => app.documentsRequired)
-                .map((app) => (
-                  <div key={app.id} className="border rounded-lg p-4 border-yellow-500">
-                    <h4 className="font-semibold">{app.courseName}</h4>
-                    <p className="text-sm text-muted-foreground mb-2">{app.universityName}</p>
-                    <div className="space-y-1">
-                      <p className="text-sm font-medium text-yellow-700 dark:text-yellow-300">
-                        Documents Required:
-                      </p>
-                      {app.documentsRequired?.map((doc, idx) => (
-                        <p key={idx} className="text-sm text-muted-foreground">• {doc}</p>
-                      ))}
-                    </div>
                     <Button
+                      variant="ghost"
                       size="sm"
-                      className="mt-3"
-                      onClick={() => navigate(`/user/applications/${app.id}`)}
+                      onClick={() => navigate(`/user/communications/${app.id}`)}
                     >
-                      Upload Documents
+                      <MessageSquare className="h-3 w-3 mr-1" />
+                      Messages
                     </Button>
                   </div>
-                ))}
-            </TabsContent>
-          </Tabs>
+                </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Recent Notifications */}
+      <Card className="mb-8">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle>Recent Notifications</CardTitle>
+              <CardDescription>Latest updates from universities</CardDescription>
+            </div>
+            <Button variant="ghost" size="sm" onClick={() => navigate('/user/notifications')}>
+              View All <ArrowRight className="ml-1 h-3 w-3" />
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-3">
+            {notifications.slice(0, 5).map(notif => (
+              <div
+                key={notif.id}
+                className={`flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition ${
+                  !notif.isRead ? 'bg-primary/5 border-primary/20' : 'hover:bg-muted/50'
+                }`}
+                onClick={() => {
+                  markAsRead(notif.id);
+                  if (notif.actionRoute) navigate(notif.actionRoute);
+                }}
+              >
+                {!notif.isRead && <div className="h-2 w-2 rounded-full bg-primary mt-2 shrink-0" />}
+                <div className="flex-1 min-w-0">
+                  <p className={`text-sm ${!notif.isRead ? 'font-semibold' : 'font-medium text-muted-foreground'}`}>
+                    {notif.title}
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-0.5 truncate">{notif.message}</p>
+                  <span className="text-xs text-muted-foreground">{notif.courseName}</span>
+                </div>
+                {notif.isActionRequired && (
+                  <Badge variant="outline" className="text-xs shrink-0">Action</Badge>
+                )}
+              </div>
+            ))}
+          </div>
         </CardContent>
       </Card>
 
@@ -434,35 +388,19 @@ const UserDashboard = () => {
         </CardHeader>
         <CardContent>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <Button 
-              variant="outline" 
-              className="h-auto flex-col gap-2 p-4"
-              onClick={() => navigate("/user/courses")}
-            >
+            <Button variant="outline" className="h-auto flex-col gap-2 p-4" onClick={() => navigate("/user/courses")}>
               <BookOpen className="h-5 w-5" />
               <span>Browse Courses</span>
             </Button>
-            <Button 
-              variant="outline" 
-              className="h-auto flex-col gap-2 p-4"
-              onClick={() => navigate("/user/applications")}
-            >
+            <Button variant="outline" className="h-auto flex-col gap-2 p-4" onClick={() => navigate("/user/applications")}>
               <FileText className="h-5 w-5" />
               <span>My Applications</span>
             </Button>
-            <Button 
-              variant="outline" 
-              className="h-auto flex-col gap-2 p-4"
-              onClick={() => setAcceptanceDialog(true)}
-            >
-              <Mail className="h-5 w-5" />
-              <span>Acceptance Letters</span>
+            <Button variant="outline" className="h-auto flex-col gap-2 p-4" onClick={() => navigate("/user/notifications")}>
+              <Bell className="h-5 w-5" />
+              <span>Notifications</span>
             </Button>
-            <Button 
-              variant="outline" 
-              className="h-auto flex-col gap-2 p-4"
-              onClick={() => navigate("/user/portfolio")}
-            >
+            <Button variant="outline" className="h-auto flex-col gap-2 p-4" onClick={() => navigate("/user/portfolio")}>
               <User className="h-5 w-5" />
               <span>My Portfolio</span>
             </Button>
@@ -470,25 +408,27 @@ const UserDashboard = () => {
         </CardContent>
       </Card>
 
-      {/* Acceptance Letter Dialog */}
+      {/* Offer Letters Dialog */}
       <Dialog open={acceptanceDialog} onOpenChange={setAcceptanceDialog}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Acceptance Letters</DialogTitle>
+            <DialogTitle>Offer Letters</DialogTitle>
             <DialogDescription>
-              Congratulations on your acceptances! Download your official letters below.
+              {acceptedApps.length > 0 
+                ? 'Congratulations! Download your official offer letters below.'
+                : 'No offer letters yet. Keep track of your applications!'}
             </DialogDescription>
           </DialogHeader>
           <ScrollArea className="max-h-[400px] pr-4">
             <div className="space-y-4">
-              {acceptedApplications.map((app) => (
-                <div key={app.id} className="border rounded-lg p-4">
+              {acceptedApps.map((app) => (
+                <div key={app.id} className="border rounded-lg p-4 bg-green-50 dark:bg-green-900/20">
                   <div className="flex items-start justify-between">
                     <div>
                       <h4 className="font-semibold">{app.courseName}</h4>
                       <p className="text-sm text-muted-foreground">{app.universityName}</p>
                       <p className="text-sm text-green-600 mt-1">
-                        Accepted on {app.lastUpdated}
+                        Accepted on {new Date(app.lastUpdated).toLocaleDateString()}
                       </p>
                     </div>
                     <div className="flex gap-2">
@@ -496,38 +436,82 @@ const UserDashboard = () => {
                         size="sm"
                         variant="outline"
                         onClick={() => {
-                          toast.success(`Opening acceptance letter for ${app.courseName}`);
+                          setSelectedOffer(app);
+                          setAcceptanceDialog(false);
+                          setOfferDialog(true);
                         }}
                       >
                         <ExternalLink className="h-3 w-3 mr-1" />
                         View
                       </Button>
-                      <Button
-                        size="sm"
-                        onClick={() => handleDownloadAcceptance(app)}
-                      >
+                      <Button size="sm" onClick={() => handleDownloadOffer(app)}>
                         <Download className="h-3 w-3 mr-1" />
                         Download
                       </Button>
                     </div>
                   </div>
-                  {app.nextSteps && app.nextSteps.length > 0 && (
-                    <div className="mt-3 pt-3 border-t">
-                      <p className="text-sm font-medium mb-2">Next Steps:</p>
-                      <ul className="space-y-1">
-                        {app.nextSteps.map((step, idx) => (
-                          <li key={idx} className="text-sm text-muted-foreground flex items-start gap-1">
-                            <CheckCircle className="h-3 w-3 mt-0.5 text-green-600" />
-                            {step}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
                 </div>
               ))}
+              {acceptedApps.length === 0 && (
+                <div className="text-center py-8 text-muted-foreground">
+                  <Clock className="h-12 w-12 mx-auto mb-4 opacity-30" />
+                  <p>No offer letters yet. Your applications are being reviewed.</p>
+                </div>
+              )}
             </div>
           </ScrollArea>
+        </DialogContent>
+      </Dialog>
+
+      {/* Offer Letter Detail Dialog */}
+      <Dialog open={offerDialog} onOpenChange={setOfferDialog}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Offer Letter</DialogTitle>
+            <DialogDescription>{selectedOffer?.courseName} at {selectedOffer?.universityName}</DialogDescription>
+          </DialogHeader>
+          {selectedOffer && (
+            <div className="space-y-6">
+              <div className="border rounded-lg p-6 bg-muted/30">
+                <div className="text-center mb-6">
+                  <Award className="h-12 w-12 text-green-600 mx-auto mb-2" />
+                  <h3 className="text-xl font-bold">Official Offer of Admission</h3>
+                  <p className="text-muted-foreground">{selectedOffer.universityName}</p>
+                </div>
+                <div className="space-y-3 text-sm">
+                  <p>Dear {selectedOffer.applicantName},</p>
+                  <p>
+                    We are pleased to offer you admission to the <strong>{selectedOffer.courseName}</strong> program 
+                    at {selectedOffer.universityName} for the upcoming academic year.
+                  </p>
+                  <p>
+                    Your application (Reference: <strong>{selectedOffer.id}</strong>) has been reviewed 
+                    and approved. Your match score of <strong>{selectedOffer.matchScore}%</strong> demonstrates 
+                    your strong fit for this program.
+                  </p>
+                  <div className="border-t pt-3 mt-3">
+                    <p className="font-semibold mb-2">Next Steps:</p>
+                    <ul className="space-y-1 list-disc list-inside text-muted-foreground">
+                      <li>Accept this offer by March 1, 2024</li>
+                      <li>Pay the enrollment deposit</li>
+                      <li>Submit visa application documents</li>
+                      <li>Complete housing registration</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              <div className="flex gap-2 justify-end">
+                <Button variant="outline" onClick={() => handleDownloadOffer(selectedOffer)}>
+                  <Download className="h-4 w-4 mr-2" />
+                  Download PDF
+                </Button>
+                <Button className="bg-green-600 hover:bg-green-700" onClick={() => handleAcceptOffer(selectedOffer)}>
+                  <CheckCircle className="h-4 w-4 mr-2" />
+                  Accept Offer
+                </Button>
+              </div>
+            </div>
+          )}
         </DialogContent>
       </Dialog>
     </div>

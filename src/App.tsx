@@ -39,6 +39,7 @@ import ProfileView from '@/pages/ProfileView';
 import MyApplications from '@/pages/user/MyApplications';
 import ApplicationDetail from '@/pages/user/ApplicationDetail';
 import Communications from '@/pages/user/Communications';
+import Notifications from '@/pages/user/Notifications';
 
 // University Admin Pages
 import UniversityLogin from '@/pages/university/UniversityLogin';
@@ -183,6 +184,10 @@ const App = () => {
               <Route path="courses/:courseId" element={<UserCourseDetail />} />
               <Route path="apply/:formId" element={<ApplicationWizard />} />
               <Route path="portfolio" element={<Portfolio />} />
+              <Route path="applications" element={<MyApplications />} />
+              <Route path="applications/:applicationId" element={<ApplicationDetail />} />
+              <Route path="communications/:applicationId" element={<Communications />} />
+              <Route path="notifications" element={<Notifications />} />
             </Route>
             
             {/* University Admin Routes */}
