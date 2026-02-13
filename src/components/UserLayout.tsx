@@ -7,17 +7,20 @@ import {
   LogOut, 
   Menu,
   Home,
-  BookOpen
+  BookOpen,
+  Bell
 } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { AcadoLogo } from "./AcadoLogo";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { useUserNotifications } from "@/hooks/useUserNotifications";
 
 const UserLayout = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { unreadCount } = useUserNotifications();
   
   const userAuth = localStorage.getItem("userAuth");
   const user = userAuth ? JSON.parse(userAuth) : null;
@@ -34,8 +37,9 @@ const UserLayout = () => {
   const navigationItems = [
     { path: "/user/dashboard", label: "Dashboard", icon: Home },
     { path: "/user/courses", label: "Courses", icon: BookOpen },
-    { path: "/user/portfolio", label: "Portfolio", icon: User },
     { path: "/user/applications", label: "Applications", icon: FileText },
+    { path: "/user/notifications", label: "Notifications", icon: Bell, badge: unreadCount },
+    { path: "/user/portfolio", label: "Portfolio", icon: User },
   ];
 
   return (
@@ -55,9 +59,14 @@ const UserLayout = () => {
                   <Link
                     key={item.path}
                     to={item.path}
-                    className="text-sm font-medium transition-colors hover:text-primary"
+                    className="relative text-sm font-medium transition-colors hover:text-primary"
                   >
                     {item.label}
+                    {item.badge ? (
+                      <span className="absolute -top-2 -right-4 bg-destructive text-destructive-foreground text-[10px] font-bold rounded-full h-4 w-4 flex items-center justify-center">
+                        {item.badge}
+                      </span>
+                    ) : null}
                   </Link>
                 ))}
               </nav>
