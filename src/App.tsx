@@ -222,6 +222,8 @@ const App = () => {
               <Route path="talent" element={<TalentPool />} />
               <Route path="communications" element={<UniversityDashboard />} />
               <Route path="users" element={<UserManagement />} />
+              <Route path="analytics" element={<UniversityAnalytics />} />
+              <Route path="reports" element={<UniversityReports />} />
               <Route path="settings" element={<UniversityDashboard />} />
             </Route>
             
