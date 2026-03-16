@@ -63,6 +63,10 @@ import ProcessConfiguration from '@/pages/university/ProcessConfiguration';
 import UserManagement from '@/pages/university/UserManagement';
 import UniversityAnalytics from '@/pages/university/UniversityAnalytics';
 import UniversityReports from '@/pages/university/UniversityReports';
+import TalentPoolAddCandidate from '@/pages/university/TalentPoolAddCandidate';
+import TalentPoolBulkUpload from '@/pages/university/TalentPoolBulkUpload';
+import TalentPoolDocumentUpload from '@/pages/university/TalentPoolDocumentUpload';
+import TalentPoolExport from '@/pages/university/TalentPoolExport';
 import CourseCategories from '@/pages/CourseCategories';
 import CourseLevels from '@/pages/CourseLevels';
 import CourseTypes from '@/pages/CourseTypes';
@@ -171,6 +175,10 @@ const App = () => {
               {/* Talent Pool - Master Admin */}
               <Route path="talent-pool" element={<TalentPoolDashboard />} />
               <Route path="talent-pool/candidates" element={<TalentPool />} />
+              <Route path="talent-pool/add" element={<TalentPoolAddCandidate />} />
+              <Route path="talent-pool/bulk-upload" element={<TalentPoolBulkUpload />} />
+              <Route path="talent-pool/document-upload" element={<TalentPoolDocumentUpload />} />
+              <Route path="talent-pool/export" element={<TalentPoolExport />} />
             </Route>
             
             {/* User Routes */}
@@ -219,6 +227,10 @@ const App = () => {
               <Route path="applications-overview" element={<ApplicationsOverview />} />
               <Route path="talent-pool" element={<TalentPoolDashboard />} />
               <Route path="talent-pool/candidates" element={<TalentPool />} />
+              <Route path="talent-pool/add" element={<TalentPoolAddCandidate />} />
+              <Route path="talent-pool/bulk-upload" element={<TalentPoolBulkUpload />} />
+              <Route path="talent-pool/document-upload" element={<TalentPoolDocumentUpload />} />
+              <Route path="talent-pool/export" element={<TalentPoolExport />} />
               <Route path="talent" element={<TalentPool />} />
               <Route path="communications" element={<UniversityDashboard />} />
               <Route path="users" element={<UserManagement />} />
