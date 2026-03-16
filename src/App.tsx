@@ -238,6 +238,7 @@ const App = () => {
               <Route path="users" element={<UserManagement />} />
               <Route path="analytics" element={<UniversityAnalytics />} />
               <Route path="reports" element={<UniversityReports />} />
+              <Route path="reports/:reportId" element={<ReportDetail />} />
               <Route path="settings" element={<UniversityDashboard />} />
             </Route>
             
