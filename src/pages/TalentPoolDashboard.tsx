@@ -120,7 +120,7 @@ const TalentPoolDashboard = () => {
       icon: Search,
       description: 'Find candidates with filters',
       variant: 'outline' as const,
-      onClick: () => navigate('/talent-pool/candidates?search=true'),
+      onClick: () => navigate(`${basePath}/candidates?search=true`),
     },
   ];
 
