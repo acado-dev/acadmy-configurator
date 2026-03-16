@@ -67,6 +67,7 @@ import TalentPoolAddCandidate from '@/pages/university/TalentPoolAddCandidate';
 import TalentPoolBulkUpload from '@/pages/university/TalentPoolBulkUpload';
 import TalentPoolDocumentUpload from '@/pages/university/TalentPoolDocumentUpload';
 import TalentPoolExport from '@/pages/university/TalentPoolExport';
+import ReportDetail from '@/pages/university/ReportDetail';
 import CourseCategories from '@/pages/CourseCategories';
 import CourseLevels from '@/pages/CourseLevels';
 import CourseTypes from '@/pages/CourseTypes';
