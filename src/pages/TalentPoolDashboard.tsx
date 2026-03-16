@@ -89,7 +89,7 @@ const TalentPoolDashboard = () => {
       color: 'text-yellow-600',
       bgColor: 'bg-yellow-50',
       trend: '+10% from last month',
-      onClick: () => navigate('/talent-pool/candidates?filter=scholarship'),
+      onClick: () => navigate(`${basePath}/candidates?filter=scholarship`),
     },
   ];
 
