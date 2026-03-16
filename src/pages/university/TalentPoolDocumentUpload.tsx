@@ -54,7 +54,7 @@ const TalentPoolDocumentUpload = () => {
           status: 'parsed' as const,
           extractedData: {
             name: ['Sarah Johnson', 'Amit Kumar', 'Maria Garcia', 'Li Wei', 'Ahmed Hassan'][i % 5],
-            email: [`candidate${i + 1}@email.com`],
+            email: `candidate${i + 1}@email.com`,
             phone: `+1 555-${String(1000 + i).padStart(4, '0')}`,
             education: ['B.Sc Computer Science - MIT', 'B.Tech ECE - IIT Delhi', 'BA Design - University of Madrid', 'B.Sc Physics - Peking University', 'High School - Cairo Academy'][i % 5],
             skills: [['Python', 'Machine Learning', 'Data Analysis'], ['Java', 'Cloud Computing', 'DevOps'], ['UI/UX Design', 'Figma', 'Adobe'], ['Mathematics', 'Research', 'LaTeX'], ['Engineering', 'CAD', 'Project Management']][i % 5],
