@@ -49,7 +49,7 @@ const TalentPoolDashboard = () => {
       color: 'text-green-600',
       bgColor: 'bg-green-50',
       trend: '+8% from last month',
-      onClick: () => navigate('/talent-pool/candidates?filter=verified'),
+      onClick: () => navigate(`${basePath}/candidates?filter=verified`),
     },
     {
       title: 'Shortlisted for Programs',
