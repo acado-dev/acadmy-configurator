@@ -39,7 +39,7 @@ const TalentPoolDashboard = () => {
       color: 'text-blue-600',
       bgColor: 'bg-blue-50',
       trend: '+12% from last month',
-      onClick: () => navigate('/talent-pool/candidates'),
+      onClick: () => navigate(`${basePath}/candidates`),
     },
     {
       title: 'Verified Profiles',
