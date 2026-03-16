@@ -227,6 +227,10 @@ const App = () => {
               <Route path="applications-overview" element={<ApplicationsOverview />} />
               <Route path="talent-pool" element={<TalentPoolDashboard />} />
               <Route path="talent-pool/candidates" element={<TalentPool />} />
+              <Route path="talent-pool/add" element={<TalentPoolAddCandidate />} />
+              <Route path="talent-pool/bulk-upload" element={<TalentPoolBulkUpload />} />
+              <Route path="talent-pool/document-upload" element={<TalentPoolDocumentUpload />} />
+              <Route path="talent-pool/export" element={<TalentPoolExport />} />
               <Route path="talent" element={<TalentPool />} />
               <Route path="communications" element={<UniversityDashboard />} />
               <Route path="users" element={<UserManagement />} />
