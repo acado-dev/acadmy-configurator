@@ -593,8 +593,8 @@ export default function AnalyticsDashboard() {
                 className={cn(
                   'flex items-start gap-3 p-3 rounded-lg border',
                   alert.type === 'error' && 'border-destructive/30 bg-destructive/5',
-                  alert.type === 'warning' && 'border-orange-300 bg-orange-50 dark:border-orange-800 dark:bg-orange-950',
-                  alert.type === 'info' && 'border-blue-300 bg-blue-50 dark:border-blue-800 dark:bg-blue-950'
+                  alert.type === 'warning' && 'border-accent bg-accent/10',
+                  alert.type === 'info' && 'border-primary/30 bg-primary/5'
                 )}
               >
                 <AlertTriangle className={cn('w-5 h-5 mt-0.5',
