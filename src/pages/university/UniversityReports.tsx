@@ -62,6 +62,9 @@ const stageColors: Record<string, string> = {
 const UniversityReports = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
+  const navigate = useNavigate();
+  const location = useLocation();
+  const basePath = location.pathname.startsWith('/university') ? '/university' : '';
 
   const filteredTemplates = reportTemplates.filter((t) => {
     const matchesSearch = t.name.toLowerCase().includes(searchQuery.toLowerCase());
@@ -69,11 +72,8 @@ const UniversityReports = () => {
     return matchesSearch && matchesCategory;
   });
 
-  const handleGenerateReport = (template: ReportTemplate) => {
-    toast({
-      title: "Report Generated",
-      description: `"${template.name}" has been generated and is ready for download.`,
-    });
+  const handleViewReport = (template: ReportTemplate) => {
+    navigate(`${basePath}/reports/${template.id}`);
   };
 
   const handleDownload = (reportName: string) => {
