@@ -149,9 +149,9 @@ const UniversityReports = () => {
                     {template.lastGenerated && (
                       <span className="text-xs text-muted-foreground">Last: {template.lastGenerated}</span>
                     )}
-                    <Button size="sm" onClick={() => handleGenerateReport(template)} className="ml-auto">
-                      <FileText className="h-4 w-4 mr-1" />
-                      Generate
+                    <Button size="sm" onClick={() => handleViewReport(template)} className="ml-auto">
+                      <Eye className="h-4 w-4 mr-1" />
+                      View Report
                     </Button>
                   </div>
                 </CardContent>
