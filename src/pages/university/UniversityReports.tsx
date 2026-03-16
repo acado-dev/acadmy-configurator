@@ -189,7 +189,14 @@ const UniversityReports = () => {
                         <Badge variant="outline">{report.format}</Badge>
                       </TableCell>
                       <TableCell className="text-muted-foreground">{report.size}</TableCell>
-                      <TableCell className="text-right">
+                      <TableCell className="text-right space-x-1">
+                        <Button variant="ghost" size="sm" onClick={() => {
+                          // Find matching template by name
+                          const t = reportTemplates.find(rt => report.template.includes(rt.name));
+                          if (t) navigate(`${basePath}/reports/${t.id}`);
+                        }}>
+                          <Eye className="h-4 w-4" />
+                        </Button>
                         <Button variant="ghost" size="sm" onClick={() => handleDownload(report.name)}>
                           <Download className="h-4 w-4" />
                         </Button>
