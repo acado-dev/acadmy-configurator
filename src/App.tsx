@@ -160,6 +160,7 @@ const App = () => {
               {/* Analytics & Reports */}
               <Route path="analytics" element={<Analytics />} />
               <Route path="reports" element={<Reports />} />
+              <Route path="reports/:reportId" element={<ReportDetail />} />
               <Route path="interested-users" element={<InterestedUsers />} />
               <Route path="user-search" element={<UserSearch />} />
               
