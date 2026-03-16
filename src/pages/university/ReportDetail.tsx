@@ -240,6 +240,31 @@ const ReportDetail = () => {
 
   const report = reportDataMap[reportId || ''];
 
+  const filteredData = useMemo(() => {
+    if (!report) return [];
+    let data = [...report.data];
+    if (searchQuery) {
+      data = data.filter(row =>
+        Object.values(row).some(v => String(v).toLowerCase().includes(searchQuery.toLowerCase()))
+      );
+    }
+    if (sortKey) {
+      data.sort((a, b) => {
+        const aVal = a[sortKey];
+        const bVal = b[sortKey];
+        const numA = typeof aVal === 'number' ? aVal : parseFloat(String(aVal).replace(/[^0-9.-]/g, ''));
+        const numB = typeof bVal === 'number' ? bVal : parseFloat(String(bVal).replace(/[^0-9.-]/g, ''));
+        if (!isNaN(numA) && !isNaN(numB)) {
+          return sortDir === 'asc' ? numA - numB : numB - numA;
+        }
+        return sortDir === 'asc'
+          ? String(aVal).localeCompare(String(bVal))
+          : String(bVal).localeCompare(String(aVal));
+      });
+    }
+    return data;
+  }, [report, searchQuery, sortKey, sortDir]);
+
   if (!report) {
     return (
       <div className="space-y-6">
@@ -263,30 +288,6 @@ const ReportDetail = () => {
       setSortDir('asc');
     }
   };
-
-  const filteredData = useMemo(() => {
-    let data = [...report.data];
-    if (searchQuery) {
-      data = data.filter(row =>
-        Object.values(row).some(v => String(v).toLowerCase().includes(searchQuery.toLowerCase()))
-      );
-    }
-    if (sortKey) {
-      data.sort((a, b) => {
-        const aVal = a[sortKey];
-        const bVal = b[sortKey];
-        const numA = typeof aVal === 'number' ? aVal : parseFloat(String(aVal).replace(/[^0-9.-]/g, ''));
-        const numB = typeof bVal === 'number' ? bVal : parseFloat(String(bVal).replace(/[^0-9.-]/g, ''));
-        if (!isNaN(numA) && !isNaN(numB)) {
-          return sortDir === 'asc' ? numA - numB : numB - numA;
-        }
-        return sortDir === 'asc'
-          ? String(aVal).localeCompare(String(bVal))
-          : String(bVal).localeCompare(String(aVal));
-      });
-    }
-    return data;
-  }, [report.data, searchQuery, sortKey, sortDir]);
 
   const handleDownloadCSV = () => {
     const headers = report.columns.map(c => c.label).join(',');
