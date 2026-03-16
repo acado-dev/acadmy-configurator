@@ -24,7 +24,11 @@ import { useTalentPool } from '@/hooks/useTalentPool';
 
 const TalentPoolDashboard = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { stats, loading } = useTalentPool();
+  
+  // Detect if we're in university context to use correct base path
+  const basePath = location.pathname.startsWith('/university') ? '/university/talent-pool' : '/talent-pool';
 
   const metrics = [
     {
