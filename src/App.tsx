@@ -61,6 +61,8 @@ import TalentPoolDashboard from '@/pages/TalentPoolDashboard';
 import ProcessSteps from '@/pages/university/ProcessSteps';
 import ProcessConfiguration from '@/pages/university/ProcessConfiguration';
 import UserManagement from '@/pages/university/UserManagement';
+import UniversityAnalytics from '@/pages/university/UniversityAnalytics';
+import UniversityReports from '@/pages/university/UniversityReports';
 import CourseCategories from '@/pages/CourseCategories';
 import CourseLevels from '@/pages/CourseLevels';
 import CourseTypes from '@/pages/CourseTypes';
@@ -220,6 +222,8 @@ const App = () => {
               <Route path="talent" element={<TalentPool />} />
               <Route path="communications" element={<UniversityDashboard />} />
               <Route path="users" element={<UserManagement />} />
+              <Route path="analytics" element={<UniversityAnalytics />} />
+              <Route path="reports" element={<UniversityReports />} />
               <Route path="settings" element={<UniversityDashboard />} />
             </Route>
             
