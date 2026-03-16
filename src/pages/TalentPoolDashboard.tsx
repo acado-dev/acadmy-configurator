@@ -59,7 +59,7 @@ const TalentPoolDashboard = () => {
       color: 'text-purple-600',
       bgColor: 'bg-purple-50',
       trend: '+15% from last month',
-      onClick: () => navigate('/talent-pool/candidates?filter=shortlisted'),
+      onClick: () => navigate(`${basePath}/candidates?filter=shortlisted`),
     },
     {
       title: 'Applicants in Progress',
