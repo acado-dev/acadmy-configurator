@@ -61,6 +61,8 @@ import TalentPoolDashboard from '@/pages/TalentPoolDashboard';
 import ProcessSteps from '@/pages/university/ProcessSteps';
 import ProcessConfiguration from '@/pages/university/ProcessConfiguration';
 import UserManagement from '@/pages/university/UserManagement';
+import UniversityAnalytics from '@/pages/university/UniversityAnalytics';
+import UniversityReports from '@/pages/university/UniversityReports';
 import CourseCategories from '@/pages/CourseCategories';
 import CourseLevels from '@/pages/CourseLevels';
 import CourseTypes from '@/pages/CourseTypes';
