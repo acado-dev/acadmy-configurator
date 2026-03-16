@@ -113,7 +113,7 @@ const TalentPoolDashboard = () => {
       icon: FileText,
       description: 'Parse CV/Resume/Records',
       variant: 'outline' as const,
-      onClick: () => navigate('/talent-pool/document-upload'),
+      onClick: () => navigate(`${basePath}/document-upload`),
     },
     {
       label: 'Smart Search',
