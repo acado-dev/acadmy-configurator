@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -6,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Download, FileText, Filter, Search, Calendar, BarChart, Users, BookOpen, ClipboardList, Award, TrendingUp } from "lucide-react";
+import { Download, FileText, Filter, Search, Calendar, BarChart, Users, BookOpen, ClipboardList, Award, TrendingUp, Eye, ArrowRight } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
 interface ReportTemplate {
