@@ -99,7 +99,7 @@ const TalentPoolDashboard = () => {
       icon: Plus,
       description: 'Manually add a new student profile',
       variant: 'default' as const,
-      onClick: () => navigate('/talent-pool/add'),
+      onClick: () => navigate(`${basePath}/add`),
     },
     {
       label: 'Bulk Upload',
