@@ -175,6 +175,10 @@ const App = () => {
               {/* Talent Pool - Master Admin */}
               <Route path="talent-pool" element={<TalentPoolDashboard />} />
               <Route path="talent-pool/candidates" element={<TalentPool />} />
+              <Route path="talent-pool/add" element={<TalentPoolAddCandidate />} />
+              <Route path="talent-pool/bulk-upload" element={<TalentPoolBulkUpload />} />
+              <Route path="talent-pool/document-upload" element={<TalentPoolDocumentUpload />} />
+              <Route path="talent-pool/export" element={<TalentPoolExport />} />
             </Route>
             
             {/* User Routes */}
