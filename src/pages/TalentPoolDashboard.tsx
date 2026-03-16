@@ -69,7 +69,7 @@ const TalentPoolDashboard = () => {
       color: 'text-orange-600',
       bgColor: 'bg-orange-50',
       trend: '+5% from last month',
-      onClick: () => navigate('/talent-pool/candidates?filter=in-progress'),
+      onClick: () => navigate(`${basePath}/candidates?filter=in-progress`),
     },
     {
       title: 'Accepted / Offer Received',
