@@ -599,8 +599,8 @@ export default function AnalyticsDashboard() {
               >
                 <AlertTriangle className={cn('w-5 h-5 mt-0.5',
                   alert.type === 'error' && 'text-destructive',
-                  alert.type === 'warning' && 'text-orange-600',
-                  alert.type === 'info' && 'text-blue-600'
+                  alert.type === 'warning' && 'text-accent-foreground',
+                  alert.type === 'info' && 'text-primary'
                 )} />
                 <div className="flex-1">
                   <p className="font-medium">{alert.message}</p>
