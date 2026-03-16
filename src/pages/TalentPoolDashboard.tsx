@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -24,7 +24,11 @@ import { useTalentPool } from '@/hooks/useTalentPool';
 
 const TalentPoolDashboard = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { stats, loading } = useTalentPool();
+  
+  // Detect if we're in university context to use correct base path
+  const basePath = location.pathname.startsWith('/university') ? '/university/talent-pool' : '/talent-pool';
 
   const metrics = [
     {
@@ -35,7 +39,7 @@ const TalentPoolDashboard = () => {
       color: 'text-blue-600',
       bgColor: 'bg-blue-50',
       trend: '+12% from last month',
-      onClick: () => navigate('/talent-pool/candidates'),
+      onClick: () => navigate(`${basePath}/candidates`),
     },
     {
       title: 'Verified Profiles',
@@ -45,7 +49,7 @@ const TalentPoolDashboard = () => {
       color: 'text-green-600',
       bgColor: 'bg-green-50',
       trend: '+8% from last month',
-      onClick: () => navigate('/talent-pool/candidates?filter=verified'),
+      onClick: () => navigate(`${basePath}/candidates?filter=verified`),
     },
     {
       title: 'Shortlisted for Programs',
@@ -55,7 +59,7 @@ const TalentPoolDashboard = () => {
       color: 'text-purple-600',
       bgColor: 'bg-purple-50',
       trend: '+15% from last month',
-      onClick: () => navigate('/talent-pool/candidates?filter=shortlisted'),
+      onClick: () => navigate(`${basePath}/candidates?filter=shortlisted`),
     },
     {
       title: 'Applicants in Progress',
@@ -65,7 +69,7 @@ const TalentPoolDashboard = () => {
       color: 'text-orange-600',
       bgColor: 'bg-orange-50',
       trend: '+5% from last month',
-      onClick: () => navigate('/talent-pool/candidates?filter=in-progress'),
+      onClick: () => navigate(`${basePath}/candidates?filter=in-progress`),
     },
     {
       title: 'Accepted / Offer Received',
@@ -75,7 +79,7 @@ const TalentPoolDashboard = () => {
       color: 'text-emerald-600',
       bgColor: 'bg-emerald-50',
       trend: '+20% from last month',
-      onClick: () => navigate('/talent-pool/candidates?filter=accepted'),
+      onClick: () => navigate(`${basePath}/candidates?filter=accepted`),
     },
     {
       title: 'Scholarship Eligible',
@@ -85,7 +89,7 @@ const TalentPoolDashboard = () => {
       color: 'text-yellow-600',
       bgColor: 'bg-yellow-50',
       trend: '+10% from last month',
-      onClick: () => navigate('/talent-pool/candidates?filter=scholarship'),
+      onClick: () => navigate(`${basePath}/candidates?filter=scholarship`),
     },
   ];
 
@@ -95,28 +99,28 @@ const TalentPoolDashboard = () => {
       icon: Plus,
       description: 'Manually add a new student profile',
       variant: 'default' as const,
-      onClick: () => navigate('/talent-pool/add'),
+      onClick: () => navigate(`${basePath}/add`),
     },
     {
       label: 'Bulk Upload',
       icon: Upload,
       description: 'Import candidates via CSV',
       variant: 'outline' as const,
-      onClick: () => navigate('/talent-pool/bulk-upload'),
+      onClick: () => navigate(`${basePath}/bulk-upload`),
     },
     {
       label: 'Upload Documents',
       icon: FileText,
       description: 'Parse CV/Resume/Records',
       variant: 'outline' as const,
-      onClick: () => navigate('/talent-pool/document-upload'),
+      onClick: () => navigate(`${basePath}/document-upload`),
     },
     {
       label: 'Smart Search',
       icon: Search,
       description: 'Find candidates with filters',
       variant: 'outline' as const,
-      onClick: () => navigate('/talent-pool/candidates?search=true'),
+      onClick: () => navigate(`${basePath}/candidates?search=true`),
     },
   ];
 
@@ -185,11 +189,11 @@ const TalentPoolDashboard = () => {
           </p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" onClick={() => navigate('/talent-pool/export')}>
+          <Button variant="outline" onClick={() => navigate(`${basePath}/export`)}>
             <Download className="mr-2 h-4 w-4" />
             Export Reports
           </Button>
-          <Button onClick={() => navigate('/talent-pool/candidates')}>
+          <Button onClick={() => navigate(`${basePath}/candidates`)}>
             <Users className="mr-2 h-4 w-4" />
             View All Candidates
           </Button>
