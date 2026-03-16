@@ -106,7 +106,7 @@ const TalentPoolDashboard = () => {
       icon: Upload,
       description: 'Import candidates via CSV',
       variant: 'outline' as const,
-      onClick: () => navigate('/talent-pool/bulk-upload'),
+      onClick: () => navigate(`${basePath}/bulk-upload`),
     },
     {
       label: 'Upload Documents',
