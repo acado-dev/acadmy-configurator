@@ -189,11 +189,11 @@ const TalentPoolDashboard = () => {
           </p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" onClick={() => navigate('/talent-pool/export')}>
+          <Button variant="outline" onClick={() => navigate(`${basePath}/export`)}>
             <Download className="mr-2 h-4 w-4" />
             Export Reports
           </Button>
-          <Button onClick={() => navigate('/talent-pool/candidates')}>
+          <Button onClick={() => navigate(`${basePath}/candidates`)}>
             <Users className="mr-2 h-4 w-4" />
             View All Candidates
           </Button>
