@@ -79,7 +79,7 @@ const TalentPoolDashboard = () => {
       color: 'text-emerald-600',
       bgColor: 'bg-emerald-50',
       trend: '+20% from last month',
-      onClick: () => navigate('/talent-pool/candidates?filter=accepted'),
+      onClick: () => navigate(`${basePath}/candidates?filter=accepted`),
     },
     {
       title: 'Scholarship Eligible',
