@@ -67,6 +67,7 @@ import TalentPoolAddCandidate from '@/pages/university/TalentPoolAddCandidate';
 import TalentPoolBulkUpload from '@/pages/university/TalentPoolBulkUpload';
 import TalentPoolDocumentUpload from '@/pages/university/TalentPoolDocumentUpload';
 import TalentPoolExport from '@/pages/university/TalentPoolExport';
+import ReportDetail from '@/pages/university/ReportDetail';
 import CourseCategories from '@/pages/CourseCategories';
 import CourseLevels from '@/pages/CourseLevels';
 import CourseTypes from '@/pages/CourseTypes';
@@ -159,6 +160,7 @@ const App = () => {
               {/* Analytics & Reports */}
               <Route path="analytics" element={<Analytics />} />
               <Route path="reports" element={<Reports />} />
+              <Route path="reports/:reportId" element={<ReportDetail />} />
               <Route path="interested-users" element={<InterestedUsers />} />
               <Route path="user-search" element={<UserSearch />} />
               
@@ -236,6 +238,7 @@ const App = () => {
               <Route path="users" element={<UserManagement />} />
               <Route path="analytics" element={<UniversityAnalytics />} />
               <Route path="reports" element={<UniversityReports />} />
+              <Route path="reports/:reportId" element={<ReportDetail />} />
               <Route path="settings" element={<UniversityDashboard />} />
             </Route>
             

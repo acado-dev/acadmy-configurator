@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -6,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Download, FileText, Filter, Search, Calendar, BarChart, Users, BookOpen, ClipboardList, Award, TrendingUp } from "lucide-react";
+import { Download, FileText, Filter, Search, Calendar, BarChart, Users, BookOpen, ClipboardList, Award, TrendingUp, Eye, ArrowRight } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
 interface ReportTemplate {
@@ -61,6 +62,9 @@ const stageColors: Record<string, string> = {
 const UniversityReports = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
+  const navigate = useNavigate();
+  const location = useLocation();
+  const basePath = location.pathname.startsWith('/university') ? '/university' : '';
 
   const filteredTemplates = reportTemplates.filter((t) => {
     const matchesSearch = t.name.toLowerCase().includes(searchQuery.toLowerCase());
@@ -68,11 +72,8 @@ const UniversityReports = () => {
     return matchesSearch && matchesCategory;
   });
 
-  const handleGenerateReport = (template: ReportTemplate) => {
-    toast({
-      title: "Report Generated",
-      description: `"${template.name}" has been generated and is ready for download.`,
-    });
+  const handleViewReport = (template: ReportTemplate) => {
+    navigate(`${basePath}/reports/${template.id}`);
   };
 
   const handleDownload = (reportName: string) => {
@@ -148,9 +149,9 @@ const UniversityReports = () => {
                     {template.lastGenerated && (
                       <span className="text-xs text-muted-foreground">Last: {template.lastGenerated}</span>
                     )}
-                    <Button size="sm" onClick={() => handleGenerateReport(template)} className="ml-auto">
-                      <FileText className="h-4 w-4 mr-1" />
-                      Generate
+                    <Button size="sm" onClick={() => handleViewReport(template)} className="ml-auto">
+                      <Eye className="h-4 w-4 mr-1" />
+                      View Report
                     </Button>
                   </div>
                 </CardContent>
@@ -188,7 +189,14 @@ const UniversityReports = () => {
                         <Badge variant="outline">{report.format}</Badge>
                       </TableCell>
                       <TableCell className="text-muted-foreground">{report.size}</TableCell>
-                      <TableCell className="text-right">
+                      <TableCell className="text-right space-x-1">
+                        <Button variant="ghost" size="sm" onClick={() => {
+                          // Find matching template by name
+                          const t = reportTemplates.find(rt => report.template.includes(rt.name));
+                          if (t) navigate(`${basePath}/reports/${t.id}`);
+                        }}>
+                          <Eye className="h-4 w-4" />
+                        </Button>
                         <Button variant="ghost" size="sm" onClick={() => handleDownload(report.name)}>
                           <Download className="h-4 w-4" />
                         </Button>
