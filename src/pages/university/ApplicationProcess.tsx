@@ -240,23 +240,29 @@ function ApplicationProcess() {
         </CardContent>
       </Card>
 
-      {/* Plain-English Criteria Agent */}
-      <CriteriaAgent
-        context={`Course: ${course.name}${courseForm ? `, application form: ${courseForm.name}` : ''}`}
-        availableFields={fieldNameOptions}
-        existingCriteria={criteria}
-        existingMinimumScore={minimumScore}
-        onApply={(agentCriteria, score) => {
-          setCriteria(agentCriteria.map(c => ({
-            id: c.id,
-            fieldName: c.fieldName,
-            type: c.type,
-            weight: c.weight,
-            conditions: c.conditions,
-          })));
-          setMinimumScore(score);
-        }}
-      />
+      {/* AI Criteria Assistant link */}
+      <Card>
+        <CardContent className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-5">
+          <div className="flex items-start gap-3">
+            <Sparkles className="w-5 h-5 text-primary mt-0.5" />
+            <div>
+              <p className="font-medium">AI Criteria Assistant</p>
+              <p className="text-sm text-muted-foreground">
+                Describe requirements in plain English and let the agent build the rubric for you.
+              </p>
+            </div>
+          </div>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => navigate(`/university/application-process/${courseId}/agent`)}
+          >
+            Open assistant
+          </Button>
+        </CardContent>
+      </Card>
+
+
 
 
       {/* Evaluation Criteria */}
