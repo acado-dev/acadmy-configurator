@@ -20,8 +20,11 @@ import {
   FileText,
   Users,
   TrendingUp,
-  Award
+  Award,
+  Sparkles,
+
 } from 'lucide-react';
+
 import { Progress } from '@/components/ui/progress';
 import { useApplicationSubmissions } from '@/hooks/useApplicationSubmissions';
 import { useFormsData } from '@/hooks/useFormsData';
@@ -119,10 +122,25 @@ const ApplicationsList = () => {
             <h1 className="text-3xl font-bold text-foreground">Applications</h1>
             <p className="text-muted-foreground">Review and manage student applications</p>
           </div>
-          <Button variant="outline">
-            <Download className="h-4 w-4 mr-2" />
-            Export
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              onClick={() =>
+                navigate(
+                  window.location.pathname.startsWith('/university')
+                    ? '/university/applications/matching'
+                    : '/applications/matching',
+                )
+              }
+            >
+              <Sparkles className="h-4 w-4 mr-2" />
+              AI Matching Screen
+            </Button>
+            <Button variant="outline">
+              <Download className="h-4 w-4 mr-2" />
+              Export
+            </Button>
+          </div>
+
         </div>
 
         {/* Filters */}

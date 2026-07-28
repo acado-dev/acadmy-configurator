@@ -239,15 +239,21 @@ export const useApplicationSubmissions = () => {
   };
 
   const updateApplicationStatus = (applicationId: string, newStatus: ApplicationSubmission['status']) => {
-    const updatedApplications = applications.map(app => 
-      app.id === applicationId 
-        ? { ...app, status: newStatus, lastUpdated: new Date() }
-        : app
-    );
-    setApplications(updatedApplications);
-    localStorage.setItem('applicationSubmissions', JSON.stringify(updatedApplications));
-    calculateStats(updatedApplications);
+    bulkUpdateStatus([applicationId], newStatus);
   };
+
+  const bulkUpdateStatus = (applicationIds: string[], newStatus: ApplicationSubmission['status']) => {
+    const ids = new Set(applicationIds);
+    setApplications(prev => {
+      const updated = prev.map(app =>
+        ids.has(app.id) ? { ...app, status: newStatus, lastUpdated: new Date() } : app
+      );
+      localStorage.setItem('applicationSubmissions', JSON.stringify(updated));
+      calculateStats(updated);
+      return updated;
+    });
+  };
+
 
   const getApplicationById = (applicationId: string): ApplicationSubmission | undefined => {
     return applications.find(app => app.id === applicationId);
@@ -450,10 +456,12 @@ export const useApplicationSubmissions = () => {
     stats,
     submitApplication,
     updateApplicationStatus,
+    bulkUpdateStatus,
     getApplicationById,
     getApplicationsByCourse,
     getApplicationsByStatus,
     calculateMatchScore,
     refreshApplications: loadApplications
+
   };
 };

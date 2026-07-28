@@ -90,6 +90,8 @@ import MailTemplate from '@/pages/MailTemplate';
 import BulkEmail from '@/pages/BulkEmail';
 import ContentCategories from '@/pages/ContentCategories';
 import CriteriaAgentPage from '@/pages/CriteriaAgentPage';
+import ApplicationMatching from '@/pages/ApplicationMatching';
+
 
 const queryClient = new QueryClient();
 
@@ -174,6 +176,8 @@ const App = () => {
               <Route path="applications-overview" element={<ApplicationsOverview />} />
               <Route path="applications" element={<ApplicationsList />} />
               <Route path="applications/selection-process" element={<ApplicationProcessList />} />
+              <Route path="applications/matching" element={<ApplicationMatching />} />
+
               <Route path="applications/acceptance-letters" element={<AcceptanceLetters />} />
               
               {/* Talent Pool - Master Admin */}
@@ -228,7 +232,9 @@ const App = () => {
               <Route path="process-configuration/new" element={<ProcessConfiguration />} />
               <Route path="process-configuration/:courseId" element={<ProcessConfiguration />} />
               <Route path="applications" element={<ApplicationsList />} />
+              <Route path="applications/matching" element={<ApplicationMatching />} />
               <Route path="applications/:id" element={<UniversityApplicationReview />} />
+
               <Route path="applications-overview" element={<ApplicationsOverview />} />
               <Route path="talent-pool" element={<TalentPoolDashboard />} />
               <Route path="talent-pool/candidates" element={<TalentPool />} />
