@@ -375,53 +375,51 @@ const ApplicationReview = () => {
               <CardTitle>Application Data</CardTitle>
             </CardHeader>
             <CardContent>
-              <Tabs defaultValue="personal" className="w-full">
-                <TabsList className="grid w-full grid-cols-3">
-                  <TabsTrigger value="personal">Personal Info</TabsTrigger>
-                  <TabsTrigger value="academic">Academic</TabsTrigger>
-                  <TabsTrigger value="experience">Experience</TabsTrigger>
-                </TabsList>
-                
-                <TabsContent value="personal" className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    {Object.entries(application.formData.personalInfo || {}).map(([key, value]) => (
+              {hasSectionedData ? (
+                <Tabs defaultValue="personal" className="w-full">
+                  <TabsList className="grid w-full grid-cols-3">
+                    <TabsTrigger value="personal">Personal Info</TabsTrigger>
+                    <TabsTrigger value="academic">Academic</TabsTrigger>
+                    <TabsTrigger value="experience">Experience</TabsTrigger>
+                  </TabsList>
+
+                  {([
+                    ['personal', 'personalInfo'],
+                    ['academic', 'academicBackground'],
+                    ['experience', 'workExperience'],
+                  ] as const).map(([tab, section]) => (
+                    <TabsContent key={tab} value={tab} className="space-y-4">
+                      <div className="grid grid-cols-2 gap-4">
+                        {Object.entries(application.formData[section] || {}).map(([key, value]) => (
+                          <div key={key}>
+                            <p className="text-sm text-muted-foreground capitalize">
+                              {key.replace(/([A-Z])/g, ' $1').trim()}
+                            </p>
+                            <p className="font-medium">{formatFieldValue(value)}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </TabsContent>
+                  ))}
+                </Tabs>
+              ) : (
+                <div className="grid grid-cols-2 gap-4">
+                  {Object.entries(application.formData || {}).length === 0 ? (
+                    <p className="text-sm text-muted-foreground col-span-2">No form data submitted.</p>
+                  ) : (
+                    Object.entries(application.formData || {}).map(([key, value]) => (
                       <div key={key}>
                         <p className="text-sm text-muted-foreground capitalize">
                           {key.replace(/([A-Z])/g, ' $1').trim()}
                         </p>
-                        <p className="font-medium">{value as string}</p>
+                        <p className="font-medium">{formatFieldValue(value)}</p>
                       </div>
-                    ))}
-                  </div>
-                </TabsContent>
-                
-                <TabsContent value="academic" className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    {Object.entries(application.formData.academicBackground || {}).map(([key, value]) => (
-                      <div key={key}>
-                        <p className="text-sm text-muted-foreground capitalize">
-                          {key.replace(/([A-Z])/g, ' $1').trim()}
-                        </p>
-                        <p className="font-medium">{value as string}</p>
-                      </div>
-                    ))}
-                  </div>
-                </TabsContent>
-                
-                <TabsContent value="experience" className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    {Object.entries(application.formData.workExperience || {}).map(([key, value]) => (
-                      <div key={key}>
-                        <p className="text-sm text-muted-foreground capitalize">
-                          {key.replace(/([A-Z])/g, ' $1').trim()}
-                        </p>
-                        <p className="font-medium">{value as string}</p>
-                      </div>
-                    ))}
-                  </div>
-                </TabsContent>
-              </Tabs>
+                    ))
+                  )}
+                </div>
+              )}
             </CardContent>
+
           </Card>
         </div>
 
