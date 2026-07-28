@@ -311,6 +311,48 @@ const FormEditor = () => {
         </div>
       </div>
 
+      {/* Evaluation Criteria Agent */}
+      <CriteriaAgent
+        context={`Application form: ${formName || 'Untitled form'}${formDescription ? ` — ${formDescription}` : ''}`}
+        availableFields={selectedFields.map(f => f.customLabel || f.label)}
+        existingCriteria={
+          selectedCourseIds[0]
+            ? (getCriteriaByCoursId(selectedCourseIds[0])?.criteria ?? []).map(c => ({ ...c }))
+            : []
+        }
+        existingMinimumScore={
+          selectedCourseIds[0] ? getCriteriaByCoursId(selectedCourseIds[0])?.minimumScore ?? 70 : 70
+        }
+        onApply={(agentCriteria, score) => {
+          if (selectedCourseIds.length === 0) {
+            toast({
+              title: 'Map this form to courses first',
+              description: 'Use "Map to Courses" so the criteria can be saved against a course.',
+              variant: 'destructive',
+            });
+            return;
+          }
+          selectedCourseIds.forEach(courseId =>
+            saveCriteriaConfig(
+              courseId,
+              score,
+              agentCriteria.map(c => ({
+                id: c.id,
+                fieldName: c.fieldName,
+                type: c.type,
+                weight: c.weight,
+                conditions: c.conditions,
+              })),
+            ),
+          );
+          toast({
+            title: 'Evaluation criteria saved',
+            description: `Applied to ${selectedCourseIds.length} mapped course(s).`,
+          });
+        }}
+      />
+
+
       {/* Add Field Dialog */}
       <Dialog open={isAddFieldDialogOpen} onOpenChange={setIsAddFieldDialogOpen}>
         <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
