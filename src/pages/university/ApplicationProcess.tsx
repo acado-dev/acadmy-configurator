@@ -22,6 +22,7 @@ import { useApplicationProcess, MatchingCriterion } from '@/hooks/useApplication
 import { useFormsData } from '@/hooks/useFormsData';
 import { masterCategories, masterFields } from '@/data/masterFields';
 import { ApplicationField, FieldCategory } from '@/types/application';
+import { CriteriaAgent } from '@/components/criteria/CriteriaAgent';
 
 function ApplicationProcess() {
   const { courseId } = useParams<{ courseId: string }>();
@@ -54,6 +55,13 @@ function ApplicationProcess() {
     
     return fieldsByCategory;
   }, [courseForm]);
+
+  const fieldNameOptions = useMemo(
+    () => Array.from(new Set(Object.values(availableFields).flat().map(f => f.label))),
+    [availableFields],
+  );
+
+
 
   useEffect(() => {
     // Guard: if no courseId or invalid course, go back to Application Process list
@@ -231,6 +239,25 @@ function ApplicationProcess() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Plain-English Criteria Agent */}
+      <CriteriaAgent
+        context={`Course: ${course.name}${courseForm ? `, application form: ${courseForm.name}` : ''}`}
+        availableFields={fieldNameOptions}
+        existingCriteria={criteria}
+        existingMinimumScore={minimumScore}
+        onApply={(agentCriteria, score) => {
+          setCriteria(agentCriteria.map(c => ({
+            id: c.id,
+            fieldName: c.fieldName,
+            type: c.type,
+            weight: c.weight,
+            conditions: c.conditions,
+          })));
+          setMinimumScore(score);
+        }}
+      />
+
 
       {/* Evaluation Criteria */}
       <Card>
