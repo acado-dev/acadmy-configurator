@@ -449,10 +449,11 @@ const ApplicationReview = () => {
                   <SelectValue placeholder="Change status" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="pending">Pending</SelectItem>
-                  <SelectItem value="under-review">Under Review</SelectItem>
+                  <SelectItem value="submitted">Submitted</SelectItem>
+                  <SelectItem value="under_review">Under Review</SelectItem>
                   <SelectItem value="shortlisted">Shortlisted</SelectItem>
-                  <SelectItem value="interview-scheduled">Interview Scheduled</SelectItem>
+                  <SelectItem value="interview_scheduled">Interview Scheduled</SelectItem>
+
                   <SelectItem value="waitlisted">Waitlisted</SelectItem>
                   <SelectItem value="accepted">Accepted</SelectItem>
                   <SelectItem value="rejected">Rejected</SelectItem>
