@@ -232,6 +232,25 @@ function ApplicationProcess() {
         </CardContent>
       </Card>
 
+      {/* Plain-English Criteria Agent */}
+      <CriteriaAgent
+        context={`Course: ${course.name}${courseForm ? `, application form: ${courseForm.name}` : ''}`}
+        availableFields={fieldNameOptions}
+        existingCriteria={criteria}
+        existingMinimumScore={minimumScore}
+        onApply={(agentCriteria, score) => {
+          setCriteria(agentCriteria.map(c => ({
+            id: c.id,
+            fieldName: c.fieldName,
+            type: c.type,
+            weight: c.weight,
+            conditions: c.conditions,
+          })));
+          setMinimumScore(score);
+        }}
+      />
+
+
       {/* Evaluation Criteria */}
       <Card>
         <CardHeader>
