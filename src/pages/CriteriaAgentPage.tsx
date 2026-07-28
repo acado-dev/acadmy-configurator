@@ -41,7 +41,21 @@ const CriteriaAgentPage: React.FC = () => {
             Describe your admission requirements in plain English and review the interpreted rubric before saving.
           </p>
         </div>
+        <Button
+          variant="outline"
+          onClick={() =>
+            navigate(
+              window.location.pathname.startsWith('/university')
+                ? `/university/applications/matching?course=${courseId}`
+                : `/applications/matching?course=${courseId}`,
+            )
+          }
+        >
+          <Target className="w-4 h-4 mr-2" />
+          Go to application matching
+        </Button>
       </div>
+
 
       <Card>
         <CardHeader>
