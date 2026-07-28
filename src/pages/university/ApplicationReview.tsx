@@ -196,8 +196,9 @@ const ApplicationReview = () => {
       case 'waitlisted': return 'text-yellow-600';
       case 'under_review': return 'text-blue-600';
       case 'shortlisted': return 'text-blue-600';
-
+      default: return 'text-gray-600';
     }
+
   };
 
   const getScoreColor = (score: number) => {
