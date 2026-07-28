@@ -232,7 +232,9 @@ const App = () => {
               <Route path="process-configuration/new" element={<ProcessConfiguration />} />
               <Route path="process-configuration/:courseId" element={<ProcessConfiguration />} />
               <Route path="applications" element={<ApplicationsList />} />
+              <Route path="applications/matching" element={<ApplicationMatching />} />
               <Route path="applications/:id" element={<UniversityApplicationReview />} />
+
               <Route path="applications-overview" element={<ApplicationsOverview />} />
               <Route path="talent-pool" element={<TalentPoolDashboard />} />
               <Route path="talent-pool/candidates" element={<TalentPool />} />
