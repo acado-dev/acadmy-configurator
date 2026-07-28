@@ -194,8 +194,9 @@ const ApplicationReview = () => {
       case 'accepted': return 'text-green-600';
       case 'rejected': return 'text-red-600';
       case 'waitlisted': return 'text-yellow-600';
-      case 'under-review': return 'text-blue-600';
-      default: return 'text-gray-600';
+      case 'under_review': return 'text-blue-600';
+      case 'shortlisted': return 'text-blue-600';
+
     }
   };
 
