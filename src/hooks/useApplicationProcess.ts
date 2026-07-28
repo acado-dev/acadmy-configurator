@@ -27,33 +27,34 @@ export const useApplicationProcess = () => {
   }, []);
 
   const saveCriteriaConfig = (courseId: string, minimumScore: number, criteria: MatchingCriterion[]) => {
-    const existingIndex = criteriaConfigs.findIndex(c => c.courseId === courseId);
     const now = new Date();
-    
-    let updatedConfigs;
-    if (existingIndex >= 0) {
-      updatedConfigs = [...criteriaConfigs];
-      updatedConfigs[existingIndex] = {
-        courseId,
-        minimumScore,
-        criteria,
-        createdAt: criteriaConfigs[existingIndex].createdAt,
-        updatedAt: now
-      };
-    } else {
-      updatedConfigs = [...criteriaConfigs, {
-        courseId,
-        minimumScore,
-        criteria,
-        createdAt: now,
-        updatedAt: now
-      }];
-    }
-    
-    setCriteriaConfigs(updatedConfigs);
-    localStorage.setItem('matchingCriteria', JSON.stringify(updatedConfigs));
+
+    setCriteriaConfigs(prev => {
+      const stored = localStorage.getItem('matchingCriteria');
+      const base: MatchingCriteriaConfig[] = stored ? JSON.parse(stored) : prev;
+      const existingIndex = base.findIndex(c => c.courseId === courseId);
+
+      let updatedConfigs: MatchingCriteriaConfig[];
+      if (existingIndex >= 0) {
+        updatedConfigs = [...base];
+        updatedConfigs[existingIndex] = {
+          courseId,
+          minimumScore,
+          criteria,
+          createdAt: base[existingIndex].createdAt,
+          updatedAt: now,
+        };
+      } else {
+        updatedConfigs = [...base, { courseId, minimumScore, criteria, createdAt: now, updatedAt: now }];
+      }
+
+      localStorage.setItem('matchingCriteria', JSON.stringify(updatedConfigs));
+      return updatedConfigs;
+    });
+
     return true;
   };
+
 
   const getCriteriaByCoursId = (courseId: string): MatchingCriteriaConfig | undefined => {
     return criteriaConfigs.find(c => c.courseId === courseId);
