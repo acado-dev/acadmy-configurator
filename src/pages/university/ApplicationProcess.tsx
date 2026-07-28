@@ -14,7 +14,8 @@ import {
   Save,
   Trash2,
   AlertCircle,
-  Info
+  Info,
+  Sparkles
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -22,7 +23,7 @@ import { useApplicationProcess, MatchingCriterion } from '@/hooks/useApplication
 import { useFormsData } from '@/hooks/useFormsData';
 import { masterCategories, masterFields } from '@/data/masterFields';
 import { ApplicationField, FieldCategory } from '@/types/application';
-import { CriteriaAgent } from '@/components/criteria/CriteriaAgent';
+
 
 function ApplicationProcess() {
   const { courseId } = useParams<{ courseId: string }>();
