@@ -56,6 +56,13 @@ function ApplicationProcess() {
     return fieldsByCategory;
   }, [courseForm]);
 
+  const fieldNameOptions = useMemo(
+    () => Array.from(new Set(Object.values(availableFields).flat().map(f => f.label))),
+    [availableFields],
+  );
+
+
+
   useEffect(() => {
     // Guard: if no courseId or invalid course, go back to Application Process list
     if (!courseId || !course) {
