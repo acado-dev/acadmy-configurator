@@ -637,7 +637,70 @@ const ApplicationReview = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Evaluation Criteria Dialog */}
+      <Dialog open={showCriteriaDialog} onOpenChange={setShowCriteriaDialog}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Evaluation Criteria</DialogTitle>
+            <DialogDescription>
+              {rubric
+                ? `Rubric configured for ${application.courseName} — minimum score ${rubric.minimumScore}%`
+                : 'No evaluation criteria have been configured for this course yet.'}
+            </DialogDescription>
+          </DialogHeader>
+
+          {rubric ? (
+            <ScrollArea className="max-h-[55vh] pr-3">
+              <div className="space-y-3">
+                {rubric.criteria.map((criterion, index) => {
+                  const detail = evaluation.details.find(
+                    (d: any) => d.criteriaId === criterion.id || d.fieldName === criterion.fieldName,
+                  );
+                  return (
+                    <div key={criterion.id ?? index} className="rounded-lg border border-border p-3 space-y-2">
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="font-medium">{criterion.fieldName}</span>
+                        <div className="flex items-center gap-2">
+                          <Badge variant="outline" className="capitalize">{criterion.type}</Badge>
+                          <Badge variant="secondary">{criterion.weight} pts</Badge>
+                        </div>
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        Conditions: {criterion.conditions.length ? criterion.conditions.join(' OR ') : 'Field must be present'}
+                      </p>
+                      {detail && (
+                        <p className="text-sm flex items-center gap-2">
+                          {detail.matched ? (
+                            <CheckCircle className="h-4 w-4 text-green-600" />
+                          ) : (
+                            <XCircle className="h-4 w-4 text-red-500" />
+                          )}
+                          This applicant: {formatFieldValue(detail.actualValue)} — scored {Math.round(detail.score)}/{detail.maxScore}
+                        </p>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </ScrollArea>
+          ) : (
+            <p className="text-sm text-muted-foreground">
+              Configure criteria to score applications automatically against your admission requirements.
+            </p>
+          )}
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowCriteriaDialog(false)}>Close</Button>
+            <Button onClick={() => navigate(`/university/application-process/${application.courseId}`)}>
+              <Target className="h-4 w-4 mr-2" />
+              Edit criteria
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
+
   );
 };
 
