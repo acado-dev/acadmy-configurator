@@ -21,8 +21,6 @@ import { CategoryRenameDialog } from '@/components/forms/CategoryRenameDialog';
 import { FormPreview } from '@/components/forms/FormPreview';
 import { useFormsData } from '@/hooks/useFormsData';
 import { useMasterFieldsManagement } from '@/hooks/useMasterFieldsManagement';
-import { CriteriaAgent } from '@/components/criteria/CriteriaAgent';
-import { useApplicationProcess } from '@/hooks/useApplicationProcess';
 import { useToast } from '@/hooks/use-toast';
 import {
   User, GraduationCap, Briefcase, Lightbulb, Award,
@@ -35,7 +33,7 @@ const FormEditor = () => {
   const navigate = useNavigate();
   const { forms, universities, courses, createForm, updateForm, getFormById } = useFormsData();
   const { categories: masterCategories, fields: masterFields } = useMasterFieldsManagement();
-  const { saveCriteriaConfig, getCriteriaByCoursId } = useApplicationProcess();
+  
   const { toast } = useToast();
 
   
@@ -311,46 +309,33 @@ const FormEditor = () => {
         </div>
       </div>
 
-      {/* Evaluation Criteria Agent */}
-      <CriteriaAgent
-        context={`Application form: ${formName || 'Untitled form'}${formDescription ? ` — ${formDescription}` : ''}`}
-        availableFields={selectedFields.map(f => f.customLabel || f.label)}
-        existingCriteria={
-          selectedCourseIds[0]
-            ? (getCriteriaByCoursId(selectedCourseIds[0])?.criteria ?? []).map(c => ({ ...c }))
-            : []
-        }
-        existingMinimumScore={
-          selectedCourseIds[0] ? getCriteriaByCoursId(selectedCourseIds[0])?.minimumScore ?? 70 : 70
-        }
-        onApply={(agentCriteria, score) => {
-          if (selectedCourseIds.length === 0) {
-            toast({
-              title: 'Map this form to courses first',
-              description: 'Use "Map to Courses" so the criteria can be saved against a course.',
-              variant: 'destructive',
-            });
-            return;
-          }
-          selectedCourseIds.forEach(courseId =>
-            saveCriteriaConfig(
-              courseId,
-              score,
-              agentCriteria.map(c => ({
-                id: c.id,
-                fieldName: c.fieldName,
-                type: c.type,
-                weight: c.weight,
-                conditions: c.conditions,
-              })),
-            ),
-          );
-          toast({
-            title: 'Evaluation criteria saved',
-            description: `Applied to ${selectedCourseIds.length} mapped course(s).`,
-          });
-        }}
-      />
+      {/* AI Criteria Assistant link */}
+      <Card className="p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h2 className="text-lg font-semibold">AI Criteria Assistant</h2>
+          <p className="text-sm text-muted-foreground">
+            Define evaluation criteria in plain English on a dedicated page.
+          </p>
+        </div>
+        <Button
+          variant="outline"
+          onClick={() => {
+            if (selectedCourseIds.length === 0) {
+              toast({
+                title: 'Map this form to courses first',
+                description: 'Use "Map to Courses" so the criteria can be saved against a course.',
+                variant: 'destructive',
+              });
+              return;
+            }
+            navigate(`/criteria-agent/${selectedCourseIds[0]}`);
+          }}
+        >
+          Open assistant
+        </Button>
+      </Card>
+
+
 
 
       {/* Add Field Dialog */}

@@ -89,6 +89,7 @@ import UserSearch from '@/pages/UserSearch';
 import MailTemplate from '@/pages/MailTemplate';
 import BulkEmail from '@/pages/BulkEmail';
 import ContentCategories from '@/pages/ContentCategories';
+import CriteriaAgentPage from '@/pages/CriteriaAgentPage';
 
 const queryClient = new QueryClient();
 
@@ -135,6 +136,7 @@ const App = () => {
               <Route path="course-type" element={<CourseTypes />} />
               <Route path="learning-outcome" element={<LearningOutcomes />} />
               <Route path="users" element={<Users />} />
+              <Route path="criteria-agent/:courseId" element={<CriteriaAgentPage />} />
               {/* Community Posts */}
               <Route path="communities" element={<CommunityPosts />} />
               <Route path="communities/create" element={<CreateCommunityPost />} />
@@ -220,6 +222,7 @@ const App = () => {
               <Route path="forms/new" element={<UniversityFormBuilder />} />
               <Route path="forms/:formId" element={<UniversityFormBuilder />} />
               <Route path="application-process/:courseId" element={<ApplicationProcess />} />
+              <Route path="application-process/:courseId/agent" element={<CriteriaAgentPage />} />
               <Route path="application-process-list" element={<ApplicationProcessList />} />
               <Route path="process-steps" element={<ProcessSteps />} />
               <Route path="process-configuration/new" element={<ProcessConfiguration />} />
