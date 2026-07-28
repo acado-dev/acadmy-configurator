@@ -35,6 +35,9 @@ const FormEditor = () => {
   const navigate = useNavigate();
   const { forms, universities, courses, createForm, updateForm, getFormById } = useFormsData();
   const { categories: masterCategories, fields: masterFields } = useMasterFieldsManagement();
+  const { saveCriteriaConfig, getCriteriaByCoursId } = useApplicationProcess();
+  const { toast } = useToast();
+
   
   const [formName, setFormName] = useState('');
   const [formDescription, setFormDescription] = useState('');
