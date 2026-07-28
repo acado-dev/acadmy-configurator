@@ -21,8 +21,6 @@ import { CategoryRenameDialog } from '@/components/forms/CategoryRenameDialog';
 import { FormPreview } from '@/components/forms/FormPreview';
 import { useFormsData } from '@/hooks/useFormsData';
 import { useMasterFieldsManagement } from '@/hooks/useMasterFieldsManagement';
-import { CriteriaAgent } from '@/components/criteria/CriteriaAgent';
-import { useApplicationProcess } from '@/hooks/useApplicationProcess';
 import { useToast } from '@/hooks/use-toast';
 import {
   User, GraduationCap, Briefcase, Lightbulb, Award,
