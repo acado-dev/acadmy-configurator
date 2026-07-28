@@ -37,6 +37,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { useApplicationSubmissions } from '@/hooks/useApplicationSubmissions';
+import { useApplicationProcess } from '@/hooks/useApplicationProcess';
 import { useFormsData } from '@/hooks/useFormsData';
 import { useToast } from '@/hooks/use-toast';
 
@@ -44,14 +45,17 @@ const ApplicationReview = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { getApplicationById, updateApplicationStatus } = useApplicationSubmissions();
+  const { getApplicationById, updateApplicationStatus, calculateMatchScore } = useApplicationSubmissions();
+  const { getCriteriaByCoursId } = useApplicationProcess();
   const { courses } = useFormsData();
-  
+
   const [application, setApplication] = useState<any>(null);
   const [showCommunicationDialog, setShowCommunicationDialog] = useState(false);
   const [showAcceptanceDialog, setShowAcceptanceDialog] = useState(false);
+  const [showCriteriaDialog, setShowCriteriaDialog] = useState(false);
   const [communicationType, setCommunicationType] = useState('email');
   const [communicationMessage, setCommunicationMessage] = useState('');
+
 
   useEffect(() => {
     if (id) {
