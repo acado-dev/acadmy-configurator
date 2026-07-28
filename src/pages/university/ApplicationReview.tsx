@@ -142,6 +142,12 @@ const ApplicationReview = () => {
     if (typeof value === 'object') return JSON.stringify(value);
     return String(value);
   };
+  const hasSectionedData = Boolean(
+    application?.formData?.personalInfo ||
+      application?.formData?.academicBackground ||
+      application?.formData?.workExperience,
+  );
+
 
 
 
