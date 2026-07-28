@@ -174,6 +174,8 @@ const App = () => {
               <Route path="applications-overview" element={<ApplicationsOverview />} />
               <Route path="applications" element={<ApplicationsList />} />
               <Route path="applications/selection-process" element={<ApplicationProcessList />} />
+              <Route path="applications/matching" element={<ApplicationMatching />} />
+
               <Route path="applications/acceptance-letters" element={<AcceptanceLetters />} />
               
               {/* Talent Pool - Master Admin */}
