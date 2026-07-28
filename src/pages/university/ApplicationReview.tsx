@@ -442,7 +442,7 @@ const ApplicationReview = () => {
               <div className="flex items-center gap-2">
                 {getStatusIcon(application.status)}
                 <span className={`font-medium ${getStatusColor(application.status)}`}>
-                  {application.status.charAt(0).toUpperCase() + application.status.slice(1).replace('-', ' ')}
+                  {String(application.status).replace(/[-_]/g, ' ').replace(/^\w/, (c: string) => c.toUpperCase())}
                 </span>
               </div>
               
