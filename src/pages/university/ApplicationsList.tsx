@@ -21,7 +21,9 @@ import {
   Users,
   TrendingUp,
   Award
+  Sparkles,
 } from 'lucide-react';
+
 import { Progress } from '@/components/ui/progress';
 import { useApplicationSubmissions } from '@/hooks/useApplicationSubmissions';
 import { useFormsData } from '@/hooks/useFormsData';
