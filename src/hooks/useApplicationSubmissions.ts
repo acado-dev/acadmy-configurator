@@ -456,10 +456,12 @@ export const useApplicationSubmissions = () => {
     stats,
     submitApplication,
     updateApplicationStatus,
+    bulkUpdateStatus,
     getApplicationById,
     getApplicationsByCourse,
     getApplicationsByStatus,
     calculateMatchScore,
     refreshApplications: loadApplications
+
   };
 };
