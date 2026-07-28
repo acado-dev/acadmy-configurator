@@ -117,6 +117,34 @@ const ApplicationReview = () => {
     }
   }, [id, getApplicationById]);
 
+  // Live evaluation against the criteria configured for this course
+  const rubric = application?.courseId ? getCriteriaByCoursId(application.courseId) : undefined;
+
+  const evaluation = useMemo(() => {
+    if (!application) return { score: 0, details: [] as any[], live: false };
+    if (rubric && rubric.criteria.length) {
+      const { score, details } = calculateMatchScore(application.formData || {}, application.courseId);
+      return { score, details, live: true };
+    }
+    return {
+      score: application.matchScore ?? 0,
+      details: (application.matchDetails ?? []).filter((d: any) => d && d.fieldName),
+      live: false,
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [application, rubric]);
+
+  const passesCutoff = rubric ? evaluation.score >= rubric.minimumScore : evaluation.score >= 60;
+
+  const formatFieldValue = (value: any) => {
+    if (value === undefined || value === null || value === '') return 'Not provided';
+    if (Array.isArray(value)) return value.join(', ');
+    if (typeof value === 'object') return JSON.stringify(value);
+    return String(value);
+  };
+
+
+
   const handleStatusChange = (newStatus: string) => {
     if (application) {
       updateApplicationStatus(application.id, newStatus as any);
