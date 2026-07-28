@@ -89,6 +89,7 @@ import UserSearch from '@/pages/UserSearch';
 import MailTemplate from '@/pages/MailTemplate';
 import BulkEmail from '@/pages/BulkEmail';
 import ContentCategories from '@/pages/ContentCategories';
+import CriteriaAgentPage from '@/pages/CriteriaAgentPage';
 
 const queryClient = new QueryClient();
 
