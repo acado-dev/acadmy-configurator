@@ -287,41 +287,87 @@ const ApplicationReview = () => {
                 Match Score Analysis
               </CardTitle>
               <CardDescription>
-                Based on configured evaluation criteria
+                {rubric
+                  ? `Scored live against ${rubric.criteria.length} configured criteria (cut-off ${rubric.minimumScore}%)`
+                  : 'No evaluation criteria configured for this course — showing the stored score'}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between gap-3 flex-wrap">
                 <div className="flex items-center gap-4">
-                  <div className={`text-3xl font-bold ${getScoreColor(application.matchScore)}`}>
-                    {application.matchScore}%
+                  <div className={`text-3xl font-bold ${getScoreColor(evaluation.score)}`}>
+                    {evaluation.score}%
                   </div>
-                  <Badge variant={application.matchScore >= 80 ? 'default' : application.matchScore >= 60 ? 'secondary' : 'destructive'}>
-                    {application.matchScore >= 80 ? 'Excellent Match' : application.matchScore >= 60 ? 'Good Match' : 'Fair Match'}
+                  <Badge variant={evaluation.score >= 80 ? 'default' : evaluation.score >= 60 ? 'secondary' : 'destructive'}>
+                    {evaluation.score >= 80 ? 'Excellent Match' : evaluation.score >= 60 ? 'Good Match' : 'Fair Match'}
                   </Badge>
+                  {rubric && (
+                    <Badge variant="outline" className={passesCutoff ? 'text-green-600' : 'text-red-600'}>
+                      {passesCutoff ? 'Meets cut-off' : 'Below cut-off'}
+                    </Badge>
+                  )}
                 </div>
-                <Button variant="outline" size="sm">
+                <Button variant="outline" size="sm" onClick={() => setShowCriteriaDialog(true)}>
                   View Criteria
                 </Button>
               </div>
-              
+
+              <Progress value={evaluation.score} className="h-2" />
+
               <Separator />
-              
-              <div className="space-y-3">
-                {application.matchDetails?.map((detail: any, index: number) => (
-                  <div key={index} className="space-y-2">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="font-medium">{detail.category}</span>
-                      <span className="text-muted-foreground">
-                        {detail.score}/{detail.maxScore}
-                      </span>
+
+              {evaluation.details.length === 0 ? (
+                <div className="text-sm text-muted-foreground space-y-3">
+                  <p>
+                    No criteria breakdown is available for this course yet. Define the evaluation
+                    criteria to get a detailed, weighted match analysis.
+                  </p>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => navigate(`/university/application-process/${application.courseId}`)}
+                  >
+                    <Target className="h-4 w-4 mr-2" />
+                    Configure evaluation criteria
+                  </Button>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {evaluation.details.map((detail: any, index: number) => (
+                    <div key={detail.criteriaId ?? index} className="space-y-2">
+                      <div className="flex items-center justify-between gap-2 text-sm">
+                        <div className="flex items-center gap-2 min-w-0">
+                          {detail.matched ? (
+                            <CheckCircle className="h-4 w-4 text-green-600 shrink-0" />
+                          ) : (
+                            <XCircle className="h-4 w-4 text-red-500 shrink-0" />
+                          )}
+                          <span className="font-medium truncate">{detail.fieldName}</span>
+                          <Badge variant="outline" className="text-[10px] capitalize">
+                            {detail.type}
+                          </Badge>
+                        </div>
+                        <span className="text-muted-foreground whitespace-nowrap">
+                          {Math.round(detail.score)}/{detail.maxScore} pts
+                        </span>
+                      </div>
+                      <Progress
+                        value={detail.maxScore ? (detail.score / detail.maxScore) * 100 : 0}
+                        className="h-2"
+                      />
+                      <div className="flex flex-wrap gap-x-6 gap-y-1 text-xs text-muted-foreground">
+                        <span>Submitted: <span className="text-foreground">{formatFieldValue(detail.actualValue)}</span></span>
+                        {detail.expectedValue && (
+                          <span>Expected: <span className="text-foreground">{formatFieldValue(detail.expectedValue)}</span></span>
+                        )}
+                      </div>
                     </div>
-                    <Progress value={(detail.score / detail.maxScore) * 100} className="h-2" />
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
             </CardContent>
           </Card>
+
 
           {/* Application Data */}
           <Card>
