@@ -90,6 +90,8 @@ import MailTemplate from '@/pages/MailTemplate';
 import BulkEmail from '@/pages/BulkEmail';
 import ContentCategories from '@/pages/ContentCategories';
 import CriteriaAgentPage from '@/pages/CriteriaAgentPage';
+import ApplicationMatching from '@/pages/ApplicationMatching';
+
 
 const queryClient = new QueryClient();
 
