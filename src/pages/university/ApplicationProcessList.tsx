@@ -66,7 +66,7 @@ function ApplicationProcessList() {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-      <h1 className="text-3xl font-bold">Application Process Configuration</h1>
+      <h1 className="text-3xl font-bold">Application Evaluation Criteria Configuration</h1>
       <p className="text-muted-foreground mt-2">
         Configure the complete application process: collection forms, evaluation criteria, and selection steps
       </p>
@@ -80,7 +80,7 @@ function ApplicationProcessList() {
       {universityCourses.filter(course => !criteriaConfigs.find(c => c.courseId === course.id)).length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle>Courses Without Application Process</CardTitle>
+            <CardTitle>Courses Without Selection Criteria</CardTitle>
             <CardDescription>
               These courses need evaluation criteria and process steps configured for applicant assessment
             </CardDescription>
