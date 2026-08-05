@@ -289,7 +289,7 @@ export default function ProcessSteps() {
                 <p className="text-sm text-muted-foreground mb-3">No process configured</p>
                 <Button size="sm" variant="outline">
                   <Settings className="h-4 w-4 mr-2" />
-                  Configure Process
+                  Selection Criteria
                 </Button>
               </CardContent>
             </Card>
@@ -301,7 +301,7 @@ export default function ProcessSteps() {
                 <p className="text-sm text-muted-foreground mb-3">No process configured</p>
                 <Button size="sm" variant="outline">
                   <Settings className="h-4 w-4 mr-2" />
-                  Configure Process
+                  Selection Criteria
                 </Button>
               </CardContent>
             </Card>

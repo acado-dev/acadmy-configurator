@@ -108,7 +108,7 @@ function ApplicationProcessList() {
                         onClick={() => handleCreateNew(course.id)}
                       >
                         <Plus className="h-4 w-4 mr-2" />
-                        Configure Process
+                        Selection Criteria
                       </Button>
                     </CardContent>
                   </Card>
