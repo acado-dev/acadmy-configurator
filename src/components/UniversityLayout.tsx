@@ -24,7 +24,10 @@ import {
   BarChart,
   Info,
   UserPlus,
-  Megaphone
+  Megaphone,
+  ClipboardCheck,
+  NotebookPen,
+  Video
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { AcadoLogo } from '@/components/AcadoLogo';
@@ -110,6 +113,9 @@ const UniversityLayout = () => {
         { label: 'Application Forms', path: '/university/forms', icon: FormInput },
         { label: 'Evaluation Criteria', path: '/university/application-process-list', icon: Settings },
         { label: 'Selection Process', path: '/university/process-steps', icon: FileCheck },
+        { label: 'Assessment', path: '/university/assessments', icon: ClipboardCheck },
+        { label: 'Assignment', path: '/university/assignments', icon: NotebookPen },
+        { label: 'Interview', path: '/university/interviews', icon: Video },
       ]
     },
     {
