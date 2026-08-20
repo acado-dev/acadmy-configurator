@@ -20,6 +20,7 @@ import { toast } from '@/hooks/use-toast';
 import { ACTIVITY_STATUSES } from '@/types/selection';
 import { useSelectionActivities } from '@/hooks/useSelectionActivities';
 import { ActivityStatusBadge } from '@/components/selection/SelectionStatusBadge';
+import { selBase } from '@/lib/selectionPaths';
 
 const AssignmentList = () => {
   const navigate = useNavigate();
@@ -47,7 +48,7 @@ const AssignmentList = () => {
             Publish assignments, collect submissions and award marks with feedback.
           </p>
         </div>
-        <Button onClick={() => navigate('/university/assignments/new')}>
+        <Button onClick={() => navigate(`${selBase()}/assignments/new`)}>
           <Plus className="mr-2 h-4 w-4" />
           Create New Assignment
         </Button>
@@ -147,7 +148,7 @@ const AssignmentList = () => {
                     <Button
                       variant="link"
                       className="h-auto p-0"
-                      onClick={() => navigate(`/university/assignments/${a.id}/responses`)}
+                      onClick={() => navigate(`${selBase()}/assignments/${a.id}/responses`)}
                     >
                       {responseCount(a.id)} submissions
                     </Button>
@@ -160,7 +161,7 @@ const AssignmentList = () => {
                       <Button
                         variant="ghost"
                         size="icon"
-                        onClick={() => navigate(`/university/assignments/${a.id}/responses`)}
+                        onClick={() => navigate(`${selBase()}/assignments/${a.id}/responses`)}
                         aria-label="View submissions"
                       >
                         <Eye className="h-4 w-4" />
@@ -168,7 +169,7 @@ const AssignmentList = () => {
                       <Button
                         variant="ghost"
                         size="icon"
-                        onClick={() => navigate(`/university/assignments/${a.id}/edit`)}
+                        onClick={() => navigate(`${selBase()}/assignments/${a.id}/edit`)}
                         aria-label="Edit assignment"
                       >
                         <Edit className="h-4 w-4" />

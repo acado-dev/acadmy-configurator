@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { 
+  ClipboardList,
+  Video,
   Home, 
   FileText, 
   Building2, 
@@ -140,6 +142,9 @@ const Layout = () => {
         { label: 'Master Fields', path: '/master-fields', icon: FileText },
         { label: 'Application Form', path: '/forms', icon: FormInput },
         { label: 'Applications', path: '/form-applications', icon: Users },
+        { label: 'Assessment', path: '/assessments', icon: ClipboardList },
+        { label: 'Assignment', path: '/assignments', icon: FileText },
+        { label: 'Interview', path: '/interviews', icon: Video },
       ]
     },
     {

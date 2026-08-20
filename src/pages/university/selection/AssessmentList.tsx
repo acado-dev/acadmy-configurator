@@ -20,6 +20,7 @@ import { toast } from '@/hooks/use-toast';
 import { ACTIVITY_STATUSES } from '@/types/selection';
 import { useSelectionActivities } from '@/hooks/useSelectionActivities';
 import { ActivityStatusBadge } from '@/components/selection/SelectionStatusBadge';
+import { selBase } from '@/lib/selectionPaths';
 
 const AssessmentList = () => {
   const navigate = useNavigate();
@@ -47,7 +48,7 @@ const AssessmentList = () => {
             Create screening assessments, track attempts and evaluate student responses.
           </p>
         </div>
-        <Button onClick={() => navigate('/university/assessments/new')}>
+        <Button onClick={() => navigate(`${selBase()}/assessments/new`)}>
           <Plus className="mr-2 h-4 w-4" />
           Create New Assessment
         </Button>
@@ -152,7 +153,7 @@ const AssessmentList = () => {
                     <Button
                       variant="link"
                       className="h-auto p-0"
-                      onClick={() => navigate(`/university/assessments/${a.id}/responses`)}
+                      onClick={() => navigate(`${selBase()}/assessments/${a.id}/responses`)}
                     >
                       {responseCount(a.id)} responses
                     </Button>
@@ -162,7 +163,7 @@ const AssessmentList = () => {
                       <Button
                         variant="ghost"
                         size="icon"
-                        onClick={() => navigate(`/university/assessments/${a.id}/responses`)}
+                        onClick={() => navigate(`${selBase()}/assessments/${a.id}/responses`)}
                         aria-label="View responses"
                       >
                         <Eye className="h-4 w-4" />
@@ -170,7 +171,7 @@ const AssessmentList = () => {
                       <Button
                         variant="ghost"
                         size="icon"
-                        onClick={() => navigate(`/university/assessments/${a.id}/edit`)}
+                        onClick={() => navigate(`${selBase()}/assessments/${a.id}/edit`)}
                         aria-label="Edit assessment"
                       >
                         <Edit className="h-4 w-4" />

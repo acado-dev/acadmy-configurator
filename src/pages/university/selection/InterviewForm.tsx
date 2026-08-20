@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { toast } from '@/hooks/use-toast';
 import { ACTIVITY_STATUSES, ActivityStatus, Interview, InterviewQuestion } from '@/types/selection';
 import { useSelectionActivities } from '@/hooks/useSelectionActivities';
+import { selBase } from '@/lib/selectionPaths';
 
 const toLocalInput = (iso?: string) => (iso ? new Date(iso).toISOString().slice(0, 16) : '');
 
@@ -84,13 +85,13 @@ const InterviewForm = () => {
       createActivity(payload as any);
       toast({ title: 'Interview created' });
     }
-    navigate('/university/interviews');
+    navigate(`${selBase()}/interviews`);
   };
 
   return (
     <div className="space-y-6">
       <div>
-        <Button variant="ghost" size="sm" className="mb-2 -ml-2" onClick={() => navigate('/university/interviews')}>
+        <Button variant="ghost" size="sm" className="mb-2 -ml-2" onClick={() => navigate(`${selBase()}/interviews`)}>
           <ArrowLeft className="mr-2 h-4 w-4" />
           Back to interviews
         </Button>
@@ -267,7 +268,7 @@ const InterviewForm = () => {
       </Card>
 
       <div className="flex justify-end gap-3">
-        <Button variant="outline" onClick={() => navigate('/university/interviews')}>
+        <Button variant="outline" onClick={() => navigate(`${selBase()}/interviews`)}>
           Cancel
         </Button>
         <Button onClick={handleSubmit}>

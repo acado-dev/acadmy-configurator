@@ -13,11 +13,12 @@ import { MODULE_LABEL, SelectionModule, SelectionStatus } from '@/types/selectio
 import { useSelectionActivities } from '@/hooks/useSelectionActivities';
 import { SelectionStatusSelect } from '@/components/selection/SelectionStatusSelect';
 import { StageProgressStrip } from '@/components/selection/StageProgressStrip';
+import { selBase } from '@/lib/selectionPaths';
 
 const basePath: Record<SelectionModule, string> = {
-  assessment: '/university/assessments',
-  assignment: '/university/assignments',
-  interview: '/university/interviews',
+  assessment: `${selBase()}/assessments`,
+  assignment: `${selBase()}/assignments`,
+  interview: `${selBase()}/interviews`,
 };
 
 const ResponseReview = ({ module }: { module: SelectionModule }) => {
