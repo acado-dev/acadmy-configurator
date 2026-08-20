@@ -91,6 +91,14 @@ import BulkEmail from '@/pages/BulkEmail';
 import ContentCategories from '@/pages/ContentCategories';
 import CriteriaAgentPage from '@/pages/CriteriaAgentPage';
 import ApplicationMatching from '@/pages/ApplicationMatching';
+import AssessmentList from '@/pages/university/selection/AssessmentList';
+import AssessmentForm from '@/pages/university/selection/AssessmentForm';
+import AssignmentList from '@/pages/university/selection/AssignmentList';
+import AssignmentForm from '@/pages/university/selection/AssignmentForm';
+import InterviewList from '@/pages/university/selection/InterviewList';
+import InterviewForm from '@/pages/university/selection/InterviewForm';
+import ResponsesList from '@/pages/university/selection/ResponsesList';
+import ResponseReview from '@/pages/university/selection/ResponseReview';
 
 
 const queryClient = new QueryClient();
@@ -229,6 +237,21 @@ const App = () => {
               <Route path="application-process/:courseId/agent" element={<CriteriaAgentPage />} />
               <Route path="application-process-list" element={<ApplicationProcessList />} />
               <Route path="process-steps" element={<ProcessSteps />} />
+              <Route path="assessments" element={<AssessmentList />} />
+              <Route path="assessments/new" element={<AssessmentForm />} />
+              <Route path="assessments/:id/edit" element={<AssessmentForm />} />
+              <Route path="assessments/:id/responses" element={<ResponsesList module="assessment" />} />
+              <Route path="assessments/:id/responses/:responseId" element={<ResponseReview module="assessment" />} />
+              <Route path="assignments" element={<AssignmentList />} />
+              <Route path="assignments/new" element={<AssignmentForm />} />
+              <Route path="assignments/:id/edit" element={<AssignmentForm />} />
+              <Route path="assignments/:id/responses" element={<ResponsesList module="assignment" />} />
+              <Route path="assignments/:id/responses/:responseId" element={<ResponseReview module="assignment" />} />
+              <Route path="interviews" element={<InterviewList />} />
+              <Route path="interviews/new" element={<InterviewForm />} />
+              <Route path="interviews/:id/edit" element={<InterviewForm />} />
+              <Route path="interviews/:id/responses" element={<ResponsesList module="interview" />} />
+              <Route path="interviews/:id/responses/:responseId" element={<ResponseReview module="interview" />} />
               <Route path="process-configuration/new" element={<ProcessConfiguration />} />
               <Route path="process-configuration/:courseId" element={<ProcessConfiguration />} />
               <Route path="applications" element={<ApplicationsList />} />
