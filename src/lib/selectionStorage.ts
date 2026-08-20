@@ -276,7 +276,15 @@ export const getCourses = (): { id: string; name: string }[] => {
   return stored.map((c) => ({ id: String(c.id), name: c.name ?? c.shortName ?? 'Untitled course' }));
 };
 
+const sampleCourses = [
+  { id: '1', name: 'Master of Business Administration', shortName: 'MBA', isActive: true },
+  { id: '2', name: 'B.Tech Computer Science', shortName: 'B.Tech CSE', isActive: true },
+];
+
 export const ensureSeed = () => {
+  if (read<any>('universityCourses').length === 0) {
+    write('universityCourses', sampleCourses);
+  }
   const courseIds = getCourses().map((c) => c.id);
   if (!localStorage.getItem(STORAGE_KEYS.assessment)) {
     write(STORAGE_KEYS.assessment, sampleAssessments(courseIds));

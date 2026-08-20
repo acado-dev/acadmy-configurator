@@ -16,7 +16,6 @@ import {
 } from '@/components/ui/table';
 import { MODULE_LABEL, SELECTION_STATUSES, SelectionModule } from '@/types/selection';
 import { useSelectionActivities } from '@/hooks/useSelectionActivities';
-import { SelectionStatusBadge } from '@/components/selection/SelectionStatusBadge';
 import { SelectionStatusSelect } from '@/components/selection/SelectionStatusSelect';
 import { maskEmail } from '@/lib/selectionStorage';
 
@@ -111,7 +110,7 @@ const ResponsesList = ({ module }: { module: SelectionModule }) => {
       </Card>
 
       <Card>
-        <CardContent className="p-0">
+        <CardContent className="overflow-x-auto p-0">
           <Table>
             <TableHeader>
               <TableRow>
@@ -137,7 +136,7 @@ const ResponsesList = ({ module }: { module: SelectionModule }) => {
                 <TableRow key={r.id}>
                   <TableCell className="font-medium">{r.studentName}</TableCell>
                   <TableCell className="text-muted-foreground">{maskEmail(r.studentEmail)}</TableCell>
-                  <TableCell>{courseName(r.courseId)}</TableCell>
+                  <TableCell>{courseName(activity?.courseId ?? r.courseId)}</TableCell>
                   <TableCell>{new Date(r.submittedAt).toLocaleDateString()}</TableCell>
                   <TableCell>
                     {r.score}/{r.maxScore}
@@ -163,14 +162,11 @@ const ResponsesList = ({ module }: { module: SelectionModule }) => {
                     )}
                   </TableCell>
                   <TableCell>
-                    <div className="flex items-center gap-2">
-                      <SelectionStatusBadge status={r.selectionStatus} />
-                      <SelectionStatusSelect
-                        value={r.selectionStatus}
-                        onChange={(status) => setSelectionStatus(r, status)}
-                        className="w-[140px]"
-                      />
-                    </div>
+                    <SelectionStatusSelect
+                      value={r.selectionStatus}
+                      onChange={(status) => setSelectionStatus(r, status)}
+                      className="w-[150px]"
+                    />
                   </TableCell>
                   <TableCell className="text-right">
                     <Button
