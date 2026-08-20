@@ -12,6 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { toast } from '@/hooks/use-toast';
 import { ACTIVITY_STATUSES, ActivityStatus, Assignment } from '@/types/selection';
 import { useSelectionActivities } from '@/hooks/useSelectionActivities';
+import { selBase } from '@/lib/selectionPaths';
 
 const toLocalInput = (iso?: string) => (iso ? new Date(iso).toISOString().slice(0, 16) : '');
 
@@ -98,13 +99,13 @@ const AssignmentForm = () => {
       createActivity(payload as any);
       toast({ title: 'Assignment created' });
     }
-    navigate('/university/assignments');
+    navigate(`${selBase()}/assignments`);
   };
 
   return (
     <div className="space-y-6">
       <div>
-        <Button variant="ghost" size="sm" className="mb-2 -ml-2" onClick={() => navigate('/university/assignments')}>
+        <Button variant="ghost" size="sm" className="mb-2 -ml-2" onClick={() => navigate(`${selBase()}/assignments`)}>
           <ArrowLeft className="mr-2 h-4 w-4" />
           Back to assignments
         </Button>
@@ -277,7 +278,7 @@ const AssignmentForm = () => {
       </Card>
 
       <div className="flex justify-end gap-3">
-        <Button variant="outline" onClick={() => navigate('/university/assignments')}>
+        <Button variant="outline" onClick={() => navigate(`${selBase()}/assignments`)}>
           Cancel
         </Button>
         <Button onClick={handleSubmit}>

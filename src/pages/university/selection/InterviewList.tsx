@@ -21,6 +21,7 @@ import { toast } from '@/hooks/use-toast';
 import { ACTIVITY_STATUSES } from '@/types/selection';
 import { useSelectionActivities } from '@/hooks/useSelectionActivities';
 import { ActivityStatusBadge } from '@/components/selection/SelectionStatusBadge';
+import { selBase } from '@/lib/selectionPaths';
 
 const InterviewList = () => {
   const navigate = useNavigate();
@@ -50,7 +51,7 @@ const InterviewList = () => {
             Schedule interview rounds, review recorded answers and evaluate candidates.
           </p>
         </div>
-        <Button onClick={() => navigate('/university/interviews/new')}>
+        <Button onClick={() => navigate(`${selBase()}/interviews/new`)}>
           <Plus className="mr-2 h-4 w-4" />
           Create New Interview
         </Button>
@@ -170,7 +171,7 @@ const InterviewList = () => {
                     <Button
                       variant="link"
                       className="h-auto p-0"
-                      onClick={() => navigate(`/university/interviews/${a.id}/responses`)}
+                      onClick={() => navigate(`${selBase()}/interviews/${a.id}/responses`)}
                     >
                       {responseCount(a.id)} attempts
                     </Button>
@@ -183,7 +184,7 @@ const InterviewList = () => {
                       <Button
                         variant="ghost"
                         size="icon"
-                        onClick={() => navigate(`/university/interviews/${a.id}/responses`)}
+                        onClick={() => navigate(`${selBase()}/interviews/${a.id}/responses`)}
                         aria-label="View responses"
                       >
                         <Eye className="h-4 w-4" />
@@ -191,7 +192,7 @@ const InterviewList = () => {
                       <Button
                         variant="ghost"
                         size="icon"
-                        onClick={() => navigate(`/university/interviews/${a.id}/edit`)}
+                        onClick={() => navigate(`${selBase()}/interviews/${a.id}/edit`)}
                         aria-label="Edit interview"
                       >
                         <Edit className="h-4 w-4" />

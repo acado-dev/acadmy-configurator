@@ -18,11 +18,12 @@ import { MODULE_LABEL, SELECTION_STATUSES, SelectionModule } from '@/types/selec
 import { useSelectionActivities } from '@/hooks/useSelectionActivities';
 import { SelectionStatusSelect } from '@/components/selection/SelectionStatusSelect';
 import { maskEmail } from '@/lib/selectionStorage';
+import { selBase } from '@/lib/selectionPaths';
 
 const basePath: Record<SelectionModule, string> = {
-  assessment: '/university/assessments',
-  assignment: '/university/assignments',
-  interview: '/university/interviews',
+  assessment: `${selBase()}/assessments`,
+  assignment: `${selBase()}/assignments`,
+  interview: `${selBase()}/interviews`,
 };
 
 const ResponsesList = ({ module }: { module: SelectionModule }) => {
