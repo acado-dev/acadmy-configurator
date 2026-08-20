@@ -195,6 +195,23 @@ const App = () => {
               <Route path="talent-pool/bulk-upload" element={<TalentPoolBulkUpload />} />
               <Route path="talent-pool/document-upload" element={<TalentPoolDocumentUpload />} />
               <Route path="talent-pool/export" element={<TalentPoolExport />} />
+
+              {/* Selection Process - Master Admin */}
+              <Route path="assessments" element={<AssessmentList />} />
+              <Route path="assessments/new" element={<AssessmentForm />} />
+              <Route path="assessments/:id/edit" element={<AssessmentForm />} />
+              <Route path="assessments/:id/responses" element={<ResponsesList module="assessment" />} />
+              <Route path="assessments/:id/responses/:responseId" element={<ResponseReview module="assessment" />} />
+              <Route path="assignments" element={<AssignmentList />} />
+              <Route path="assignments/new" element={<AssignmentForm />} />
+              <Route path="assignments/:id/edit" element={<AssignmentForm />} />
+              <Route path="assignments/:id/responses" element={<ResponsesList module="assignment" />} />
+              <Route path="assignments/:id/responses/:responseId" element={<ResponseReview module="assignment" />} />
+              <Route path="interviews" element={<InterviewList />} />
+              <Route path="interviews/new" element={<InterviewForm />} />
+              <Route path="interviews/:id/edit" element={<InterviewForm />} />
+              <Route path="interviews/:id/responses" element={<ResponsesList module="interview" />} />
+              <Route path="interviews/:id/responses/:responseId" element={<ResponseReview module="interview" />} />
             </Route>
             
             {/* User Routes */}
