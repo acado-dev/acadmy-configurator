@@ -110,6 +110,9 @@ const UniversityLayout = () => {
         { label: 'Application Forms', path: '/university/forms', icon: FormInput },
         { label: 'Evaluation Criteria', path: '/university/application-process-list', icon: Settings },
         { label: 'Selection Process', path: '/university/process-steps', icon: FileCheck },
+        { label: 'Assessment', path: '/university/assessments', icon: ClipboardList },
+        { label: 'Assignment', path: '/university/assignments', icon: FileText },
+        { label: 'Interview', path: '/university/interviews', icon: Video },
       ]
     },
     {
