@@ -91,6 +91,8 @@ import BulkEmail from '@/pages/BulkEmail';
 import ContentCategories from '@/pages/ContentCategories';
 import CriteriaAgentPage from '@/pages/CriteriaAgentPage';
 import ApplicationMatching from '@/pages/ApplicationMatching';
+import SelectionActivityList from '@/pages/university/SelectionActivityList';
+import SelectionActivityForm from '@/pages/university/SelectionActivityForm';
 
 
 const queryClient = new QueryClient();
@@ -229,6 +231,15 @@ const App = () => {
               <Route path="application-process/:courseId/agent" element={<CriteriaAgentPage />} />
               <Route path="application-process-list" element={<ApplicationProcessList />} />
               <Route path="process-steps" element={<ProcessSteps />} />
+              <Route path="assessments" element={<SelectionActivityList kind="assessment" />} />
+              <Route path="assessments/new" element={<SelectionActivityForm kind="assessment" />} />
+              <Route path="assessments/:id/edit" element={<SelectionActivityForm kind="assessment" />} />
+              <Route path="assignments" element={<SelectionActivityList kind="assignment" />} />
+              <Route path="assignments/new" element={<SelectionActivityForm kind="assignment" />} />
+              <Route path="assignments/:id/edit" element={<SelectionActivityForm kind="assignment" />} />
+              <Route path="interviews" element={<SelectionActivityList kind="interview" />} />
+              <Route path="interviews/new" element={<SelectionActivityForm kind="interview" />} />
+              <Route path="interviews/:id/edit" element={<SelectionActivityForm kind="interview" />} />
               <Route path="process-configuration/new" element={<ProcessConfiguration />} />
               <Route path="process-configuration/:courseId" element={<ProcessConfiguration />} />
               <Route path="applications" element={<ApplicationsList />} />
