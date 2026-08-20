@@ -24,7 +24,10 @@ import {
   BarChart,
   Info,
   UserPlus,
-  Megaphone
+  Megaphone,
+  ClipboardCheck,
+  NotebookPen,
+  Video
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { AcadoLogo } from '@/components/AcadoLogo';
