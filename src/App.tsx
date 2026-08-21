@@ -93,6 +93,7 @@ import CriteriaAgentPage from '@/pages/CriteriaAgentPage';
 import ApplicationMatching from '@/pages/ApplicationMatching';
 import AssessmentList from '@/pages/university/selection/AssessmentList';
 import AssessmentForm from '@/pages/university/selection/AssessmentForm';
+import AssessmentQuestions from '@/pages/university/selection/AssessmentQuestions';
 import AssignmentList from '@/pages/university/selection/AssignmentList';
 import AssignmentForm from '@/pages/university/selection/AssignmentForm';
 import InterviewList from '@/pages/university/selection/InterviewList';
@@ -200,6 +201,7 @@ const App = () => {
               <Route path="assessments" element={<AssessmentList />} />
               <Route path="assessments/new" element={<AssessmentForm />} />
               <Route path="assessments/:id/edit" element={<AssessmentForm />} />
+              <Route path="assessments/:id/questions" element={<AssessmentQuestions />} />
               <Route path="assessments/:id/responses" element={<ResponsesList module="assessment" />} />
               <Route path="assessments/:id/responses/:responseId" element={<ResponseReview module="assessment" />} />
               <Route path="assignments" element={<AssignmentList />} />
@@ -257,6 +259,7 @@ const App = () => {
               <Route path="assessments" element={<AssessmentList />} />
               <Route path="assessments/new" element={<AssessmentForm />} />
               <Route path="assessments/:id/edit" element={<AssessmentForm />} />
+              <Route path="assessments/:id/questions" element={<AssessmentQuestions />} />
               <Route path="assessments/:id/responses" element={<ResponsesList module="assessment" />} />
               <Route path="assessments/:id/responses/:responseId" element={<ResponseReview module="assessment" />} />
               <Route path="assignments" element={<AssignmentList />} />

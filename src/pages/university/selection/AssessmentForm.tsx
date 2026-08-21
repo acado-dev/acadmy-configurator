@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Save } from 'lucide-react';
+import { ArrowLeft, ListChecks, Save } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -64,7 +64,7 @@ const AssessmentForm = () => {
 
   const set = (key: string, value: any) => setForm((prev) => ({ ...prev, [key]: value }));
 
-  const handleSubmit = () => {
+  const handleSubmit = (goToQuestions = false) => {
     if (!form.courseId || !form.title || !form.startAt || !form.endAt) {
       toast({
         title: 'Missing details',
@@ -78,14 +78,16 @@ const AssessmentForm = () => {
       startAt: new Date(form.startAt).toISOString(),
       endAt: new Date(form.endAt).toISOString(),
     };
+    let activityId = id;
     if (isEdit && id) {
       updateActivity(id, payload as any);
       toast({ title: 'Assessment updated' });
     } else {
-      createActivity(payload as any);
+      const created = createActivity(payload as any);
+      activityId = created.id;
       toast({ title: 'Assessment created' });
     }
-    navigate(`${selBase()}/assessments`);
+    navigate(goToQuestions ? `${selBase()}/assessments/${activityId}/questions` : `${selBase()}/assessments`);
   };
 
   return (
@@ -245,9 +247,13 @@ const AssessmentForm = () => {
         <Button variant="outline" onClick={() => navigate(`${selBase()}/assessments`)}>
           Cancel
         </Button>
-        <Button onClick={handleSubmit}>
+        <Button variant="outline" onClick={() => handleSubmit(false)}>
           <Save className="mr-2 h-4 w-4" />
           {isEdit ? 'Save changes' : 'Create assessment'}
+        </Button>
+        <Button onClick={() => handleSubmit(true)}>
+          <ListChecks className="mr-2 h-4 w-4" />
+          {isEdit ? 'Save & manage questions' : 'Save & Add Questions'}
         </Button>
       </div>
     </div>
