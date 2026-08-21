@@ -145,7 +145,16 @@ const AssessmentList = () => {
                   <TableCell>{courseName(a.courseId)}</TableCell>
                   <TableCell>{new Date(a.startAt).toLocaleDateString()}</TableCell>
                   <TableCell>{new Date(a.endAt).toLocaleDateString()}</TableCell>
-                  <TableCell>{a.numberOfQuestions}</TableCell>
+                  <TableCell>
+                    <Button
+                      variant="link"
+                      className="h-auto p-0"
+                      onClick={() => navigate(`${selBase()}/assessments/${a.id}/questions`)}
+                      title="View / manage questions"
+                    >
+                      {questionCountFor(a.id)}/{a.numberOfQuestions}
+                    </Button>
+                  </TableCell>
                   <TableCell>
                     <ActivityStatusBadge status={a.status} />
                   </TableCell>
