@@ -258,6 +258,7 @@ const App = () => {
               <Route path="assessments" element={<AssessmentList />} />
               <Route path="assessments/new" element={<AssessmentForm />} />
               <Route path="assessments/:id/edit" element={<AssessmentForm />} />
+              <Route path="assessments/:id/questions" element={<AssessmentQuestions />} />
               <Route path="assessments/:id/responses" element={<ResponsesList module="assessment" />} />
               <Route path="assessments/:id/responses/:responseId" element={<ResponseReview module="assessment" />} />
               <Route path="assignments" element={<AssignmentList />} />
