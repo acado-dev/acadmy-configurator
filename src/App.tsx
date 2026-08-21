@@ -93,6 +93,7 @@ import CriteriaAgentPage from '@/pages/CriteriaAgentPage';
 import ApplicationMatching from '@/pages/ApplicationMatching';
 import AssessmentList from '@/pages/university/selection/AssessmentList';
 import AssessmentForm from '@/pages/university/selection/AssessmentForm';
+import AssessmentQuestions from '@/pages/university/selection/AssessmentQuestions';
 import AssignmentList from '@/pages/university/selection/AssignmentList';
 import AssignmentForm from '@/pages/university/selection/AssignmentForm';
 import InterviewList from '@/pages/university/selection/InterviewList';
