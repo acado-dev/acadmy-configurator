@@ -118,3 +118,26 @@ export const MODULE_LABEL: Record<SelectionModule, string> = {
   assignment: 'Assignment',
   interview: 'Interview',
 };
+
+export type QuestionType = 'mcq_single' | 'mcq_multiple' | 'true_false' | 'descriptive';
+
+export interface QuestionOption {
+  id: string;
+  text: string;
+}
+
+export interface AssessmentQuestion {
+  id: string;
+  assessmentId: string;
+  order: number;
+  type: QuestionType;
+  text: string;
+  options: QuestionOption[];
+  correctOptionIds: string[];
+  modelAnswer?: string;
+  marks: number;
+  negativeMarks: number;
+  instructions?: string;
+  mediaUrl?: string;
+  mediaName?: string;
+}
