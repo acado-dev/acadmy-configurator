@@ -45,5 +45,7 @@ export const useAssessmentQuestions = (assessmentId?: string) => {
   return { questions, addQuestion, addQuestions, updateQuestion, deleteQuestion, reorder, totalMarks, reload: load };
 };
 
-export const questionCountFor = (assessmentId: string) =>
-  readQuestions().filter((q) => q.assessmentId === assessmentId).length;
+export const questionCountFor = (assessmentId: string) => {
+  ensureQuestionSeed();
+  return readQuestions().filter((q) => q.assessmentId === assessmentId).length;
+};
