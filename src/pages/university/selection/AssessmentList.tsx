@@ -21,6 +21,7 @@ import { ACTIVITY_STATUSES } from '@/types/selection';
 import { useSelectionActivities } from '@/hooks/useSelectionActivities';
 import { ActivityStatusBadge } from '@/components/selection/SelectionStatusBadge';
 import { selBase } from '@/lib/selectionPaths';
+import { questionCountFor } from '@/hooks/useAssessmentQuestions';
 
 const AssessmentList = () => {
   const navigate = useNavigate();
