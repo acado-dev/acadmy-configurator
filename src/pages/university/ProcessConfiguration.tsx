@@ -56,6 +56,7 @@ export default function ProcessConfiguration() {
   const assignments = useSelectionActivities('assignment');
   const interviews = useSelectionActivities('interview');
   const selPrefix = location.pathname.startsWith('/university') ? '/university' : '';
+  const courseKey = courseId ?? 'new';
   
   const [selectedCourse, setSelectedCourse] = useState(courseId || '');
   const [steps, setSteps] = useState<ProcessStep[]>([]);
@@ -68,7 +69,7 @@ export default function ProcessConfiguration() {
     if (raw) {
       try {
         const draft = JSON.parse(raw);
-        if (draft?.courseKey === courseId) {
+        if (draft?.courseKey === courseKey) {
           setSteps(draft.steps ?? []);
           if (draft.selectedCourse) setSelectedCourse(draft.selectedCourse);
           return;
@@ -95,7 +96,7 @@ export default function ProcessConfiguration() {
   const saveDraft = (nextSteps: ProcessStep[]) => {
     localStorage.setItem(
       DRAFT_KEY,
-      JSON.stringify({ courseKey: courseId, selectedCourse, steps: nextSteps })
+      JSON.stringify({ courseKey, selectedCourse, steps: nextSteps })
     );
   };
 
@@ -259,7 +260,7 @@ export default function ProcessConfiguration() {
         </Button>
         <div>
           <h1 className="text-3xl font-bold text-foreground">
-            {courseId === 'new' ? 'Create Selection Process' : 'Edit Selection Process'}
+            {courseKey === 'new' ? 'Create Selection Process' : 'Edit Selection Process'}
           </h1>
           <p className="text-muted-foreground mt-1">
             Configure the multi-step selection workflow for your course
