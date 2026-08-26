@@ -20,107 +20,23 @@ import {
 } from '@/components/ui/table';
 import { useToast } from '@/hooks/use-toast';
 
-interface ProcessStep {
-  id: string;
-  name: string;
-  type: 'interview' | 'test' | 'document-review' | 'committee-review' | 'final-decision';
-  description: string;
-  duration: string;
-  responsible: string;
-  order: number;
-}
-
-interface SelectionProcess {
-  id: string;
-  courseId: string;
-  courseName: string;
-  steps: ProcessStep[];
-  totalDuration: string;
-  status: 'active' | 'draft';
-  updatedAt: Date;
-}
+import { Eye } from 'lucide-react';
+import {
+  StoredProcessStep as ProcessStep,
+  StoredSelectionProcess as SelectionProcess,
+  getProcesses,
+  deleteProcess,
+} from '@/lib/selectionProcesses';
 
 export default function ProcessSteps() {
   const navigate = useNavigate();
   const { toast } = useToast();
-  
-  // Mock data for selection processes
-  const [processes] = useState<SelectionProcess[]>([
-    {
-      id: '1',
-      courseId: 'business-mgmt',
-      courseName: 'Business Management',
-      steps: [
-        {
-          id: '1',
-          name: 'Initial Screening',
-          type: 'document-review',
-          description: 'Review of application documents',
-          duration: '2 days',
-          responsible: 'Admissions Team',
-          order: 1
-        },
-        {
-          id: '2',
-          name: 'Written Test',
-          type: 'test',
-          description: 'Online aptitude and subject test',
-          duration: '1 day',
-          responsible: 'Testing Center',
-          order: 2
-        },
-        {
-          id: '3',
-          name: 'Panel Interview',
-          type: 'interview',
-          description: 'Video interview with faculty panel',
-          duration: '3 days',
-          responsible: 'Faculty Panel',
-          order: 3
-        },
-        {
-          id: '4',
-          name: 'Final Review',
-          type: 'committee-review',
-          description: 'Committee decision on admission',
-          duration: '2 days',
-          responsible: 'Admission Committee',
-          order: 4
-        }
-      ],
-      totalDuration: '8 days',
-      status: 'active',
-      updatedAt: new Date()
-    },
-    {
-      id: '2',
-      courseId: 'comp-sci',
-      courseName: 'Computer Science',
-      steps: [
-        {
-          id: '1',
-          name: 'Technical Assessment',
-          type: 'test',
-          description: 'Coding test and problem solving',
-          duration: '1 day',
-          responsible: 'Tech Team',
-          order: 1
-        },
-        {
-          id: '2',
-          name: 'Technical Interview',
-          type: 'interview',
-          description: 'Technical discussion with faculty',
-          duration: '2 days',
-          responsible: 'CS Faculty',
-          order: 2
-        }
-      ],
-      totalDuration: '3 days',
-      status: 'active',
-      updatedAt: new Date()
-    }
-  ]);
+
+  const [processes, setProcesses] = useState<SelectionProcess[]>([]);
+
+  React.useEffect(() => {
+    setProcesses(getProcesses());
+  }, []);
 
   const getStepIcon = (type: ProcessStep['type']) => {
     switch (type) {
@@ -162,6 +78,8 @@ export default function ProcessSteps() {
   };
 
   const handleDeleteProcess = (processId: string) => {
+    deleteProcess(processId);
+    setProcesses(getProcesses());
     toast({
       title: "Process Deleted",
       description: "Selection process has been removed successfully.",
@@ -200,7 +118,7 @@ export default function ProcessSteps() {
                 <TableHead>Total Duration</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Last Updated</TableHead>
-                <TableHead className="w-[100px]">Actions</TableHead>
+                <TableHead className="w-[180px]">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -240,10 +158,19 @@ export default function ProcessSteps() {
                   </TableCell>
                   <TableCell>
                     <span className="text-sm text-muted-foreground">
-                      {process.updatedAt.toLocaleDateString()}
+                      {new Date(process.updatedAt).toLocaleDateString()}
                     </span>
                   </TableCell>
                   <TableCell>
+                    <div className="flex items-center gap-1">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => navigate(`/university/process-steps/${process.id}`)}
+                    >
+                      <Eye className="h-4 w-4 mr-1" />
+                      View
+                    </Button>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button variant="ghost" size="icon">
@@ -251,6 +178,10 @@ export default function ProcessSteps() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => navigate(`/university/process-steps/${process.id}`)}>
+                          <Eye className="h-4 w-4 mr-2" />
+                          View Process
+                        </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => handleConfigureProcess(process.courseId)}>
                           <Edit className="h-4 w-4 mr-2" />
                           Edit Process
@@ -264,6 +195,7 @@ export default function ProcessSteps() {
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}
