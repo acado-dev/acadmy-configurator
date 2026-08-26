@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, Plus, Save, Trash2 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -18,6 +18,9 @@ const toLocalInput = (iso?: string) => (iso ? new Date(iso).toISOString().slice(
 const InterviewForm = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const returnTo = searchParams.get('returnTo');
+  const stepId = searchParams.get('stepId');
   const { activities, courses, createActivity, updateActivity } = useSelectionActivities('interview');
   const isEdit = !!id;
 
@@ -26,6 +29,8 @@ const InterviewForm = () => {
     title: '',
     description: '',
     interviewType: 'video' as Interview['interviewType'],
+    meetingPlatform: 'zoom' as NonNullable<Interview['meetingPlatform']>,
+    meetingLink: '',
     startAt: '',
     endAt: '',
     durationMinutes: 20,
@@ -48,6 +53,8 @@ const InterviewForm = () => {
       title: existing.title,
       description: existing.description,
       interviewType: existing.interviewType,
+      meetingPlatform: existing.meetingPlatform ?? 'zoom',
+      meetingLink: existing.meetingLink ?? '',
       startAt: toLocalInput(existing.startAt),
       endAt: toLocalInput(existing.endAt),
       durationMinutes: existing.durationMinutes,
@@ -78,12 +85,18 @@ const InterviewForm = () => {
       startAt: new Date(form.startAt).toISOString(),
       endAt: new Date(form.endAt).toISOString(),
     };
+    let activityId = id;
     if (isEdit && id) {
       updateActivity(id, payload as any);
       toast({ title: 'Interview updated' });
     } else {
-      createActivity(payload as any);
+      const created = createActivity(payload as any);
+      activityId = created.id;
       toast({ title: 'Interview created' });
+    }
+    if (returnTo) {
+      navigate(`${returnTo}?attachStep=${stepId ?? ''}&activityId=${activityId}`);
+      return;
     }
     navigate(`${selBase()}/interviews`);
   };
@@ -149,6 +162,31 @@ const InterviewForm = () => {
               value={form.durationMinutes}
               onChange={(e) => set('durationMinutes', Number(e.target.value))}
             />
+          </div>
+          <div className="space-y-2">
+            <Label>Meeting Platform</Label>
+            <Select value={form.meetingPlatform} onValueChange={(v) => set('meetingPlatform', v)}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="zoom">Zoom</SelectItem>
+                <SelectItem value="teams">Microsoft Teams</SelectItem>
+                <SelectItem value="google_meet">Google Meet</SelectItem>
+                <SelectItem value="other">Other</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="meetingLink">Invite Link (Zoom / Teams / Meet)</Label>
+            <Input
+              id="meetingLink"
+              type="url"
+              placeholder="https://zoom.us/j/..."
+              value={form.meetingLink}
+              onChange={(e) => set('meetingLink', e.target.value)}
+            />
+            <p className="text-xs text-muted-foreground">Shared with candidates when the interview is live.</p>
           </div>
           <div className="space-y-2">
             <Label htmlFor="startAt">Start Date &amp; Time *</Label>

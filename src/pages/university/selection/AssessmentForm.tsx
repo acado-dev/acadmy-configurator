@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, ListChecks, Save } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -18,6 +18,9 @@ const toLocalInput = (iso?: string) => (iso ? new Date(iso).toISOString().slice(
 const AssessmentForm = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const returnTo = searchParams.get('returnTo');
+  const stepId = searchParams.get('stepId');
   const { activities, courses, createActivity, updateActivity } = useSelectionActivities('assessment');
   const isEdit = !!id;
 
@@ -28,6 +31,7 @@ const AssessmentForm = () => {
     startAt: '',
     endAt: '',
     numberOfQuestions: 10,
+    maximumMarks: 100,
     questionType: 'mcq' as Assessment['questionType'],
     durationMinutes: 60,
     maxAttempts: 1,
@@ -50,6 +54,7 @@ const AssessmentForm = () => {
       startAt: toLocalInput(existing.startAt),
       endAt: toLocalInput(existing.endAt),
       numberOfQuestions: existing.numberOfQuestions,
+      maximumMarks: existing.maximumMarks ?? 100,
       questionType: existing.questionType,
       durationMinutes: existing.durationMinutes,
       maxAttempts: existing.maxAttempts,
@@ -86,6 +91,10 @@ const AssessmentForm = () => {
       const created = createActivity(payload as any);
       activityId = created.id;
       toast({ title: 'Assessment created' });
+    }
+    if (returnTo && !goToQuestions) {
+      navigate(`${returnTo}?attachStep=${stepId ?? ''}&activityId=${activityId}`);
+      return;
     }
     navigate(goToQuestions ? `${selBase()}/assessments/${activityId}/questions` : `${selBase()}/assessments`);
   };
@@ -145,6 +154,16 @@ const AssessmentForm = () => {
               min={1}
               value={form.numberOfQuestions}
               onChange={(e) => set('numberOfQuestions', Number(e.target.value))}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="maximumMarks">Maximum Marks *</Label>
+            <Input
+              id="maximumMarks"
+              type="number"
+              min={1}
+              value={form.maximumMarks}
+              onChange={(e) => set('maximumMarks', Number(e.target.value))}
             />
           </div>
           <div className="space-y-2">
