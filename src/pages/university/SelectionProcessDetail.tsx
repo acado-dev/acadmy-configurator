@@ -35,6 +35,7 @@ import {
   write,
 } from '@/lib/selectionStorage';
 import { STEP_MODULE, StoredProcessStep, getProcess } from '@/lib/selectionProcesses';
+import { useApplicationSubmissions } from '@/hooks/useApplicationSubmissions';
 
 interface AppSubmission {
   id: string;
@@ -97,7 +98,7 @@ export default function SelectionProcessDetail() {
     assignment: [],
     interview: [],
   });
-  const [applications, setApplications] = useState<AppSubmission[]>([]);
+  const { applications: allApplications, updateApplicationStatus } = useApplicationSubmissions();
   const [search, setSearch] = useState('');
   const [openRow, setOpenRow] = useState<{ row: StepRow; step: StoredProcessStep } | null>(null);
 
@@ -108,7 +109,6 @@ export default function SelectionProcessDetail() {
       assignment: read<ActivityResponse>(RESPONSE_KEYS.assignment),
       interview: read<ActivityResponse>(RESPONSE_KEYS.interview),
     });
-    setApplications(read<AppSubmission>(APP_KEY));
   };
 
   useEffect(() => {
@@ -138,15 +138,16 @@ export default function SelectionProcessDetail() {
         response: r,
       }));
     } else {
-      const scoped = applications.filter(
-        (a) => String(a.courseId) === String(process?.courseId) || applications.length > 0
+      const matching = (allApplications as unknown as AppSubmission[]).filter(
+        (a) => String(a.courseId) === String(process?.courseId)
       );
+      const scoped = matching.length ? matching : (allApplications as unknown as AppSubmission[]);
       rows = scoped.map((a) => ({
         kind: 'application' as const,
         id: a.id,
         name: a.applicantName,
         email: a.applicantEmail,
-        submittedAt: typeof a.submittedAt === 'string' ? a.submittedAt : undefined,
+        submittedAt: a.submittedAt ? String(a.submittedAt) : undefined,
         score: a.matchScore,
         maxScore: 100,
         status: appStatusToSelection(a.status),
@@ -174,10 +175,7 @@ export default function SelectionProcessDetail() {
       });
       write(STATUS_HISTORY_KEY, history);
     } else {
-      const next = read<AppSubmission>(APP_KEY).map((a) =>
-        a.id === row.id ? { ...a, status: selectionToAppStatus(status) } : a
-      );
-      write(APP_KEY, next);
+      updateApplicationStatus(row.id, selectionToAppStatus(status) as any);
     }
     load();
     setOpenRow(null);
