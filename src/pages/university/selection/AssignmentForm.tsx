@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, Save, Upload } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -19,6 +19,10 @@ const toLocalInput = (iso?: string) => (iso ? new Date(iso).toISOString().slice(
 const AssignmentForm = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const returnTo = searchParams.get('returnTo');
+  const stepId = searchParams.get('stepId');
+  const presetType = searchParams.get('presetType');
   const { activities, courses, createActivity, updateActivity } = useSelectionActivities('assignment');
   const isEdit = !!id;
   const fileRef = useRef<HTMLInputElement>(null);
@@ -68,6 +72,11 @@ const AssignmentForm = () => {
 
   const set = (key: string, value: any) => setForm((prev) => ({ ...prev, [key]: value }));
 
+  useEffect(() => {
+    if (isEdit || !presetType) return;
+    setForm((prev) => ({ ...prev, assignmentType: presetType }));
+  }, [isEdit, presetType]);
+
   const handleFile = (file?: File) => {
     if (!file) return;
     const reader = new FileReader();
@@ -92,12 +101,18 @@ const AssignmentForm = () => {
       startAt: new Date(form.startAt).toISOString(),
       endAt: new Date(form.endAt).toISOString(),
     };
+    let activityId = id;
     if (isEdit && id) {
       updateActivity(id, payload as any);
       toast({ title: 'Assignment updated' });
     } else {
-      createActivity(payload as any);
+      const created = createActivity(payload as any);
+      activityId = created.id;
       toast({ title: 'Assignment created' });
+    }
+    if (returnTo) {
+      navigate(`${returnTo}?attachStep=${stepId ?? ''}&activityId=${activityId}`);
+      return;
     }
     navigate(`${selBase()}/assignments`);
   };
