@@ -59,6 +59,7 @@ import UniversityInfo from '@/pages/university/UniversityInfo';
 import TalentPool from '@/pages/university/TalentPool';
 import TalentPoolDashboard from '@/pages/TalentPoolDashboard';
 import ProcessSteps from '@/pages/university/ProcessSteps';
+import SelectionProcessDetail from '@/pages/university/SelectionProcessDetail';
 import ProcessConfiguration from '@/pages/university/ProcessConfiguration';
 import UserManagement from '@/pages/university/UserManagement';
 import UniversityAnalytics from '@/pages/university/UniversityAnalytics';
@@ -256,6 +257,7 @@ const App = () => {
               <Route path="application-process/:courseId/agent" element={<CriteriaAgentPage />} />
               <Route path="application-process-list" element={<ApplicationProcessList />} />
               <Route path="process-steps" element={<ProcessSteps />} />
+              <Route path="process-steps/:processId" element={<SelectionProcessDetail />} />
               <Route path="assessments" element={<AssessmentList />} />
               <Route path="assessments/new" element={<AssessmentForm />} />
               <Route path="assessments/:id/edit" element={<AssessmentForm />} />

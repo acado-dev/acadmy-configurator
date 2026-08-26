@@ -12,6 +12,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useFormsData } from '@/hooks/useFormsData';
 import { useSelectionActivities } from '@/hooks/useSelectionActivities';
 import { SelectionModule } from '@/types/selection';
+import { saveProcess, totalDurationOf } from '@/lib/selectionProcesses';
 
 type StepType =
   | 'application'
@@ -213,6 +214,17 @@ export default function ProcessConfiguration() {
     }
 
     setIsLoading(true);
+    const courseLabel =
+      courses.find((c: any) => String(c.id) === String(selectedCourse))?.name ?? 'Selected course';
+    saveProcess({
+      id: `proc-${courseKey}`,
+      courseId: String(selectedCourse),
+      courseName: courseLabel,
+      steps: steps as any,
+      totalDuration: totalDurationOf(steps as any),
+      status: 'active',
+      updatedAt: new Date().toISOString(),
+    });
     // Simulate saving
     setTimeout(() => {
       setIsLoading(false);
