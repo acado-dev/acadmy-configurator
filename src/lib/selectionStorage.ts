@@ -153,6 +153,8 @@ const sampleInterviews = (courseIds: string[]): Interview[] => [
     shortlistingScore: 75,
     interviewType: 'video',
     durationMinutes: 20,
+    meetingPlatform: 'zoom',
+    meetingLink: 'https://zoom.us/j/1234567890',
     preparationTimeSeconds: 30,
     responseTimeSeconds: 120,
     questions: [
