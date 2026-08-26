@@ -36,6 +36,7 @@ export interface BaseActivity {
 
 export interface Assessment extends BaseActivity {
   numberOfQuestions: number;
+  maximumMarks: number;
   questionType: 'mcq' | 'descriptive' | 'mixed';
   durationMinutes: number;
   maxAttempts: number;
@@ -67,6 +68,8 @@ export interface Interview extends BaseActivity {
   questions: InterviewQuestion[];
   preparationTimeSeconds: number;
   responseTimeSeconds: number;
+  meetingLink?: string;
+  meetingPlatform?: 'zoom' | 'teams' | 'google_meet' | 'other';
 }
 
 export interface ResponseAnswer {
