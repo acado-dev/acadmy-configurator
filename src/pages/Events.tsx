@@ -32,6 +32,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { toast } from "@/hooks/use-toast";
 import { Event } from "@/types/event";
+import { getEvents, saveEvents } from "@/lib/eventStorage";
 
 const Events = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -47,7 +48,7 @@ const Events = () => {
     if (selectedEvent) {
       const updatedEvents = events.filter((e) => e.id !== selectedEvent.id);
       setEvents(updatedEvents);
-      localStorage.setItem("events", JSON.stringify(updatedEvents));
+      saveEvents(updatedEvents);
       toast({
         title: "Event deleted",
         description: "The event has been successfully deleted.",
@@ -190,7 +191,11 @@ const Events = () => {
                 ) : (
                   filteredEvents.map((event) => (
                     <TableRow key={event.id}>
-                      <TableCell className="font-medium">{event.title}</TableCell>
+                      <TableCell className="font-medium">
+                        <Link to={`/events/${event.id}`} className="hover:underline">
+                          {event.title}
+                        </Link>
+                      </TableCell>
                       <TableCell>{event.conductedBy}</TableCell>
                       <TableCell>
                         {new Date(event.eventDate).toLocaleDateString()}
@@ -200,9 +205,11 @@ const Events = () => {
                       <TableCell>{event.registrations || 0}</TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-2">
-                          <Button variant="ghost" size="icon" title="View">
-                            <Eye className="h-4 w-4" />
-                          </Button>
+                          <Link to={`/events/${event.id}`}>
+                            <Button variant="ghost" size="icon" title="View">
+                              <Eye className="h-4 w-4" />
+                            </Button>
+                          </Link>
                           <Link to={`/events/edit/${event.id}`}>
                             <Button variant="ghost" size="icon" title="Edit">
                               <Edit className="h-4 w-4" />
