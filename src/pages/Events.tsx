@@ -39,13 +39,9 @@ const Events = () => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
 
-  // Load events from localStorage
-  const loadEvents = (): Event[] => {
-    const stored = localStorage.getItem("events");
-    return stored ? JSON.parse(stored) : [];
-  };
+  // Load events from localStorage (seeded with sample events)
+  const [events, setEvents] = useState<Event[]>(() => getEvents());
 
-  const [events, setEvents] = useState<Event[]>(loadEvents());
 
   const handleDelete = () => {
     if (selectedEvent) {
