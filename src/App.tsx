@@ -81,6 +81,9 @@ import CreateWallPost from '@/pages/CreateWallPost';
 import Reels from '@/pages/Reels';
 import Events from '@/pages/Events';
 import CreateEvent from '@/pages/CreateEvent';
+import EventDetail from '@/pages/EventDetail';
+import EventActivityResponses from '@/pages/EventActivityResponses';
+import EventResponseDetail from '@/pages/EventResponseDetail';
 import Scholarships from '@/pages/Scholarships';
 import CreateScholarship from '@/pages/CreateScholarship';
 import Analytics from '@/pages/Analytics';
@@ -165,6 +168,9 @@ const App = () => {
               <Route path="events" element={<Events />} />
               <Route path="events/create" element={<CreateEvent />} />
               <Route path="events/edit/:id" element={<CreateEvent />} />
+              <Route path="events/:id" element={<EventDetail />} />
+              <Route path="events/:id/stages/:stageId/responses" element={<EventActivityResponses />} />
+              <Route path="events/:id/stages/:stageId/responses/:responseId" element={<EventResponseDetail />} />
               
               {/* Scholarships */}
               <Route path="scholarships" element={<Scholarships />} />
