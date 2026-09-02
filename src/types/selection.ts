@@ -60,6 +60,7 @@ export interface InterviewQuestion {
   id: string;
   text: string;
   mandatory: boolean;
+  marks?: number;
 }
 
 export interface Interview extends BaseActivity {

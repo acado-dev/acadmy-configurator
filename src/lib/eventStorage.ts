@@ -44,7 +44,7 @@ export interface EventActivityResponse {
     interviewer?: string;
     rating?: number;
     notes?: string;
-    questions?: { question: string; answer: string }[];
+    questions?: { question: string; answer: string; marks?: number; awarded?: number }[];
   };
   remarks?: string;
 }
