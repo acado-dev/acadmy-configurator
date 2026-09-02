@@ -41,7 +41,7 @@ const InterviewForm = () => {
     status: 'draft' as ActivityStatus,
   });
   const [questions, setQuestions] = useState<InterviewQuestion[]>([
-    { id: `q-${Date.now()}`, text: '', mandatory: true },
+    { id: `q-${Date.now()}`, text: '', mandatory: true, marks: 10 },
   ]);
 
   useEffect(() => {
@@ -64,7 +64,7 @@ const InterviewForm = () => {
       shortlistingScore: existing.shortlistingScore,
       status: existing.status,
     });
-    setQuestions(existing.questions?.length ? existing.questions : [{ id: 'q-1', text: '', mandatory: true }]);
+    setQuestions(existing.questions?.length ? existing.questions : [{ id: 'q-1', text: '', mandatory: true, marks: 10 }]);
   }, [isEdit, id, activities.length]);
 
   const set = (key: string, value: any) => setForm((prev) => ({ ...prev, [key]: value }));
@@ -260,7 +260,7 @@ const InterviewForm = () => {
           <Button
             variant="outline"
             size="sm"
-            onClick={() => setQuestions((prev) => [...prev, { id: `q-${Date.now()}`, text: '', mandatory: true }])}
+            onClick={() => setQuestions((prev) => [...prev, { id: `q-${Date.now()}`, text: '', mandatory: true, marks: 10 }])}
           >
             <Plus className="mr-2 h-4 w-4" />
             Add question
