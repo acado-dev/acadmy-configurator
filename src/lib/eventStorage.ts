@@ -44,7 +44,7 @@ export interface EventActivityResponse {
     interviewer?: string;
     rating?: number;
     notes?: string;
-    questions?: { question: string; answer: string }[];
+    questions?: { question: string; answer: string; marks?: number; awarded?: number }[];
   };
   remarks?: string;
 }
@@ -410,6 +410,18 @@ export const getEventResponse = (id?: string) => {
   ensureEventSeed();
   return read<EventActivityResponse>(EVENT_RESPONSES_KEY).find((r) => r.id === id);
 };
+
+export const updateEventResponse = (
+  id: string,
+  data: Partial<EventActivityResponse>
+): EventActivityResponse | undefined => {
+  ensureEventSeed();
+  const all = read<EventActivityResponse>(EVENT_RESPONSES_KEY);
+  const next = all.map((r) => (r.id === id ? { ...r, ...data } : r));
+  write(EVENT_RESPONSES_KEY, next);
+  return next.find((r) => r.id === id);
+};
+
 
 export const activityKindForStage = (
   type: EventStage["type"]
