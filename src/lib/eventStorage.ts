@@ -411,6 +411,18 @@ export const getEventResponse = (id?: string) => {
   return read<EventActivityResponse>(EVENT_RESPONSES_KEY).find((r) => r.id === id);
 };
 
+export const updateEventResponse = (
+  id: string,
+  data: Partial<EventActivityResponse>
+): EventActivityResponse | undefined => {
+  ensureEventSeed();
+  const all = read<EventActivityResponse>(EVENT_RESPONSES_KEY);
+  const next = all.map((r) => (r.id === id ? { ...r, ...data } : r));
+  write(EVENT_RESPONSES_KEY, next);
+  return next.find((r) => r.id === id);
+};
+
+
 export const activityKindForStage = (
   type: EventStage["type"]
 ): EventActivityResponse["activityKind"] => {
