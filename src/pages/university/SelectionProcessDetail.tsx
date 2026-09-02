@@ -10,6 +10,7 @@ import {
   Link2,
   PauseCircle,
   PenLine,
+  Save,
   Search,
   Users,
   Video,
@@ -101,6 +102,8 @@ export default function SelectionProcessDetail() {
   const { applications: allApplications, updateApplicationStatus } = useApplicationSubmissions();
   const [search, setSearch] = useState('');
   const [openRow, setOpenRow] = useState<{ row: StepRow; step: StoredProcessStep } | null>(null);
+  const [responseMarks, setResponseMarks] = useState(0);
+  const [answerMarks, setAnswerMarks] = useState<Record<string, number>>({});
 
   const load = () => {
     ensureSeed();
@@ -115,10 +118,52 @@ export default function SelectionProcessDetail() {
     load();
   }, [processId]);
 
-  const activityTitle = (module: SelectionModule, activityId?: string) => {
+  useEffect(() => {
+    if (!openRow || openRow.row.kind !== 'response') return;
+    setResponseMarks(openRow.row.response.score);
+    setAnswerMarks(
+      openRow.row.response.answers.reduce<Record<string, number>>((acc, answer) => {
+        acc[answer.id] = answer.marks ?? 0;
+        return acc;
+      }, {})
+    );
+  }, [openRow?.row.id]);
+
+  const activityFor = (module: SelectionModule, activityId?: string) => {
     if (!activityId) return undefined;
-    const found = read<any>(STORAGE_KEYS[module]).find((a) => a.id === activityId);
-    return found?.title as string | undefined;
+    return read<any>(STORAGE_KEYS[module]).find((a) => a.id === activityId);
+  };
+
+  const activityTitle = (module: SelectionModule, activityId?: string) => activityFor(module, activityId)?.title as string | undefined;
+
+  const saveResponseEvaluation = (row: StepRow, step: StoredProcessStep) => {
+    if (row.kind !== 'response') return;
+    const module = STEP_MODULE[step.type];
+    if (!module) return;
+    const activity = activityFor(module, row.response.activityId);
+    const updatedAnswers = row.response.answers.map((answer, index) => {
+      const questionMarks = module === 'interview' ? activity?.questions?.[index]?.marks : undefined;
+      const maxMarks = Number(questionMarks ?? answer.maxMarks ?? 0);
+      return {
+        ...answer,
+        maxMarks,
+        marks: Math.max(0, Math.min(Number(answerMarks[answer.id] ?? 0), maxMarks)),
+      };
+    });
+    const score = module === 'assignment' && row.response.answers.length === 0
+      ? Math.max(0, Math.min(Number(responseMarks), Number(activity?.maximumMarks ?? row.response.maxScore)))
+      : updatedAnswers.reduce((sum, answer) => sum + (answer.marks ?? 0), 0);
+    const next = read<ActivityResponse>(RESPONSE_KEYS[module]).map((response) =>
+      response.id === row.id ? { ...response, answers: updatedAnswers, score, maxScore: activity?.maximumMarks ?? response.maxScore } : response
+    );
+    write(RESPONSE_KEYS[module], next);
+    load();
+    setOpenRow({
+      row: { ...row, response: { ...row.response, answers: updatedAnswers, score } },
+      step,
+    });
+    setResponseMarks(score);
+    toast({ title: 'Marks saved', description: `${row.name}'s response has been evaluated.` });
   };
 
   const rowsForStep = (step: StoredProcessStep): StepRow[] => {
@@ -453,6 +498,49 @@ export default function SelectionProcessDetail() {
                         {openRow.row.response.submissionContent || 'No content submitted.'}
                       </p>
                     )}
+                    {openRow.row.response.answers.length > 0 && (
+                      <div className="space-y-3 pt-2">
+                        <p className="text-sm font-medium">Answer-wise evaluation</p>
+                        {openRow.row.response.answers.map((answer, index) => (
+                          <div key={answer.id} className="rounded-lg border border-border p-3">
+                            <p className="mb-2 text-sm font-medium">Q{index + 1}. {answer.question}</p>
+                            <p className="mb-3 whitespace-pre-wrap rounded-md bg-muted/40 p-3 text-sm">
+                              {answer.answer || 'No answer provided.'}
+                            </p>
+                            <div className="flex items-center gap-2">
+                              <Label htmlFor={`process-marks-${answer.id}`} className="text-xs text-muted-foreground">
+                                Marks awarded
+                              </Label>
+                              <Input
+                                id={`process-marks-${answer.id}`}
+                                type="number"
+                                min={0}
+                                max={answer.maxMarks}
+                                className="w-24"
+                                value={answerMarks[answer.id] ?? 0}
+                                onChange={(e) =>
+                                  setAnswerMarks((previous) => ({ ...previous, [answer.id]: Number(e.target.value) }))
+                                }
+                              />
+                              <span className="text-xs text-muted-foreground">/ {answer.maxMarks}</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    {openRow.row.response.answers.length === 0 && (
+                      <div className="space-y-2 pt-2">
+                        <Label htmlFor="process-total-marks">Total marks awarded</Label>
+                        <Input
+                          id="process-total-marks"
+                          type="number"
+                          min={0}
+                          max={activityFor('assignment', openRow.row.response.activityId)?.maximumMarks ?? openRow.row.response.maxScore}
+                          value={responseMarks}
+                          onChange={(e) => setResponseMarks(Number(e.target.value))}
+                        />
+                      </div>
+                    )}
                     {openRow.row.response.remarks && (
                       <p className="text-sm text-muted-foreground">Remarks: {openRow.row.response.remarks}</p>
                     )}
@@ -465,50 +553,80 @@ export default function SelectionProcessDetail() {
                     {openRow.row.response.answers.length === 0 && (
                       <p className="text-sm text-muted-foreground">No answers recorded.</p>
                     )}
-                    {openRow.row.response.answers.map((a, i) => {
-                      const correct = a.correctAnswer ? a.answer.trim() === a.correctAnswer.trim() : undefined;
-                      return (
-                        <div key={a.id} className="rounded-lg border border-border p-3">
-                          <div className="mb-2 flex items-start justify-between gap-2">
-                            <p className="text-sm font-medium">
-                              Q{i + 1}. {a.question}
-                            </p>
-                            <div className="flex shrink-0 items-center gap-2">
-                              <Badge variant="outline">
-                                {a.marks ?? 0}/{a.maxMarks}
-                              </Badge>
-                              {correct !== undefined &&
-                                (correct ? (
-                                  <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-                                ) : (
-                                  <XCircle className="h-4 w-4 text-destructive" />
-                                ))}
-                            </div>
-                          </div>
-                          {a.videoUrl && (
-                            <a
-                              href={a.videoUrl}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="mb-2 flex items-center gap-2 text-sm text-primary underline"
-                            >
-                              <Video className="h-4 w-4" />
-                              Play recorded answer
-                            </a>
-                          )}
-                          <p className="whitespace-pre-wrap rounded-md bg-muted/40 p-3 text-sm">
-                            {a.answer || 'No answer provided.'}
-                          </p>
-                          {a.correctAnswer && (
-                            <p className="mt-2 text-xs text-muted-foreground">Expected: {a.correctAnswer}</p>
-                          )}
-                        </div>
-                      );
-                    })}
+                     {openRow.row.response.answers.map((a, i) => {
+                       const correct = a.correctAnswer ? a.answer.trim() === a.correctAnswer.trim() : undefined;
+                       const interviewMax = openRow.step.type === 'interview'
+                         ? activityFor('interview', openRow.row.response.activityId)?.questions?.[i]?.marks
+                         : undefined;
+                       const maxMarks = Number(interviewMax ?? a.maxMarks ?? 0);
+                       return (
+                         <div key={a.id} className="rounded-lg border border-border p-3">
+                           <div className="mb-2 flex items-start justify-between gap-2">
+                             <p className="text-sm font-medium">
+                               Q{i + 1}. {a.question}
+                             </p>
+                             <div className="flex shrink-0 items-center gap-2">
+                               <Badge variant="outline">
+                                 {answerMarks[a.id] ?? a.marks ?? 0}/{maxMarks}
+                               </Badge>
+                               {correct !== undefined &&
+                                 (correct ? (
+                                   <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+                                 ) : (
+                                   <XCircle className="h-4 w-4 text-destructive" />
+                                 ))}
+                             </div>
+                           </div>
+                           {a.videoUrl && (
+                             <a
+                               href={a.videoUrl}
+                               target="_blank"
+                               rel="noreferrer"
+                               className="mb-2 flex items-center gap-2 text-sm text-primary underline"
+                             >
+                               <Video className="h-4 w-4" />
+                               Play recorded answer
+                             </a>
+                           )}
+                           <p className="whitespace-pre-wrap rounded-md bg-muted/40 p-3 text-sm">
+                             {a.answer || 'No answer provided.'}
+                           </p>
+                           {a.correctAnswer && (
+                             <p className="mt-2 text-xs text-muted-foreground">Expected: {a.correctAnswer}</p>
+                           )}
+                           <div className="mt-3 flex items-center gap-2">
+                             <Label htmlFor={`process-answer-marks-${a.id}`} className="text-xs text-muted-foreground">
+                               Marks awarded
+                             </Label>
+                             <Input
+                               id={`process-answer-marks-${a.id}`}
+                               type="number"
+                               min={0}
+                               max={maxMarks}
+                               className="w-24"
+                               value={answerMarks[a.id] ?? a.marks ?? 0}
+                               onChange={(e) =>
+                                 setAnswerMarks((previous) => ({ ...previous, [a.id]: Number(e.target.value) }))
+                               }
+                             />
+                             <span className="text-xs text-muted-foreground">/ {maxMarks}</span>
+                           </div>
+                         </div>
+                       );
+                     })}
                   </div>
                 )}
 
-                <Separator />
+                 {openRow.row.kind === 'response' && (
+                   <div className="flex justify-end">
+                     <Button variant="outline" onClick={() => saveResponseEvaluation(openRow.row, openRow.step)}>
+                       <Save className="mr-2 h-4 w-4" />
+                       Save marks
+                     </Button>
+                   </div>
+                 )}
+
+                 <Separator />
 
                 <div className="flex flex-wrap gap-2">
                   <Button

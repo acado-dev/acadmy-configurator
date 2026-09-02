@@ -41,8 +41,9 @@ const InterviewForm = () => {
     status: 'draft' as ActivityStatus,
   });
   const [questions, setQuestions] = useState<InterviewQuestion[]>([
-    { id: `q-${Date.now()}`, text: '', mandatory: true },
+    { id: `q-${Date.now()}`, text: '', mandatory: true, marks: 10 },
   ]);
+  const totalMarks = questions.reduce((sum, q) => sum + (Number(q.marks) || 0), 0);
 
   useEffect(() => {
     if (!isEdit) return;
@@ -64,7 +65,11 @@ const InterviewForm = () => {
       shortlistingScore: existing.shortlistingScore,
       status: existing.status,
     });
-    setQuestions(existing.questions?.length ? existing.questions : [{ id: 'q-1', text: '', mandatory: true }]);
+    setQuestions(
+      existing.questions?.length
+        ? existing.questions.map((q) => ({ ...q, marks: q.marks ?? 10 }))
+        : [{ id: 'q-1', text: '', mandatory: true, marks: 10 }]
+    );
   }, [isEdit, id, activities.length]);
 
   const set = (key: string, value: any) => setForm((prev) => ({ ...prev, [key]: value }));
@@ -78,10 +83,13 @@ const InterviewForm = () => {
       });
       return;
     }
-    const cleanQuestions = questions.filter((q) => q.text.trim());
+    const cleanQuestions = questions
+      .filter((q) => q.text.trim())
+      .map((q) => ({ ...q, marks: Number(q.marks) || 0 }));
     const payload = {
       ...form,
       questions: cleanQuestions,
+      maximumMarks: cleanQuestions.reduce((s, q) => s + (q.marks || 0), 0),
       startAt: new Date(form.startAt).toISOString(),
       endAt: new Date(form.endAt).toISOString(),
     };
@@ -256,11 +264,16 @@ const InterviewForm = () => {
 
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle className="text-base">Question pool ({questions.filter((q) => q.text.trim()).length})</CardTitle>
+          <div>
+            <CardTitle className="text-base">
+              Question pool ({questions.filter((q) => q.text.trim()).length})
+            </CardTitle>
+            <p className="mt-1 text-xs text-muted-foreground">Total marks: {totalMarks}</p>
+          </div>
           <Button
             variant="outline"
             size="sm"
-            onClick={() => setQuestions((prev) => [...prev, { id: `q-${Date.now()}`, text: '', mandatory: true }])}
+            onClick={() => setQuestions((prev) => [...prev, { id: `q-${Date.now()}`, text: '', mandatory: true, marks: 10 }])}
           >
             <Plus className="mr-2 h-4 w-4" />
             Add question
@@ -300,6 +313,23 @@ const InterviewForm = () => {
                   setQuestions((prev) => prev.map((x) => (x.id === q.id ? { ...x, text: e.target.value } : x)))
                 }
               />
+              <div className="mt-3 flex items-center gap-2">
+                <Label htmlFor={`marks-${q.id}`} className="text-xs text-muted-foreground">
+                  Marks for this question
+                </Label>
+                <Input
+                  id={`marks-${q.id}`}
+                  type="number"
+                  min={0}
+                  className="w-24"
+                  value={q.marks ?? 0}
+                  onChange={(e) =>
+                    setQuestions((prev) =>
+                      prev.map((x) => (x.id === q.id ? { ...x, marks: Number(e.target.value) } : x))
+                    )
+                  }
+                />
+              </div>
             </div>
           ))}
         </CardContent>
