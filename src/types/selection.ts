@@ -60,12 +60,14 @@ export interface InterviewQuestion {
   id: string;
   text: string;
   mandatory: boolean;
+  marks?: number;
 }
 
 export interface Interview extends BaseActivity {
   interviewType: 'video' | 'live' | 'other';
   durationMinutes: number;
   questions: InterviewQuestion[];
+  maximumMarks?: number;
   preparationTimeSeconds: number;
   responseTimeSeconds: number;
   meetingLink?: string;
