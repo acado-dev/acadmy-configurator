@@ -1,14 +1,11 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, CheckCircle2, FileText, Link2, Save, Star, Video, XCircle } from "lucide-react";
+import { ArrowLeft, CheckCircle2, FileText, Link2, Star, Video, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { toast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { EventAnswer, getEvent, getEventResponse, stageTypeLabel, updateEventResponse } from "@/lib/eventStorage";
+import { EventAnswer, getEvent, getEventResponse, stageTypeLabel } from "@/lib/eventStorage";
 
 const formatDateTime = (value: string) =>
   new Date(value).toLocaleString(undefined, {
@@ -32,20 +29,6 @@ const EventResponseDetail = () => {
   const event = useMemo(() => getEvent(id), [id]);
   const stage = event?.stages?.find((s) => s.id === stageId);
   const response = useMemo(() => getEventResponse(responseId), [responseId]);
-  const [answerMarks, setAnswerMarks] = useState<Record<string, number>>({});
-  const [interviewMarks, setInterviewMarks] = useState<Record<number, number>>({});
-
-  useEffect(() => {
-    if (!response) return;
-    setAnswerMarks((response.answers ?? []).reduce<Record<string, number>>((marks, answer) => {
-      marks[answer.questionId] = answer.awarded ?? 0;
-      return marks;
-    }, {}));
-    setInterviewMarks((response.interview?.questions ?? []).reduce<Record<number, number>>((marks, question, index) => {
-      marks[index] = question.awarded ?? 0;
-      return marks;
-    }, {}));
-  }, [response?.id]);
 
   if (!event || !stage || !response) {
     return (
@@ -62,42 +45,6 @@ const EventResponseDetail = () => {
 
   const correctCount = (response.answers || []).filter((a) => a.type !== "descriptive" && isCorrect(a)).length;
   const objectiveCount = (response.answers || []).filter((a) => a.type !== "descriptive").length;
-  const currentAnswerScore = (response.answers ?? []).reduce((sum, answer) => sum + (answerMarks[answer.questionId] ?? 0), 0);
-  const currentInterviewScore = (response.interview?.questions ?? []).reduce((sum, question, index) => sum + (interviewMarks[index] ?? 0), 0);
-  const isMarkableResponse = response.activityKind === "assessment" || response.activityKind === "interview";
-  const currentScore = response.activityKind === "assessment" ? currentAnswerScore : response.activityKind === "interview" ? currentInterviewScore : response.score;
-  const currentMaxScore = response.activityKind === "interview"
-    ? (response.interview?.questions ?? []).reduce((sum, question) => sum + (question.marks ?? 10), 0)
-    : response.maxScore;
-
-  const handleSaveMarks = () => {
-    if (!isMarkableResponse) return;
-    if ((response.answers ?? []).some((answer) => {
-      const value = answerMarks[answer.questionId] ?? 0;
-      return value < 0 || value > answer.marks;
-    }) || (response.interview?.questions ?? []).some((question, index) => {
-      const value = interviewMarks[index] ?? 0;
-      return value < 0 || value > (question.marks ?? 10);
-    })) {
-      toast({ title: "Invalid marks", description: "Marks awarded must be between 0 and the maximum marks for each answer.", variant: "destructive" });
-      return;
-    }
-    const updatedAnswers = response.answers?.map((answer) => ({ ...answer, awarded: answerMarks[answer.questionId] ?? 0 }));
-    const updatedInterview = response.interview ? {
-      ...response.interview,
-      questions: response.interview.questions?.map((question, index) => ({ ...question, marks: question.marks ?? 10, awarded: interviewMarks[index] ?? 0 })),
-    } : response.interview;
-    const score = response.activityKind === "assessment" ? currentAnswerScore : currentInterviewScore;
-    updateEventResponse(response.id, {
-      answers: updatedAnswers,
-      interview: updatedInterview,
-      score,
-      maxScore: currentMaxScore,
-      status: "evaluated",
-      result: currentMaxScore && score >= currentMaxScore / 2 ? "pass" : "fail",
-    });
-    toast({ title: "Marks saved", description: `The learner's ${stageTypeLabel[stage.type].toLowerCase()} response was evaluated.` });
-  };
 
   return (
     <div className="container mx-auto p-6 space-y-6">
@@ -130,7 +77,7 @@ const EventResponseDetail = () => {
           <CardContent className="py-6">
             <p className="text-xs uppercase tracking-wide text-muted-foreground">Score</p>
             <p className="text-2xl font-bold mt-1">
-              {currentScore !== undefined ? `${currentScore}/${currentMaxScore}` : "Pending"}
+              {response.score !== undefined ? `${response.score}/${response.maxScore}` : "Pending"}
             </p>
           </CardContent>
         </Card>
@@ -215,11 +162,9 @@ const EventResponseDetail = () => {
                   )}
 
                   <Separator />
-                  <div className="flex items-center gap-3">
-                    <Label htmlFor={`event-answer-${a.questionId}`} className="text-sm text-muted-foreground">Marks awarded</Label>
-                    <Input id={`event-answer-${a.questionId}`} type="number" min={0} max={a.marks} className="h-9 w-24" value={answerMarks[a.questionId] ?? 0} onChange={(e) => setAnswerMarks((previous) => ({ ...previous, [a.questionId]: Number(e.target.value) }))} />
-                    <span className="text-sm text-muted-foreground">/ {a.marks}</span>
-                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    Marks awarded: <span className="font-medium text-foreground">{a.awarded ?? 0}</span> / {a.marks}
+                  </p>
                 </div>
               );
             })}
@@ -285,11 +230,6 @@ const EventResponseDetail = () => {
                   Q{i + 1}. {q.question}
                 </p>
                 <p className="text-sm leading-relaxed rounded-md bg-muted p-4">{q.answer}</p>
-                <div className="flex items-center gap-3">
-                  <Label htmlFor={`event-interview-${i}`} className="text-sm text-muted-foreground">Marks awarded</Label>
-                  <Input id={`event-interview-${i}`} type="number" min={0} max={q.marks ?? 10} className="h-9 w-24" value={interviewMarks[i] ?? 0} onChange={(e) => setInterviewMarks((previous) => ({ ...previous, [i]: Number(e.target.value) }))} />
-                  <span className="text-sm text-muted-foreground">/ {q.marks ?? 10}</span>
-                </div>
               </div>
             ))}
 
@@ -301,15 +241,6 @@ const EventResponseDetail = () => {
             )}
           </CardContent>
         </Card>
-      )}
-
-      {isMarkableResponse && (
-        <div className="flex justify-end">
-          <Button onClick={handleSaveMarks}>
-            <Save className="mr-2 h-4 w-4" />
-            Save marks
-          </Button>
-        </div>
       )}
 
       {response.activityKind === "generic" && (
