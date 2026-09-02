@@ -273,6 +273,19 @@ const InterviewForm = () => {
                 <span className="text-sm font-medium">Question {index + 1}</span>
                 <div className="flex items-center gap-4">
                   <div className="flex items-center gap-2">
+                    <Label htmlFor={`marks-${q.id}`} className="text-xs text-muted-foreground">Marks</Label>
+                    <Input
+                      id={`marks-${q.id}`}
+                      type="number"
+                      min={0}
+                      className="h-8 w-20"
+                      value={q.marks ?? 0}
+                      onChange={(e) =>
+                        setQuestions((prev) => prev.map((x) => (x.id === q.id ? { ...x, marks: Number(e.target.value) } : x)))
+                      }
+                    />
+                  </div>
+                  <div className="flex items-center gap-2">
                     <Label className="text-xs text-muted-foreground">Mandatory</Label>
                     <Switch
                       checked={q.mandatory}
