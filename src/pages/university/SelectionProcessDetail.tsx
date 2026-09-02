@@ -556,7 +556,7 @@ export default function SelectionProcessDetail() {
                      {openRow.row.response.answers.map((a, i) => {
                        const correct = a.correctAnswer ? a.answer.trim() === a.correctAnswer.trim() : undefined;
                        const interviewMax = openRow.step.type === 'interview'
-                         ? activityFor('interview', openRow.row.response.activityId)?.questions?.[i]?.marks
+                         ? activityFor('interview', (openRow.row as { response?: ActivityResponse }).response?.activityId)?.questions?.[i]?.marks
                          : undefined;
                        const maxMarks = Number(interviewMax ?? a.maxMarks ?? 0);
                        return (
