@@ -550,6 +550,65 @@ const ApplicationReview = () => {
             </CardContent>
           </Card>
 
+          {/* Requested Documents */}
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0">
+              <CardTitle>Requested Documents</CardTitle>
+              <Button variant="ghost" size="sm" onClick={() => setShowDocumentDialog(true)}>
+                <FileText className="h-4 w-4 mr-2" />
+                New
+              </Button>
+            </CardHeader>
+            <CardContent>
+              {documentRequests.length === 0 ? (
+                <p className="text-sm text-muted-foreground">
+                  No documents have been requested for this application yet.
+                </p>
+              ) : (
+                <ScrollArea className="max-h-64">
+                  <div className="space-y-3">
+                    {documentRequests.map((req) => (
+                      <div key={req.id} className="rounded-lg border border-border p-3 space-y-2">
+                        <div className="flex items-start justify-between gap-2">
+                          <p className="text-sm font-medium">{req.documentType}</p>
+                          <Badge
+                            variant={
+                              req.status === 'received'
+                                ? 'default'
+                                : req.status === 'cancelled'
+                                ? 'outline'
+                                : 'secondary'
+                            }
+                            className="capitalize"
+                          >
+                            {req.status}
+                          </Badge>
+                        </div>
+                        <p className="text-xs text-muted-foreground">
+                          {REASON_LABELS[req.reason]} · Requested{' '}
+                          {new Date(req.requestedAt).toLocaleDateString()}
+                          {req.dueDate ? ` · Due ${new Date(req.dueDate).toLocaleDateString()}` : ''}
+                        </p>
+                        {req.message && <p className="text-xs">{req.message}</p>}
+                        {req.status === 'pending' && (
+                          <div className="flex gap-2 pt-1">
+                            <Button size="sm" variant="outline" onClick={() => handleRequestStatus(req.id, 'received')}>
+                              <CheckCircle className="h-3.5 w-3.5 mr-1" />
+                              Mark received
+                            </Button>
+                            <Button size="sm" variant="ghost" onClick={() => handleRequestStatus(req.id, 'cancelled')}>
+                              Cancel
+                            </Button>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </ScrollArea>
+              )}
+            </CardContent>
+          </Card>
+
           {/* Documents */}
           <Card>
             <CardHeader>
