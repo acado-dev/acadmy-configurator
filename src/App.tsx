@@ -54,6 +54,7 @@ import ApplicationProcess from '@/pages/university/ApplicationProcess';
 import ApplicationProcessList from '@/pages/university/ApplicationProcessList';
 import UniversityApplicationReview from '@/pages/university/ApplicationReview';
 import ApplicationsList from '@/pages/university/ApplicationsList';
+import DocumentRequestsList from '@/pages/university/DocumentRequestsList';
 import ApplicationsOverview from '@/pages/university/ApplicationsOverview';
 import UniversityInfo from '@/pages/university/UniversityInfo';
 import TalentPool from '@/pages/university/TalentPool';
