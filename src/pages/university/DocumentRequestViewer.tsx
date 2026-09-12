@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useSearchParams } from 'react-router-dom';
 import {
   FileText,
   Download,
@@ -39,27 +38,35 @@ const EVENT_ICONS: Record<DocumentRequestEvent['type'], React.ElementType> = {
   note: Clock,
 };
 
-const DocumentRequestViewer = () => {
-  const { requestId } = useParams();
-  const [searchParams] = useSearchParams();
+interface DocumentRequestViewerProps {
+  requestId: string;
+  onClose?: () => void;
+  onUpdate?: () => void;
+}
+
+const DocumentRequestViewer = ({ requestId, onClose, onUpdate }: DocumentRequestViewerProps) => {
   const { toast } = useToast();
   const [request, setRequest] = useState<DocumentRequest | null>(null);
   const [message, setMessage] = useState('');
 
   const refresh = () => {
-    if (requestId) setRequest(getDocumentRequestById(requestId) || null);
+    setRequest(getDocumentRequestById(requestId) || null);
+    onUpdate?.();
   };
 
-  useEffect(refresh, [requestId]);
+  useEffect(() => {
+    setRequest(getDocumentRequestById(requestId) || null);
+    setMessage('');
+  }, [requestId]);
 
   if (!request) {
     return (
-      <div className="p-8">
+      <div className="p-6">
         <Card>
           <CardHeader>
             <CardTitle>Document request not found</CardTitle>
             <CardDescription>
-              This request may have been removed. Close this window and try again from the application.
+              This request may have been removed. Close this pop-up and try again from the application.
             </CardDescription>
           </CardHeader>
         </Card>
@@ -109,13 +116,12 @@ const DocumentRequestViewer = () => {
   };
 
   return (
-    <div className="mx-auto max-w-6xl space-y-6 p-6">
+    <div className="space-y-6 p-1">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h1 className="text-2xl font-semibold">{request.documentType}</h1>
           <p className="text-sm text-muted-foreground">
-            {request.applicantName} · {request.applicantEmail} · Application{' '}
-            {searchParams.get('application') || request.applicationId}
+            {request.applicantName} · {request.applicantEmail} · Application {request.applicationId}
           </p>
         </div>
         <Badge className="capitalize" variant={request.status === 'accepted' ? 'default' : 'secondary'}>
@@ -153,7 +159,7 @@ const DocumentRequestViewer = () => {
                     </a>
                   </Button>
                 </div>
-                <div className="h-[520px] rounded-lg border border-border bg-muted/40">
+                <div className="h-[min(52vh,520px)] rounded-lg border border-border bg-muted/40">
                   <object data={file.url} className="h-full w-full rounded-lg" aria-label={`Preview of ${file.name}`}>
                     <div className="flex h-full items-center justify-center p-4 text-sm text-muted-foreground">
                       Preview not available. Use Download to view the file.
@@ -211,9 +217,11 @@ const DocumentRequestViewer = () => {
                 </Button>
               )}
               <Separator />
-              <Button className="w-full" variant="ghost" onClick={() => window.close()}>
-                Close window
-              </Button>
+              {onClose && (
+                <Button className="w-full" variant="ghost" onClick={onClose}>
+                  Close
+                </Button>
+              )}
             </CardContent>
           </Card>
 
