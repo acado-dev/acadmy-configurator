@@ -40,6 +40,15 @@ import { useApplicationSubmissions } from '@/hooks/useApplicationSubmissions';
 import { useApplicationProcess } from '@/hooks/useApplicationProcess';
 import { useFormsData } from '@/hooks/useFormsData';
 import { useToast } from '@/hooks/use-toast';
+import RequestDocumentDialog from '@/components/applications/RequestDocumentDialog';
+import {
+  createDocumentRequest,
+  getDocumentRequests,
+  updateDocumentRequestStatus,
+  DocumentRequest,
+  DocumentRequestReason,
+  REASON_LABELS,
+} from '@/lib/documentRequests';
 
 const ApplicationReview = () => {
   const { id } = useParams();
