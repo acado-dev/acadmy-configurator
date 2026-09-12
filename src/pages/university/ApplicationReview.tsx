@@ -531,9 +531,10 @@ const ApplicationReview = () => {
                 <Button 
                   className="w-full" 
                   variant="outline"
+                  onClick={() => setShowDocumentDialog(true)}
                 >
                   <FileText className="h-4 w-4 mr-2" />
-                  Request Documents
+                  Request Document
                 </Button>
                 {application.status === 'shortlisted' && (
                   <Button 
