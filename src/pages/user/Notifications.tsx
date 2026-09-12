@@ -99,10 +99,7 @@ const Notifications = () => {
         className={`flex items-start gap-4 p-4 rounded-lg border transition-colors cursor-pointer ${
           !notif.isRead ? 'bg-primary/5 border-primary/20' : 'hover:bg-muted/50'
         }`}
-        onClick={() => {
-          markAsRead(notif.id);
-          if (notif.actionRoute) navigate(notif.actionRoute);
-        }}
+        onClick={handleOpen}
       >
         <div className={`p-2.5 rounded-lg shrink-0 ${bg}`}>
           <Icon className={`h-5 w-5 ${color}`} />
