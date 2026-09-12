@@ -14,10 +14,30 @@ import {
   User
 } from "lucide-react";
 import { toast } from "sonner";
+import { useEffect, useState } from "react";
+import { Upload } from "lucide-react";
+import ApplicantDocumentRequestDialog from "@/components/documents/ApplicantDocumentRequestDialog";
+import {
+  DocumentRequest,
+  REASON_LABELS,
+  getDocumentRequests,
+  seedDocumentRequestsIfEmpty,
+} from "@/lib/documentRequests";
 
 const ApplicationDetail = () => {
   const { applicationId } = useParams();
   const navigate = useNavigate();
+  const [docRequests, setDocRequests] = useState<DocumentRequest[]>([]);
+  const [openRequestId, setOpenRequestId] = useState<string | null>(null);
+
+  const loadRequests = () => {
+    seedDocumentRequestsIfEmpty();
+    setDocRequests(getDocumentRequests().filter((r) => r.status !== 'cancelled'));
+  };
+
+  useEffect(() => {
+    loadRequests();
+  }, [applicationId]);
 
   // Mock application data - in production, this would come from your backend
   const application = {
@@ -255,6 +275,60 @@ const ApplicationDetail = () => {
               </div>
             </CardContent>
           </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Requested Documents</CardTitle>
+              <CardDescription>
+                Documents the university has asked you to provide
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {docRequests.length === 0 ? (
+                <p className="text-sm text-muted-foreground">
+                  No documents have been requested.
+                </p>
+              ) : (
+                <div className="space-y-3">
+                  {docRequests.map((r) => (
+                    <div
+                      key={r.id}
+                      className="flex flex-wrap items-center justify-between gap-3 p-3 border rounded-lg"
+                    >
+                      <div className="min-w-0">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <p className="font-medium">{r.documentType}</p>
+                          <Badge variant={r.status === 'pending' ? 'secondary' : 'outline'}>
+                            {r.status === 'pending'
+                              ? 'Awaiting your upload'
+                              : r.status === 'received'
+                              ? 'Submitted · under review'
+                              : 'Accepted'}
+                          </Badge>
+                        </div>
+                        <p className="text-sm text-muted-foreground">
+                          {r.message || REASON_LABELS[r.reason]}
+                        </p>
+                      </div>
+                      <Button size="sm" onClick={() => setOpenRequestId(r.id)}>
+                        {r.status === 'pending' ? (
+                          <>
+                            <Upload className="mr-2 h-4 w-4" />
+                            Upload / Comment
+                          </>
+                        ) : (
+                          <>
+                            <FileText className="mr-2 h-4 w-4" />
+                            View
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
         </TabsContent>
 
         {/* Timeline Tab */}
@@ -319,6 +393,12 @@ const ApplicationDetail = () => {
           </Card>
         </TabsContent>
       </Tabs>
+
+      <ApplicantDocumentRequestDialog
+        requestId={openRequestId}
+        onOpenChange={(open) => !open && setOpenRequestId(null)}
+        onUpdate={loadRequests}
+      />
     </div>
   );
 };

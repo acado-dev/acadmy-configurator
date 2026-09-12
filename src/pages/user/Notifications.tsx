@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -18,10 +19,38 @@ import {
   Inbox,
 } from 'lucide-react';
 import { useUserNotifications, NotificationType } from '@/hooks/useUserNotifications';
+import ApplicantDocumentRequestDialog from '@/components/documents/ApplicantDocumentRequestDialog';
+import {
+  DocumentRequest,
+  REASON_LABELS,
+  getDocumentRequests,
+  seedDocumentRequestsIfEmpty,
+} from '@/lib/documentRequests';
+import { Upload, MessageSquare as CommentIcon } from 'lucide-react';
 
 const Notifications = () => {
   const navigate = useNavigate();
   const { notifications, unreadCount, markAsRead, markAllRead } = useUserNotifications();
+  const [docRequests, setDocRequests] = useState<DocumentRequest[]>([]);
+  const [openRequestId, setOpenRequestId] = useState<string | null>(null);
+
+  const loadRequests = () => {
+    seedDocumentRequestsIfEmpty();
+    setDocRequests(getDocumentRequests().filter((r) => r.status !== 'cancelled'));
+  };
+
+  useEffect(() => {
+    loadRequests();
+  }, []);
+
+  const pendingDocs = docRequests.filter((r) => r.status === 'pending');
+
+  const statusLabel = (r: DocumentRequest) =>
+    r.status === 'pending'
+      ? 'Awaiting your upload'
+      : r.status === 'received'
+      ? 'Submitted · under review'
+      : 'Accepted';
 
   const getNotificationIcon = (type: NotificationType) => {
     const icons: Record<NotificationType, { icon: typeof Bell; color: string; bg: string }> = {
@@ -51,16 +80,26 @@ const Notifications = () => {
 
   const renderNotification = (notif: typeof notifications[0]) => {
     const { icon: Icon, color, bg } = getNotificationIcon(notif.type);
+    const linkedRequest =
+      notif.type === 'document_request'
+        ? docRequests.find((r) => r.applicationId === notif.applicationId && r.status === 'pending') ||
+          docRequests.find((r) => r.applicationId === notif.applicationId)
+        : undefined;
+    const handleOpen = () => {
+      markAsRead(notif.id);
+      if (linkedRequest) {
+        setOpenRequestId(linkedRequest.id);
+        return;
+      }
+      if (notif.actionRoute) navigate(notif.actionRoute);
+    };
     return (
       <div
         key={notif.id}
         className={`flex items-start gap-4 p-4 rounded-lg border transition-colors cursor-pointer ${
           !notif.isRead ? 'bg-primary/5 border-primary/20' : 'hover:bg-muted/50'
         }`}
-        onClick={() => {
-          markAsRead(notif.id);
-          if (notif.actionRoute) navigate(notif.actionRoute);
-        }}
+        onClick={handleOpen}
       >
         <div className={`p-2.5 rounded-lg shrink-0 ${bg}`}>
           <Icon className={`h-5 w-5 ${color}`} />
@@ -82,20 +121,19 @@ const Notifications = () => {
             </Badge>
             <span className="text-xs text-muted-foreground">• {notif.universityName}</span>
           </div>
-          {notif.isActionRequired && notif.actionLabel && (
+          {(notif.isActionRequired && notif.actionLabel) || linkedRequest ? (
             <Button
               size="sm"
               className="mt-3"
               onClick={(e) => {
                 e.stopPropagation();
-                markAsRead(notif.id);
-                if (notif.actionRoute) navigate(notif.actionRoute);
+                handleOpen();
               }}
             >
-              {notif.actionLabel}
+              {linkedRequest ? 'View document request' : notif.actionLabel}
               <ArrowRight className="ml-1 h-3 w-3" />
             </Button>
-          )}
+          ) : null}
         </div>
       </div>
     );
@@ -135,7 +173,80 @@ const Notifications = () => {
             <AlertTriangle className="h-4 w-4" />
             Action Required ({actionNotifications.length})
           </TabsTrigger>
+          <TabsTrigger value="documents" className="gap-1">
+            <FileText className="h-4 w-4" />
+            Document Requests ({pendingDocs.length})
+          </TabsTrigger>
         </TabsList>
+
+        <TabsContent value="documents">
+          <Card>
+            <CardHeader>
+              <CardTitle>Documents requested by universities</CardTitle>
+              <CardDescription>
+                Upload the requested document or send a comment to the admissions team.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="p-4 pt-0">
+              <ScrollArea className="h-[560px]">
+                <div className="space-y-3">
+                  {docRequests.length === 0 ? (
+                    <div className="text-center py-12 text-muted-foreground">
+                      <FileText className="h-12 w-12 mx-auto mb-4 opacity-30" />
+                      <p>No documents requested right now</p>
+                    </div>
+                  ) : (
+                    docRequests.map((r) => (
+                      <div
+                        key={r.id}
+                        className="flex flex-wrap items-start justify-between gap-3 rounded-lg border p-4"
+                      >
+                        <div className="min-w-0">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <h4 className="text-sm font-semibold">{r.documentType}</h4>
+                            <Badge
+                              variant={r.status === 'pending' ? 'secondary' : 'outline'}
+                              className="text-xs"
+                            >
+                              {statusLabel(r)}
+                            </Badge>
+                          </div>
+                          <p className="mt-1 text-sm text-muted-foreground">
+                            {r.message || REASON_LABELS[r.reason]}
+                          </p>
+                          <p className="mt-1 text-xs text-muted-foreground">
+                            Application {r.applicationId} · Requested{' '}
+                            {new Date(r.requestedAt).toLocaleDateString()}
+                            {r.dueDate ? ` · Due ${new Date(r.dueDate).toLocaleDateString()}` : ''}
+                          </p>
+                        </div>
+                        <div className="flex gap-2">
+                          <Button size="sm" onClick={() => setOpenRequestId(r.id)}>
+                            {r.status === 'pending' ? (
+                              <>
+                                <Upload className="mr-2 h-4 w-4" />
+                                Upload
+                              </>
+                            ) : (
+                              <>
+                                <FileText className="mr-2 h-4 w-4" />
+                                View
+                              </>
+                            )}
+                          </Button>
+                          <Button size="sm" variant="outline" onClick={() => setOpenRequestId(r.id)}>
+                            <CommentIcon className="mr-2 h-4 w-4" />
+                            Comment
+                          </Button>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </ScrollArea>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
         <TabsContent value="all">
           <Card>
@@ -194,6 +305,12 @@ const Notifications = () => {
           </Card>
         </TabsContent>
       </Tabs>
+
+      <ApplicantDocumentRequestDialog
+        requestId={openRequestId}
+        onOpenChange={(open) => !open && setOpenRequestId(null)}
+        onUpdate={loadRequests}
+      />
     </div>
   );
 };

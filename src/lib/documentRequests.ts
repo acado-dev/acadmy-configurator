@@ -199,6 +199,77 @@ export const reRequestDocument = (id: string, message?: string) => {
 };
 
 
+// Applicant-side actions
+export const uploadRequestedDocumentByApplicant = (
+  id: string,
+  file: RequestedDocumentFile,
+  comment?: string,
+) => {
+  attachRequestedDocument(id, file);
+  if (comment?.trim()) {
+    appendDocumentRequestEvent(id, 'message', 'applicant', comment.trim());
+  }
+};
+
+export const addApplicantComment = (id: string, comment: string) => {
+  appendDocumentRequestEvent(id, 'message', 'applicant', comment);
+};
+
+export const seedDocumentRequestsIfEmpty = () => {
+  if (read().length > 0) return;
+  const now = Date.now();
+  const iso = (offsetDays: number) => new Date(now - offsetDays * 86400000).toISOString();
+  const rows: DocumentRequest[] = [
+    {
+      id: `DOCREQ-${now}`,
+      applicationId: 'APP-002',
+      applicantName: 'Jane Smith',
+      applicantEmail: 'jane.smith@example.com',
+      documentType: 'English Proficiency Score (IELTS/TOEFL)',
+      reason: 'missing',
+      message: 'Please upload your official English proficiency score report.',
+      dueDate: new Date(now + 7 * 86400000).toISOString(),
+      status: 'pending',
+      requestCount: 1,
+      requestedAt: iso(2),
+      updatedAt: iso(2),
+      thread: [
+        {
+          id: `EV-${now}-a`,
+          type: 'requested',
+          actor: 'admin',
+          message:
+            'English Proficiency Score (IELTS/TOEFL) requested (Document missing). Please upload your official score report.',
+          at: iso(2),
+        },
+      ],
+    },
+    {
+      id: `DOCREQ-${now + 1}`,
+      applicationId: 'APP-002',
+      applicantName: 'Jane Smith',
+      applicantEmail: 'jane.smith@example.com',
+      documentType: 'Financial / Bank Statement',
+      reason: 'new_requirement',
+      message: 'A recent bank statement is now required to process your application.',
+      status: 'pending',
+      requestCount: 1,
+      requestedAt: iso(1),
+      updatedAt: iso(1),
+      thread: [
+        {
+          id: `EV-${now}-b`,
+          type: 'requested',
+          actor: 'admin',
+          message: 'Financial / Bank Statement requested (New requirement).',
+          at: iso(1),
+        },
+      ],
+    },
+  ];
+  write(rows);
+};
+
 export const updateDocumentRequestStatus = (id: string, status: DocumentRequestStatus) => {
   const existing = read().find((r) => r.id === id);
   patch(id, {
