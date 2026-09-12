@@ -131,6 +131,7 @@ const Layout = () => {
         { label: 'Application Overview', path: '/applications-overview', icon: Eye },
         { label: 'Collected Applications', path: '/applications', icon: Users },
         { label: 'Selection Process', path: '/applications/selection-process', icon: Target },
+        { label: 'Document Requests', path: '/applications/document-requests', icon: FileText },
         { label: 'Acceptance Letters', path: '/applications/acceptance-letters', icon: Award },
       ]
     },
