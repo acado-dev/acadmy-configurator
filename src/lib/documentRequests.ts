@@ -2,7 +2,14 @@
 
 export type DocumentRequestReason = 'new_requirement' | 'missing' | 'invalid';
 
-export type DocumentRequestStatus = 'pending' | 'received' | 'cancelled';
+export type DocumentRequestStatus = 'pending' | 'received' | 'accepted' | 'cancelled';
+
+export interface RequestedDocumentFile {
+  name: string;
+  size: string;
+  url: string;
+  uploadedAt: string;
+}
 
 export interface DocumentRequest {
   id: string;
@@ -16,7 +23,10 @@ export interface DocumentRequest {
   status: DocumentRequestStatus;
   requestedAt: string;
   updatedAt: string;
+  requestCount?: number;
+  uploadedDocument?: RequestedDocumentFile;
 }
+
 
 export const DOCUMENT_TYPES: string[] = [
   'Passport / ID Proof',
