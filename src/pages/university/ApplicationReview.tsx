@@ -814,6 +814,10 @@ const ApplicationReview = () => {
       {/* Requested Document Viewer */}
       <Dialog open={!!viewingRequest} onOpenChange={(o) => !o && setViewingRequest(null)}>
         <DialogContent className="max-h-[92vh] max-w-6xl overflow-y-auto">
+          <DialogHeader className="sr-only">
+            <DialogTitle>Document request details</DialogTitle>
+            <DialogDescription>Review the document, request history, and available actions.</DialogDescription>
+          </DialogHeader>
           {viewingRequest && (
             <DocumentRequestViewer
               requestId={viewingRequest.id}
