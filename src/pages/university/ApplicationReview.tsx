@@ -69,6 +69,7 @@ const ApplicationReview = () => {
   const [communicationMessage, setCommunicationMessage] = useState('');
   const [showDocumentDialog, setShowDocumentDialog] = useState(false);
   const [documentRequests, setDocumentRequests] = useState<DocumentRequest[]>([]);
+  const [viewingRequest, setViewingRequest] = useState<DocumentRequest | null>(null);
 
   useEffect(() => {
     if (id) setDocumentRequests(getDocumentRequests(id));
