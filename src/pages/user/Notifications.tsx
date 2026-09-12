@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -18,10 +19,38 @@ import {
   Inbox,
 } from 'lucide-react';
 import { useUserNotifications, NotificationType } from '@/hooks/useUserNotifications';
+import ApplicantDocumentRequestDialog from '@/components/documents/ApplicantDocumentRequestDialog';
+import {
+  DocumentRequest,
+  REASON_LABELS,
+  getDocumentRequests,
+  seedDocumentRequestsIfEmpty,
+} from '@/lib/documentRequests';
+import { Upload, MessageSquare as CommentIcon } from 'lucide-react';
 
 const Notifications = () => {
   const navigate = useNavigate();
   const { notifications, unreadCount, markAsRead, markAllRead } = useUserNotifications();
+  const [docRequests, setDocRequests] = useState<DocumentRequest[]>([]);
+  const [openRequestId, setOpenRequestId] = useState<string | null>(null);
+
+  const loadRequests = () => {
+    seedDocumentRequestsIfEmpty();
+    setDocRequests(getDocumentRequests().filter((r) => r.status !== 'cancelled'));
+  };
+
+  useEffect(() => {
+    loadRequests();
+  }, []);
+
+  const pendingDocs = docRequests.filter((r) => r.status === 'pending');
+
+  const statusLabel = (r: DocumentRequest) =>
+    r.status === 'pending'
+      ? 'Awaiting your upload'
+      : r.status === 'received'
+      ? 'Submitted · under review'
+      : 'Accepted';
 
   const getNotificationIcon = (type: NotificationType) => {
     const icons: Record<NotificationType, { icon: typeof Bell; color: string; bg: string }> = {
