@@ -23,7 +23,9 @@ import {
   BookOpen,
   MapPin,
   Globe,
-  Building
+  Building,
+  Eye
+
 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -45,6 +47,9 @@ import {
   createDocumentRequest,
   getDocumentRequests,
   updateDocumentRequestStatus,
+  attachRequestedDocument,
+  acceptRequestedDocument,
+  reRequestDocument,
   DocumentRequest,
   DocumentRequestReason,
   REASON_LABELS,
@@ -66,6 +71,7 @@ const ApplicationReview = () => {
   const [communicationMessage, setCommunicationMessage] = useState('');
   const [showDocumentDialog, setShowDocumentDialog] = useState(false);
   const [documentRequests, setDocumentRequests] = useState<DocumentRequest[]>([]);
+  const [viewingRequest, setViewingRequest] = useState<DocumentRequest | null>(null);
 
   useEffect(() => {
     if (id) setDocumentRequests(getDocumentRequests(id));
@@ -93,16 +99,47 @@ const ApplicationReview = () => {
   };
 
   const handleRequestStatus = (requestId: string, status: 'received' | 'cancelled') => {
-    updateDocumentRequestStatus(requestId, status);
+    if (status === 'received') {
+      attachRequestedDocument(requestId);
+    } else {
+      updateDocumentRequestStatus(requestId, status);
+    }
     setDocumentRequests(getDocumentRequests(application.id));
     toast({
-      title: status === 'received' ? 'Marked as received' : 'Request cancelled',
+      title: status === 'received' ? 'Document received' : 'Request cancelled',
       description:
         status === 'received'
-          ? 'The document has been marked as received.'
+          ? 'The uploaded document is now available to view and review.'
           : 'The document request has been cancelled.',
     });
   };
+
+  const handleAcceptDocument = (requestId: string) => {
+    acceptRequestedDocument(requestId);
+    setDocumentRequests(getDocumentRequests(application.id));
+    setViewingRequest(null);
+    toast({ title: 'Document accepted', description: 'Added to the application documents.' });
+  };
+
+  const handleReRequestDocument = (req: DocumentRequest) => {
+    reRequestDocument(req.id, `Please re-upload ${req.documentType}. The previous file was not acceptable.`);
+    setDocumentRequests(getDocumentRequests(application.id));
+    setViewingRequest(null);
+    toast({
+      title: 'Document re-requested',
+      description: `${req.documentType} has been requested again from ${req.applicantName}.`,
+    });
+  };
+
+  const handleMessageAboutDocument = (req: DocumentRequest) => {
+    setViewingRequest(null);
+    setCommunicationType('email');
+    setCommunicationMessage(
+      `Hi ${req.applicantName},\n\nRegarding the ${req.documentType} for your application ${req.applicationId}:\n\n`,
+    );
+    setShowCommunicationDialog(true);
+  };
+
 
 
   useEffect(() => {
@@ -165,8 +202,24 @@ const ApplicationReview = () => {
     }
   }, [id, getApplicationById]);
 
+  // All documents on file: originally submitted + received against admin requests
+  const applicationDocuments = useMemo(() => {
+    const submitted = (application?.formData?.documents ?? []).map((d: any) => ({ ...d }));
+    const fromRequests = documentRequests
+      .filter((r) => r.uploadedDocument && (r.status === 'received' || r.status === 'accepted'))
+      .map((r) => ({
+        name: r.uploadedDocument!.name,
+        size: r.uploadedDocument!.size,
+        uploadedAt: r.uploadedDocument!.uploadedAt,
+        requestId: r.id,
+        reviewStatus: r.status === 'accepted' ? 'Accepted' : 'Pending review',
+      }));
+    return [...submitted, ...fromRequests];
+  }, [application, documentRequests]);
+
   // Live evaluation against the criteria configured for this course
   const rubric = application?.courseId ? getCriteriaByCoursId(application.courseId) : undefined;
+
 
   const evaluation = useMemo(() => {
     if (!application) return { score: 0, details: [] as any[], live: false };
@@ -573,7 +626,7 @@ const ApplicationReview = () => {
                           <p className="text-sm font-medium">{req.documentType}</p>
                           <Badge
                             variant={
-                              req.status === 'received'
+                              req.status === 'accepted'
                                 ? 'default'
                                 : req.status === 'cancelled'
                                 ? 'outline'
@@ -588,16 +641,68 @@ const ApplicationReview = () => {
                           {REASON_LABELS[req.reason]} · Requested{' '}
                           {new Date(req.requestedAt).toLocaleDateString()}
                           {req.dueDate ? ` · Due ${new Date(req.dueDate).toLocaleDateString()}` : ''}
+                          {(req.requestCount || 1) > 1 ? ` · Asked ${req.requestCount} times` : ''}
                         </p>
                         {req.message && <p className="text-xs">{req.message}</p>}
+
+                        {req.uploadedDocument && (
+                          <div className="flex items-center justify-between gap-2 rounded-md bg-muted/60 p-2">
+                            <div className="flex items-center gap-2 min-w-0">
+                              <FileText className="h-4 w-4 shrink-0 text-muted-foreground" />
+                              <div className="min-w-0">
+                                <p className="truncate text-xs font-medium">{req.uploadedDocument.name}</p>
+                                <p className="text-xs text-muted-foreground">{req.uploadedDocument.size}</p>
+                              </div>
+                            </div>
+                            <Button size="sm" variant="outline" onClick={() => setViewingRequest(req)}>
+                              <Eye className="h-3.5 w-3.5 mr-1" />
+                              View
+                            </Button>
+                          </div>
+                        )}
+
                         {req.status === 'pending' && (
-                          <div className="flex gap-2 pt-1">
+                          <div className="flex flex-wrap gap-2 pt-1">
                             <Button size="sm" variant="outline" onClick={() => handleRequestStatus(req.id, 'received')}>
                               <CheckCircle className="h-3.5 w-3.5 mr-1" />
                               Mark received
                             </Button>
+                            <Button size="sm" variant="ghost" onClick={() => handleMessageAboutDocument(req)}>
+                              <Mail className="h-3.5 w-3.5 mr-1" />
+                              Message
+                            </Button>
                             <Button size="sm" variant="ghost" onClick={() => handleRequestStatus(req.id, 'cancelled')}>
                               Cancel
+                            </Button>
+                          </div>
+                        )}
+
+                        {req.status === 'received' && (
+                          <div className="flex flex-wrap gap-2 pt-1">
+                            <Button size="sm" onClick={() => handleAcceptDocument(req.id)}>
+                              <CheckCircle className="h-3.5 w-3.5 mr-1" />
+                              Accept
+                            </Button>
+                            <Button size="sm" variant="outline" onClick={() => handleReRequestDocument(req)}>
+                              <Send className="h-3.5 w-3.5 mr-1" />
+                              Request again
+                            </Button>
+                            <Button size="sm" variant="ghost" onClick={() => handleMessageAboutDocument(req)}>
+                              <Mail className="h-3.5 w-3.5 mr-1" />
+                              Message
+                            </Button>
+                          </div>
+                        )}
+
+                        {req.status === 'accepted' && (
+                          <div className="flex flex-wrap gap-2 pt-1">
+                            <Button size="sm" variant="outline" onClick={() => handleReRequestDocument(req)}>
+                              <Send className="h-3.5 w-3.5 mr-1" />
+                              Request again
+                            </Button>
+                            <Button size="sm" variant="ghost" onClick={() => handleMessageAboutDocument(req)}>
+                              <Mail className="h-3.5 w-3.5 mr-1" />
+                              Message
                             </Button>
                           </div>
                         )}
@@ -613,28 +718,52 @@ const ApplicationReview = () => {
           <Card>
             <CardHeader>
               <CardTitle>Submitted Documents</CardTitle>
+              <CardDescription>
+                Includes documents received against admin requests
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <ScrollArea className="h-48">
                 <div className="space-y-2">
-                  {application.formData.documents?.map((doc: any, index: number) => (
+                  {applicationDocuments.length === 0 && (
+                    <p className="text-sm text-muted-foreground">No documents on file yet.</p>
+                  )}
+                  {applicationDocuments.map((doc: any, index: number) => (
                     <div key={index} className="flex items-center justify-between p-2 hover:bg-accent rounded-lg">
-                      <div className="flex items-center gap-2">
-                        <FileText className="h-4 w-4 text-muted-foreground" />
-                        <div>
-                          <p className="text-sm font-medium">{doc.name}</p>
-                          <p className="text-xs text-muted-foreground">{doc.size}</p>
+                      <div className="flex items-center gap-2 min-w-0">
+                        <FileText className="h-4 w-4 shrink-0 text-muted-foreground" />
+                        <div className="min-w-0">
+                          <p className="truncate text-sm font-medium">{doc.name}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {doc.size}
+                            {doc.requestId ? ` · Requested · ${doc.reviewStatus}` : ''}
+                          </p>
                         </div>
                       </div>
-                      <Button variant="ghost" size="icon">
-                        <Download className="h-4 w-4" />
-                      </Button>
+                      <div className="flex items-center gap-1">
+                        {doc.requestId && (
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => {
+                              const req = documentRequests.find((r) => r.id === doc.requestId);
+                              if (req) setViewingRequest(req);
+                            }}
+                          >
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                        )}
+                        <Button variant="ghost" size="icon">
+                          <Download className="h-4 w-4" />
+                        </Button>
+                      </div>
                     </div>
                   ))}
                 </div>
               </ScrollArea>
             </CardContent>
           </Card>
+
 
           {/* Communication History */}
           <Card>
@@ -672,6 +801,70 @@ const ApplicationReview = () => {
         applicantName={application.applicantName}
         onSubmit={handleRequestDocument}
       />
+
+      {/* Requested Document Viewer */}
+      <Dialog open={!!viewingRequest} onOpenChange={(o) => !o && setViewingRequest(null)}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>{viewingRequest?.documentType}</DialogTitle>
+            <DialogDescription>
+              Uploaded by {viewingRequest?.applicantName}
+              {viewingRequest?.uploadedDocument
+                ? ` on ${new Date(viewingRequest.uploadedDocument.uploadedAt).toLocaleDateString()}`
+                : ''}
+            </DialogDescription>
+          </DialogHeader>
+
+          {viewingRequest?.uploadedDocument && (
+            <div className="space-y-3">
+              <div className="flex items-center justify-between rounded-lg border border-border p-3">
+                <div className="flex items-center gap-2">
+                  <FileText className="h-5 w-5 text-muted-foreground" />
+                  <div>
+                    <p className="text-sm font-medium">{viewingRequest.uploadedDocument.name}</p>
+                    <p className="text-xs text-muted-foreground">{viewingRequest.uploadedDocument.size}</p>
+                  </div>
+                </div>
+                <Button variant="outline" size="sm" asChild>
+                  <a href={viewingRequest.uploadedDocument.url} target="_blank" rel="noreferrer">
+                    <Download className="h-4 w-4 mr-2" />
+                    Open / Download
+                  </a>
+                </Button>
+              </div>
+              <div className="flex h-64 items-center justify-center rounded-lg border border-dashed border-border bg-muted/40">
+                <object
+                  data={viewingRequest.uploadedDocument.url}
+                  className="h-full w-full rounded-lg"
+                  aria-label={`Preview of ${viewingRequest.uploadedDocument.name}`}
+                >
+                  <p className="p-4 text-sm text-muted-foreground">
+                    Preview not available. Use Open / Download to view the file.
+                  </p>
+                </object>
+              </div>
+            </div>
+          )}
+
+          <DialogFooter className="flex-wrap gap-2">
+            <Button variant="ghost" onClick={() => viewingRequest && handleMessageAboutDocument(viewingRequest)}>
+              <Mail className="h-4 w-4 mr-2" />
+              Send communication
+            </Button>
+            <Button variant="outline" onClick={() => viewingRequest && handleReRequestDocument(viewingRequest)}>
+              <Send className="h-4 w-4 mr-2" />
+              Request again
+            </Button>
+            {viewingRequest?.status !== 'accepted' && (
+              <Button onClick={() => viewingRequest && handleAcceptDocument(viewingRequest.id)}>
+                <CheckCircle className="h-4 w-4 mr-2" />
+                Accept document
+              </Button>
+            )}
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
 
       {/* Communication Dialog */}
       <Dialog open={showCommunicationDialog} onOpenChange={setShowCommunicationDialog}>
