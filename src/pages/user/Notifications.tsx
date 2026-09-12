@@ -121,20 +121,19 @@ const Notifications = () => {
             </Badge>
             <span className="text-xs text-muted-foreground">• {notif.universityName}</span>
           </div>
-          {notif.isActionRequired && notif.actionLabel && (
+          {(notif.isActionRequired && notif.actionLabel) || linkedRequest ? (
             <Button
               size="sm"
               className="mt-3"
               onClick={(e) => {
                 e.stopPropagation();
-                markAsRead(notif.id);
-                if (notif.actionRoute) navigate(notif.actionRoute);
+                handleOpen();
               }}
             >
-              {notif.actionLabel}
+              {linkedRequest ? 'View document request' : notif.actionLabel}
               <ArrowRight className="ml-1 h-3 w-3" />
             </Button>
-          )}
+          ) : null}
         </div>
       </div>
     );
