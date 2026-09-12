@@ -665,6 +665,14 @@ const ApplicationReview = () => {
         </div>
       </div>
 
+      {/* Request Document Dialog */}
+      <RequestDocumentDialog
+        open={showDocumentDialog}
+        onOpenChange={setShowDocumentDialog}
+        applicantName={application.applicantName}
+        onSubmit={handleRequestDocument}
+      />
+
       {/* Communication Dialog */}
       <Dialog open={showCommunicationDialog} onOpenChange={setShowCommunicationDialog}>
         <DialogContent>
