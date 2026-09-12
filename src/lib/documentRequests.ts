@@ -86,12 +86,51 @@ export const createDocumentRequest = (
     ...input,
     id: `DOCREQ-${Date.now()}`,
     status: 'pending',
+    requestCount: 1,
     requestedAt: now,
     updatedAt: now,
   };
   write([...read(), request]);
   return request;
 };
+
+const patch = (id: string, changes: Partial<DocumentRequest>) => {
+  write(
+    read().map((r) =>
+      r.id === id ? { ...r, ...changes, updatedAt: new Date().toISOString() } : r,
+    ),
+  );
+};
+
+// Simulates the applicant uploading the requested document
+export const attachRequestedDocument = (id: string, file?: Partial<RequestedDocumentFile>) => {
+  const existing = read().find((r) => r.id === id);
+  const label = (existing?.documentType || 'Document').replace(/[^a-zA-Z0-9]+/g, '_');
+  patch(id, {
+    status: 'received',
+    uploadedDocument: {
+      name: file?.name || `${label}.pdf`,
+      size: file?.size || '312 KB',
+      url: file?.url || '/placeholder.svg',
+      uploadedAt: file?.uploadedAt || new Date().toISOString(),
+    },
+  });
+};
+
+export const acceptRequestedDocument = (id: string) => patch(id, { status: 'accepted' });
+
+export const reRequestDocument = (id: string, message?: string) => {
+  const existing = read().find((r) => r.id === id);
+  patch(id, {
+    status: 'pending',
+    reason: 'invalid',
+    message: message ?? existing?.message ?? '',
+    uploadedDocument: undefined,
+    requestCount: (existing?.requestCount || 1) + 1,
+    requestedAt: new Date().toISOString(),
+  });
+};
+
 
 export const updateDocumentRequestStatus = (id: string, status: DocumentRequestStatus) => {
   write(
