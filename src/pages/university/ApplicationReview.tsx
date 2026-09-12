@@ -98,6 +98,14 @@ const ApplicationReview = () => {
     });
   };
 
+  const openRequestWindow = (req: DocumentRequest) => {
+    window.open(
+      `/university/applications/${req.applicationId}/documents/${req.id}`,
+      `docreq-${req.id}`,
+      'noopener,width=1200,height=900',
+    );
+  };
+
   const handleRequestStatus = (requestId: string, status: 'received' | 'cancelled') => {
     if (status === 'received') {
       attachRequestedDocument(requestId);
@@ -654,12 +662,18 @@ const ApplicationReview = () => {
                                 <p className="text-xs text-muted-foreground">{req.uploadedDocument.size}</p>
                               </div>
                             </div>
-                            <Button size="sm" variant="outline" onClick={() => setViewingRequest(req)}>
+                            <Button size="sm" variant="outline" onClick={() => openRequestWindow(req)}>
                               <Eye className="h-3.5 w-3.5 mr-1" />
                               View
                             </Button>
                           </div>
                         )}
+
+                        <div className="pt-1">
+                          <Button size="sm" variant="link" className="h-auto p-0" onClick={() => openRequestWindow(req)}>
+                            Open request & thread
+                          </Button>
+                        </div>
 
                         {req.status === 'pending' && (
                           <div className="flex flex-wrap gap-2 pt-1">
