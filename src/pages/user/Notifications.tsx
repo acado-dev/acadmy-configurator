@@ -80,6 +80,19 @@ const Notifications = () => {
 
   const renderNotification = (notif: typeof notifications[0]) => {
     const { icon: Icon, color, bg } = getNotificationIcon(notif.type);
+    const linkedRequest =
+      notif.type === 'document_request'
+        ? docRequests.find((r) => r.applicationId === notif.applicationId && r.status === 'pending') ||
+          docRequests.find((r) => r.applicationId === notif.applicationId)
+        : undefined;
+    const handleOpen = () => {
+      markAsRead(notif.id);
+      if (linkedRequest) {
+        setOpenRequestId(linkedRequest.id);
+        return;
+      }
+      if (notif.actionRoute) navigate(notif.actionRoute);
+    };
     return (
       <div
         key={notif.id}
