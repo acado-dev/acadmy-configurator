@@ -202,8 +202,24 @@ const ApplicationReview = () => {
     }
   }, [id, getApplicationById]);
 
+  // All documents on file: originally submitted + received against admin requests
+  const applicationDocuments = useMemo(() => {
+    const submitted = (application?.formData?.documents ?? []).map((d: any) => ({ ...d }));
+    const fromRequests = documentRequests
+      .filter((r) => r.uploadedDocument && (r.status === 'received' || r.status === 'accepted'))
+      .map((r) => ({
+        name: r.uploadedDocument!.name,
+        size: r.uploadedDocument!.size,
+        uploadedAt: r.uploadedDocument!.uploadedAt,
+        requestId: r.id,
+        reviewStatus: r.status === 'accepted' ? 'Accepted' : 'Pending review',
+      }));
+    return [...submitted, ...fromRequests];
+  }, [application, documentRequests]);
+
   // Live evaluation against the criteria configured for this course
   const rubric = application?.courseId ? getCriteriaByCoursId(application.courseId) : undefined;
+
 
   const evaluation = useMemo(() => {
     if (!application) return { score: 0, details: [] as any[], live: false };
