@@ -173,7 +173,80 @@ const Notifications = () => {
             <AlertTriangle className="h-4 w-4" />
             Action Required ({actionNotifications.length})
           </TabsTrigger>
+          <TabsTrigger value="documents" className="gap-1">
+            <FileText className="h-4 w-4" />
+            Document Requests ({pendingDocs.length})
+          </TabsTrigger>
         </TabsList>
+
+        <TabsContent value="documents">
+          <Card>
+            <CardHeader>
+              <CardTitle>Documents requested by universities</CardTitle>
+              <CardDescription>
+                Upload the requested document or send a comment to the admissions team.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="p-4 pt-0">
+              <ScrollArea className="h-[560px]">
+                <div className="space-y-3">
+                  {docRequests.length === 0 ? (
+                    <div className="text-center py-12 text-muted-foreground">
+                      <FileText className="h-12 w-12 mx-auto mb-4 opacity-30" />
+                      <p>No documents requested right now</p>
+                    </div>
+                  ) : (
+                    docRequests.map((r) => (
+                      <div
+                        key={r.id}
+                        className="flex flex-wrap items-start justify-between gap-3 rounded-lg border p-4"
+                      >
+                        <div className="min-w-0">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <h4 className="text-sm font-semibold">{r.documentType}</h4>
+                            <Badge
+                              variant={r.status === 'pending' ? 'secondary' : 'outline'}
+                              className="text-xs"
+                            >
+                              {statusLabel(r)}
+                            </Badge>
+                          </div>
+                          <p className="mt-1 text-sm text-muted-foreground">
+                            {r.message || REASON_LABELS[r.reason]}
+                          </p>
+                          <p className="mt-1 text-xs text-muted-foreground">
+                            Application {r.applicationId} · Requested{' '}
+                            {new Date(r.requestedAt).toLocaleDateString()}
+                            {r.dueDate ? ` · Due ${new Date(r.dueDate).toLocaleDateString()}` : ''}
+                          </p>
+                        </div>
+                        <div className="flex gap-2">
+                          <Button size="sm" onClick={() => setOpenRequestId(r.id)}>
+                            {r.status === 'pending' ? (
+                              <>
+                                <Upload className="mr-2 h-4 w-4" />
+                                Upload
+                              </>
+                            ) : (
+                              <>
+                                <FileText className="mr-2 h-4 w-4" />
+                                View
+                              </>
+                            )}
+                          </Button>
+                          <Button size="sm" variant="outline" onClick={() => setOpenRequestId(r.id)}>
+                            <CommentIcon className="mr-2 h-4 w-4" />
+                            Comment
+                          </Button>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </ScrollArea>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
         <TabsContent value="all">
           <Card>
