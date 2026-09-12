@@ -608,7 +608,7 @@ const ApplicationReview = () => {
                           <p className="text-sm font-medium">{req.documentType}</p>
                           <Badge
                             variant={
-                              req.status === 'received'
+                              req.status === 'accepted'
                                 ? 'default'
                                 : req.status === 'cancelled'
                                 ? 'outline'
@@ -623,16 +623,68 @@ const ApplicationReview = () => {
                           {REASON_LABELS[req.reason]} · Requested{' '}
                           {new Date(req.requestedAt).toLocaleDateString()}
                           {req.dueDate ? ` · Due ${new Date(req.dueDate).toLocaleDateString()}` : ''}
+                          {(req.requestCount || 1) > 1 ? ` · Asked ${req.requestCount} times` : ''}
                         </p>
                         {req.message && <p className="text-xs">{req.message}</p>}
+
+                        {req.uploadedDocument && (
+                          <div className="flex items-center justify-between gap-2 rounded-md bg-muted/60 p-2">
+                            <div className="flex items-center gap-2 min-w-0">
+                              <FileText className="h-4 w-4 shrink-0 text-muted-foreground" />
+                              <div className="min-w-0">
+                                <p className="truncate text-xs font-medium">{req.uploadedDocument.name}</p>
+                                <p className="text-xs text-muted-foreground">{req.uploadedDocument.size}</p>
+                              </div>
+                            </div>
+                            <Button size="sm" variant="outline" onClick={() => setViewingRequest(req)}>
+                              <Eye className="h-3.5 w-3.5 mr-1" />
+                              View
+                            </Button>
+                          </div>
+                        )}
+
                         {req.status === 'pending' && (
-                          <div className="flex gap-2 pt-1">
+                          <div className="flex flex-wrap gap-2 pt-1">
                             <Button size="sm" variant="outline" onClick={() => handleRequestStatus(req.id, 'received')}>
                               <CheckCircle className="h-3.5 w-3.5 mr-1" />
                               Mark received
                             </Button>
+                            <Button size="sm" variant="ghost" onClick={() => handleMessageAboutDocument(req)}>
+                              <Mail className="h-3.5 w-3.5 mr-1" />
+                              Message
+                            </Button>
                             <Button size="sm" variant="ghost" onClick={() => handleRequestStatus(req.id, 'cancelled')}>
                               Cancel
+                            </Button>
+                          </div>
+                        )}
+
+                        {req.status === 'received' && (
+                          <div className="flex flex-wrap gap-2 pt-1">
+                            <Button size="sm" onClick={() => handleAcceptDocument(req.id)}>
+                              <CheckCircle className="h-3.5 w-3.5 mr-1" />
+                              Accept
+                            </Button>
+                            <Button size="sm" variant="outline" onClick={() => handleReRequestDocument(req)}>
+                              <Send className="h-3.5 w-3.5 mr-1" />
+                              Request again
+                            </Button>
+                            <Button size="sm" variant="ghost" onClick={() => handleMessageAboutDocument(req)}>
+                              <Mail className="h-3.5 w-3.5 mr-1" />
+                              Message
+                            </Button>
+                          </div>
+                        )}
+
+                        {req.status === 'accepted' && (
+                          <div className="flex flex-wrap gap-2 pt-1">
+                            <Button size="sm" variant="outline" onClick={() => handleReRequestDocument(req)}>
+                              <Send className="h-3.5 w-3.5 mr-1" />
+                              Request again
+                            </Button>
+                            <Button size="sm" variant="ghost" onClick={() => handleMessageAboutDocument(req)}>
+                              <Mail className="h-3.5 w-3.5 mr-1" />
+                              Message
                             </Button>
                           </div>
                         )}
@@ -648,28 +700,52 @@ const ApplicationReview = () => {
           <Card>
             <CardHeader>
               <CardTitle>Submitted Documents</CardTitle>
+              <CardDescription>
+                Includes documents received against admin requests
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <ScrollArea className="h-48">
                 <div className="space-y-2">
-                  {application.formData.documents?.map((doc: any, index: number) => (
+                  {applicationDocuments.length === 0 && (
+                    <p className="text-sm text-muted-foreground">No documents on file yet.</p>
+                  )}
+                  {applicationDocuments.map((doc: any, index: number) => (
                     <div key={index} className="flex items-center justify-between p-2 hover:bg-accent rounded-lg">
-                      <div className="flex items-center gap-2">
-                        <FileText className="h-4 w-4 text-muted-foreground" />
-                        <div>
-                          <p className="text-sm font-medium">{doc.name}</p>
-                          <p className="text-xs text-muted-foreground">{doc.size}</p>
+                      <div className="flex items-center gap-2 min-w-0">
+                        <FileText className="h-4 w-4 shrink-0 text-muted-foreground" />
+                        <div className="min-w-0">
+                          <p className="truncate text-sm font-medium">{doc.name}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {doc.size}
+                            {doc.requestId ? ` · Requested · ${doc.reviewStatus}` : ''}
+                          </p>
                         </div>
                       </div>
-                      <Button variant="ghost" size="icon">
-                        <Download className="h-4 w-4" />
-                      </Button>
+                      <div className="flex items-center gap-1">
+                        {doc.requestId && (
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => {
+                              const req = documentRequests.find((r) => r.id === doc.requestId);
+                              if (req) setViewingRequest(req);
+                            }}
+                          >
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                        )}
+                        <Button variant="ghost" size="icon">
+                          <Download className="h-4 w-4" />
+                        </Button>
+                      </div>
                     </div>
                   ))}
                 </div>
               </ScrollArea>
             </CardContent>
           </Card>
+
 
           {/* Communication History */}
           <Card>
