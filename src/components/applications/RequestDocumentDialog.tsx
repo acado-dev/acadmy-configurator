@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { FileText, Send } from 'lucide-react';
+import { Send } from 'lucide-react';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -148,4 +148,3 @@ const RequestDocumentDialog = ({ open, onOpenChange, applicantName, onSubmit }: 
 };
 
 export default RequestDocumentDialog;
-export { FileText };
