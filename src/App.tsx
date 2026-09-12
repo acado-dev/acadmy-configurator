@@ -54,6 +54,7 @@ import ApplicationProcess from '@/pages/university/ApplicationProcess';
 import ApplicationProcessList from '@/pages/university/ApplicationProcessList';
 import UniversityApplicationReview from '@/pages/university/ApplicationReview';
 import ApplicationsList from '@/pages/university/ApplicationsList';
+import DocumentRequestsList from '@/pages/university/DocumentRequestsList';
 import ApplicationsOverview from '@/pages/university/ApplicationsOverview';
 import UniversityInfo from '@/pages/university/UniversityInfo';
 import TalentPool from '@/pages/university/TalentPool';
@@ -195,6 +196,7 @@ const App = () => {
               <Route path="applications/matching" element={<ApplicationMatching />} />
 
               <Route path="applications/acceptance-letters" element={<AcceptanceLetters />} />
+              <Route path="applications/document-requests" element={<DocumentRequestsList />} />
               
               {/* Talent Pool - Master Admin */}
               <Route path="talent-pool" element={<TalentPoolDashboard />} />
@@ -284,6 +286,7 @@ const App = () => {
               <Route path="process-configuration/:courseId" element={<ProcessConfiguration />} />
               <Route path="applications" element={<ApplicationsList />} />
               <Route path="applications/matching" element={<ApplicationMatching />} />
+              <Route path="applications/document-requests" element={<DocumentRequestsList />} />
               <Route path="applications/:id" element={<UniversityApplicationReview />} />
 
               <Route path="applications-overview" element={<ApplicationsOverview />} />
