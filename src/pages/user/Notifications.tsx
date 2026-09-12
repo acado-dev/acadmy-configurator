@@ -305,6 +305,12 @@ const Notifications = () => {
           </Card>
         </TabsContent>
       </Tabs>
+
+      <ApplicantDocumentRequestDialog
+        requestId={openRequestId}
+        onOpenChange={(open) => !open && setOpenRequestId(null)}
+        onUpdate={loadRequests}
+      />
     </div>
   );
 };
