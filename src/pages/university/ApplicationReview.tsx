@@ -64,6 +64,45 @@ const ApplicationReview = () => {
   const [showCriteriaDialog, setShowCriteriaDialog] = useState(false);
   const [communicationType, setCommunicationType] = useState('email');
   const [communicationMessage, setCommunicationMessage] = useState('');
+  const [showDocumentDialog, setShowDocumentDialog] = useState(false);
+  const [documentRequests, setDocumentRequests] = useState<DocumentRequest[]>([]);
+
+  useEffect(() => {
+    if (id) setDocumentRequests(getDocumentRequests(id));
+  }, [id]);
+
+  const handleRequestDocument = (data: {
+    documentType: string;
+    reason: DocumentRequestReason;
+    message: string;
+    dueDate?: string;
+  }) => {
+    if (!application) return;
+    createDocumentRequest({
+      applicationId: application.id,
+      applicantName: application.applicantName,
+      applicantEmail: application.applicantEmail,
+      ...data,
+    });
+    setDocumentRequests(getDocumentRequests(application.id));
+    if (application.status === 'submitted') handleStatusChange('under_review');
+    toast({
+      title: 'Document requested',
+      description: `${data.documentType} requested from ${application.applicantName} (${REASON_LABELS[data.reason]}).`,
+    });
+  };
+
+  const handleRequestStatus = (requestId: string, status: 'received' | 'cancelled') => {
+    updateDocumentRequestStatus(requestId, status);
+    setDocumentRequests(getDocumentRequests(application.id));
+    toast({
+      title: status === 'received' ? 'Marked as received' : 'Request cancelled',
+      description:
+        status === 'received'
+          ? 'The document has been marked as received.'
+          : 'The document request has been cancelled.',
+    });
+  };
 
 
   useEffect(() => {
