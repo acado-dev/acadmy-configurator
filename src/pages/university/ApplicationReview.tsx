@@ -802,6 +802,70 @@ const ApplicationReview = () => {
         onSubmit={handleRequestDocument}
       />
 
+      {/* Requested Document Viewer */}
+      <Dialog open={!!viewingRequest} onOpenChange={(o) => !o && setViewingRequest(null)}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>{viewingRequest?.documentType}</DialogTitle>
+            <DialogDescription>
+              Uploaded by {viewingRequest?.applicantName}
+              {viewingRequest?.uploadedDocument
+                ? ` on ${new Date(viewingRequest.uploadedDocument.uploadedAt).toLocaleDateString()}`
+                : ''}
+            </DialogDescription>
+          </DialogHeader>
+
+          {viewingRequest?.uploadedDocument && (
+            <div className="space-y-3">
+              <div className="flex items-center justify-between rounded-lg border border-border p-3">
+                <div className="flex items-center gap-2">
+                  <FileText className="h-5 w-5 text-muted-foreground" />
+                  <div>
+                    <p className="text-sm font-medium">{viewingRequest.uploadedDocument.name}</p>
+                    <p className="text-xs text-muted-foreground">{viewingRequest.uploadedDocument.size}</p>
+                  </div>
+                </div>
+                <Button variant="outline" size="sm" asChild>
+                  <a href={viewingRequest.uploadedDocument.url} target="_blank" rel="noreferrer">
+                    <Download className="h-4 w-4 mr-2" />
+                    Open / Download
+                  </a>
+                </Button>
+              </div>
+              <div className="flex h-64 items-center justify-center rounded-lg border border-dashed border-border bg-muted/40">
+                <object
+                  data={viewingRequest.uploadedDocument.url}
+                  className="h-full w-full rounded-lg"
+                  aria-label={`Preview of ${viewingRequest.uploadedDocument.name}`}
+                >
+                  <p className="p-4 text-sm text-muted-foreground">
+                    Preview not available. Use Open / Download to view the file.
+                  </p>
+                </object>
+              </div>
+            </div>
+          )}
+
+          <DialogFooter className="flex-wrap gap-2">
+            <Button variant="ghost" onClick={() => viewingRequest && handleMessageAboutDocument(viewingRequest)}>
+              <Mail className="h-4 w-4 mr-2" />
+              Send communication
+            </Button>
+            <Button variant="outline" onClick={() => viewingRequest && handleReRequestDocument(viewingRequest)}>
+              <Send className="h-4 w-4 mr-2" />
+              Request again
+            </Button>
+            {viewingRequest?.status !== 'accepted' && (
+              <Button onClick={() => viewingRequest && handleAcceptDocument(viewingRequest.id)}>
+                <CheckCircle className="h-4 w-4 mr-2" />
+                Accept document
+              </Button>
+            )}
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+
       {/* Communication Dialog */}
       <Dialog open={showCommunicationDialog} onOpenChange={setShowCommunicationDialog}>
         <DialogContent>
