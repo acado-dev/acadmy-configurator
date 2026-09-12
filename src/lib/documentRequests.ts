@@ -11,6 +11,22 @@ export interface RequestedDocumentFile {
   uploadedAt: string;
 }
 
+export type DocumentRequestEventType =
+  | 'requested'
+  | 'message'
+  | 'uploaded'
+  | 'accepted'
+  | 'cancelled'
+  | 'note';
+
+export interface DocumentRequestEvent {
+  id: string;
+  type: DocumentRequestEventType;
+  actor: 'admin' | 'applicant' | 'system';
+  message: string;
+  at: string;
+}
+
 export interface DocumentRequest {
   id: string;
   applicationId: string;
@@ -25,6 +41,7 @@ export interface DocumentRequest {
   updatedAt: string;
   requestCount?: number;
   uploadedDocument?: RequestedDocumentFile;
+  thread?: DocumentRequestEvent[];
 }
 
 
@@ -72,6 +89,32 @@ const write = (rows: DocumentRequest[]) => {
   localStorage.setItem(KEY, JSON.stringify(rows));
 };
 
+export const getDocumentRequestById = (id: string): DocumentRequest | undefined =>
+  read().find((r) => r.id === id);
+
+const event = (
+  type: DocumentRequestEventType,
+  actor: DocumentRequestEvent['actor'],
+  message: string,
+): DocumentRequestEvent => ({
+  id: `EV-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+  type,
+  actor,
+  message,
+  at: new Date().toISOString(),
+});
+
+export const appendDocumentRequestEvent = (
+  id: string,
+  type: DocumentRequestEventType,
+  actor: DocumentRequestEvent['actor'],
+  message: string,
+) => {
+  const existing = read().find((r) => r.id === id);
+  if (!existing) return;
+  patch(id, { thread: [...(existing.thread || []), event(type, actor, message)] });
+};
+
 export const getDocumentRequests = (applicationId?: string): DocumentRequest[] => {
   const rows = read();
   const filtered = applicationId ? rows.filter((r) => r.applicationId === applicationId) : rows;
@@ -89,6 +132,13 @@ export const createDocumentRequest = (
     requestCount: 1,
     requestedAt: now,
     updatedAt: now,
+    thread: [
+      event(
+        'requested',
+        'admin',
+        `${input.documentType} requested (${REASON_LABELS[input.reason]}).${input.message ? ` ${input.message}` : ''}`,
+      ),
+    ],
   };
   write([...read(), request]);
   return request;
@@ -108,6 +158,10 @@ export const attachRequestedDocument = (id: string, file?: Partial<RequestedDocu
   const label = (existing?.documentType || 'Document').replace(/[^a-zA-Z0-9]+/g, '_');
   patch(id, {
     status: 'received',
+    thread: [
+      ...(existing?.thread || []),
+      event('uploaded', 'applicant', `Uploaded ${existing?.documentType || 'document'}.`),
+    ],
     uploadedDocument: {
       name: file?.name || `${label}.pdf`,
       size: file?.size || '312 KB',
@@ -117,7 +171,16 @@ export const attachRequestedDocument = (id: string, file?: Partial<RequestedDocu
   });
 };
 
-export const acceptRequestedDocument = (id: string) => patch(id, { status: 'accepted' });
+export const acceptRequestedDocument = (id: string) => {
+  const existing = read().find((r) => r.id === id);
+  patch(id, {
+    status: 'accepted',
+    thread: [
+      ...(existing?.thread || []),
+      event('accepted', 'admin', 'Document reviewed and accepted. Added to application documents.'),
+    ],
+  });
+};
 
 export const reRequestDocument = (id: string, message?: string) => {
   const existing = read().find((r) => r.id === id);
@@ -128,12 +191,25 @@ export const reRequestDocument = (id: string, message?: string) => {
     uploadedDocument: undefined,
     requestCount: (existing?.requestCount || 1) + 1,
     requestedAt: new Date().toISOString(),
+    thread: [
+      ...(existing?.thread || []),
+      event('requested', 'admin', message || `${existing?.documentType || 'Document'} requested again.`),
+    ],
   });
 };
 
 
 export const updateDocumentRequestStatus = (id: string, status: DocumentRequestStatus) => {
-  write(
-    read().map((r) => (r.id === id ? { ...r, status, updatedAt: new Date().toISOString() } : r)),
-  );
+  const existing = read().find((r) => r.id === id);
+  patch(id, {
+    status,
+    thread: [
+      ...(existing?.thread || []),
+      event(
+        status === 'cancelled' ? 'cancelled' : 'note',
+        'admin',
+        status === 'cancelled' ? 'Request cancelled.' : `Status changed to ${status}.`,
+      ),
+    ],
+  });
 };
