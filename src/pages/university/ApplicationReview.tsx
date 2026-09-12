@@ -93,16 +93,47 @@ const ApplicationReview = () => {
   };
 
   const handleRequestStatus = (requestId: string, status: 'received' | 'cancelled') => {
-    updateDocumentRequestStatus(requestId, status);
+    if (status === 'received') {
+      attachRequestedDocument(requestId);
+    } else {
+      updateDocumentRequestStatus(requestId, status);
+    }
     setDocumentRequests(getDocumentRequests(application.id));
     toast({
-      title: status === 'received' ? 'Marked as received' : 'Request cancelled',
+      title: status === 'received' ? 'Document received' : 'Request cancelled',
       description:
         status === 'received'
-          ? 'The document has been marked as received.'
+          ? 'The uploaded document is now available to view and review.'
           : 'The document request has been cancelled.',
     });
   };
+
+  const handleAcceptDocument = (requestId: string) => {
+    acceptRequestedDocument(requestId);
+    setDocumentRequests(getDocumentRequests(application.id));
+    setViewingRequest(null);
+    toast({ title: 'Document accepted', description: 'Added to the application documents.' });
+  };
+
+  const handleReRequestDocument = (req: DocumentRequest) => {
+    reRequestDocument(req.id, `Please re-upload ${req.documentType}. The previous file was not acceptable.`);
+    setDocumentRequests(getDocumentRequests(application.id));
+    setViewingRequest(null);
+    toast({
+      title: 'Document re-requested',
+      description: `${req.documentType} has been requested again from ${req.applicantName}.`,
+    });
+  };
+
+  const handleMessageAboutDocument = (req: DocumentRequest) => {
+    setViewingRequest(null);
+    setCommunicationType('email');
+    setCommunicationMessage(
+      `Hi ${req.applicantName},\n\nRegarding the ${req.documentType} for your application ${req.applicationId}:\n\n`,
+    );
+    setShowCommunicationDialog(true);
+  };
+
 
 
   useEffect(() => {
