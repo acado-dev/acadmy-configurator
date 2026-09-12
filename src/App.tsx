@@ -196,6 +196,7 @@ const App = () => {
               <Route path="applications/matching" element={<ApplicationMatching />} />
 
               <Route path="applications/acceptance-letters" element={<AcceptanceLetters />} />
+              <Route path="applications/document-requests" element={<DocumentRequestsList />} />
               
               {/* Talent Pool - Master Admin */}
               <Route path="talent-pool" element={<TalentPoolDashboard />} />
@@ -285,6 +286,7 @@ const App = () => {
               <Route path="process-configuration/:courseId" element={<ProcessConfiguration />} />
               <Route path="applications" element={<ApplicationsList />} />
               <Route path="applications/matching" element={<ApplicationMatching />} />
+              <Route path="applications/document-requests" element={<DocumentRequestsList />} />
               <Route path="applications/:id" element={<UniversityApplicationReview />} />
 
               <Route path="applications-overview" element={<ApplicationsOverview />} />

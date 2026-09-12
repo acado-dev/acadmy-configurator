@@ -124,6 +124,7 @@ const UniversityLayout = () => {
       subItems: [
         { label: 'Applications Overview', path: '/university/applications-overview', icon: BarChart },
         { label: 'Collected Applications', path: '/university/applications', icon: FileText, badge: universityData.pendingApplications },
+        { label: 'Document Requests', path: '/university/applications/document-requests', icon: FileText },
         { label: 'Acceptance Letters', path: '/university/applications', icon: Mail },
       ]
     },
