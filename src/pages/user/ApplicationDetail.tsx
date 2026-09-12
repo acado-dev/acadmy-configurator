@@ -14,10 +14,30 @@ import {
   User
 } from "lucide-react";
 import { toast } from "sonner";
+import { useEffect, useState } from "react";
+import { Upload } from "lucide-react";
+import ApplicantDocumentRequestDialog from "@/components/documents/ApplicantDocumentRequestDialog";
+import {
+  DocumentRequest,
+  REASON_LABELS,
+  getDocumentRequests,
+  seedDocumentRequestsIfEmpty,
+} from "@/lib/documentRequests";
 
 const ApplicationDetail = () => {
   const { applicationId } = useParams();
   const navigate = useNavigate();
+  const [docRequests, setDocRequests] = useState<DocumentRequest[]>([]);
+  const [openRequestId, setOpenRequestId] = useState<string | null>(null);
+
+  const loadRequests = () => {
+    seedDocumentRequestsIfEmpty();
+    setDocRequests(getDocumentRequests().filter((r) => r.status !== 'cancelled'));
+  };
+
+  useEffect(() => {
+    loadRequests();
+  }, [applicationId]);
 
   // Mock application data - in production, this would come from your backend
   const application = {
