@@ -229,6 +229,84 @@ export const duplicateTemplate = (id: string) => {
 
 export const UNIVERSITY_ID = 'acado-university';
 
+/* ---------------- assignment & lock ---------------- */
+
+export interface UniversityOption {
+  id: string;
+  name: string;
+  email: string;
+}
+
+const slug = (name: string) =>
+  name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+
+export const getUniversityOptions = (): UniversityOption[] => {
+  let stored: any[] = [];
+  try {
+    stored = JSON.parse(localStorage.getItem('universities') || '[]');
+  } catch {
+    stored = [];
+  }
+  const options = stored
+    .filter((u) => u && (u.name || u.universityName))
+    .map((u, i) => {
+      const name = u.name ?? u.universityName;
+      return {
+        id: String(u.id ?? `univ-${i}`),
+        name,
+        email: u.email ?? u.contactEmail ?? `admissions@${slug(name)}.edu`,
+      };
+    });
+  if (!options.some((o) => o.id === UNIVERSITY_ID)) {
+    options.unshift({
+      id: UNIVERSITY_ID,
+      name: 'ACADO Institute of Technology',
+      email: 'admissions@acado.ai',
+    });
+  }
+  return options;
+};
+
+export const templateAssignment = (t: CommunicationTemplate) =>
+  t.assignedTo ?? { mode: 'all' as const, universityIds: [] };
+
+export const isAssignedToUniversity = (
+  t: CommunicationTemplate,
+  universityId: string = UNIVERSITY_ID
+) => {
+  const assignment = templateAssignment(t);
+  return assignment.mode === 'all' || assignment.universityIds.includes(universityId);
+};
+
+export const setTemplateAssignment = (
+  id: string,
+  assignedTo: CommunicationTemplate['assignedTo']
+) => {
+  const template = getTemplateById(id);
+  if (!template) return getTemplates();
+  return upsertTemplate({ ...template, assignedTo });
+};
+
+export const setTemplateLocked = (id: string, locked: boolean) => {
+  const template = getTemplateById(id);
+  if (!template) return getTemplates();
+  const templates = upsertTemplate({ ...template, locked });
+  if (!locked) return templates;
+  // A fixed template cannot keep university overrides.
+  const cleaned = templates.filter(
+    (t) => !(t.owner === 'university' && t.basedOnId === id)
+  );
+  saveTemplates(cleaned);
+  return cleaned;
+};
+
+/** Templates a university may see and use: assigned to it and not fixed by the platform. */
+export const getTemplatesForUniversity = (universityId: string = UNIVERSITY_ID) =>
+  getTemplates().filter((t) => {
+    if (t.owner === 'university') return !t.universityId || t.universityId === universityId;
+    return !t.locked && isAssignedToUniversity(t, universityId);
+  });
+
 /** Creates a university-owned editable copy of a platform template. */
 export const customizeForUniversity = (platformId: string) => {
   const source = getTemplateById(platformId);
