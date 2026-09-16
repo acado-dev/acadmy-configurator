@@ -221,24 +221,66 @@ export function InboxView({ scope, senderName, title }: Props) {
                 <DialogTitle>New message</DialogTitle>
               </DialogHeader>
               <div className="space-y-4">
-                <div className="grid gap-4 md:grid-cols-2">
-                  <div className="space-y-2">
-                    <Label>Recipient name</Label>
-                    <Input
-                      value={compose.toName}
-                      onChange={(e) => setCompose({ ...compose, toName: e.target.value })}
-                      placeholder="Jane Smith"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Recipient email *</Label>
-                    <Input
-                      value={compose.toEmail}
-                      onChange={(e) => setCompose({ ...compose, toEmail: e.target.value })}
-                      placeholder="jane.smith@example.com"
-                    />
-                  </div>
+                <div className="space-y-2">
+                  <Label>Send to</Label>
+                  <Tabs
+                    value={compose.mode}
+                    onValueChange={(v) =>
+                      setCompose({ ...compose, mode: v as 'single' | 'group' })
+                    }
+                  >
+                    <TabsList className="grid w-full grid-cols-2">
+                      <TabsTrigger value="single">One person</TabsTrigger>
+                      <TabsTrigger value="group">A group of users</TabsTrigger>
+                    </TabsList>
+                  </Tabs>
                 </div>
+                {compose.mode === 'single' ? (
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <div className="space-y-2">
+                      <Label>Recipient name</Label>
+                      <Input
+                        value={compose.toName}
+                        onChange={(e) => setCompose({ ...compose, toName: e.target.value })}
+                        placeholder="Jane Smith"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Recipient email *</Label>
+                      <Input
+                        value={compose.toEmail}
+                        onChange={(e) => setCompose({ ...compose, toEmail: e.target.value })}
+                        placeholder="jane.smith@example.com"
+                      />
+                    </div>
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    <Label>Group *</Label>
+                    <Select
+                      value={compose.groupId}
+                      onValueChange={(groupId) => setCompose({ ...compose, groupId })}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Pick a group of users" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {audienceGroups.map((g) => (
+                          <SelectItem key={g.id} value={g.id}>
+                            {g.label} ({g.recipients.length})
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    {selectedGroup && (
+                      <p className="text-xs text-muted-foreground">
+                        <Users className="mr-1 inline h-3 w-3" />
+                        {selectedGroup.description} — {selectedGroup.recipients.length}{' '}
+                        recipient{selectedGroup.recipients.length === 1 ? '' : 's'}
+                      </p>
+                    )}
+                  </div>
+                )}
                 <div className="space-y-2">
                   <Label>Start from a template</Label>
                   <Select value={compose.templateId} onValueChange={applyTemplate}>
