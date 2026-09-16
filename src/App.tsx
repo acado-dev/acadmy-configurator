@@ -108,6 +108,7 @@ import {
   UniversityInbox,
 } from '@/pages/communication/UniversityCommunication';
 import UserInbox from '@/pages/user/Inbox';
+import ForgotPassword from '@/pages/ForgotPassword';
 import ContentCategories from '@/pages/ContentCategories';
 import CriteriaAgentPage from '@/pages/CriteriaAgentPage';
 import ApplicationMatching from '@/pages/ApplicationMatching';
@@ -140,6 +141,8 @@ const App = () => {
           <Routes>
             {/* Admin Routes */}
             <Route path="/login" element={<Login />} />
+            <Route path="/forgot-password" element={<ForgotPassword loginPath="/login" />} />
+            <Route path="/user/forgot-password" element={<ForgotPassword loginPath="/user/login" />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/" element={
               <ProtectedRoute>
