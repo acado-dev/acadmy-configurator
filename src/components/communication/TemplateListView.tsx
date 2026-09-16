@@ -128,26 +128,29 @@ export function TemplateListView({ scope, basePath }: Props) {
   }, [templates, scope, search, triggerFilter, channelFilter, statusFilter]);
 
   const handleDuplicate = (id: string) => {
-    setTemplates(duplicateTemplate(id));
+    duplicateTemplate(id);
+    reload();
     toast({ title: 'Template duplicated' });
   };
 
   const handleDelete = (id: string) => {
-    setTemplates(deleteTemplate(id));
+    deleteTemplate(id);
+    reload();
     setDeleteId(null);
     toast({ title: 'Template deleted' });
   };
 
   const handleCustomize = (id: string) => {
     const copy = customizeForUniversity(id);
-    setTemplates(getTemplates());
+    reload();
     if (copy) navigate(`${basePath}/${copy.id}`);
   };
 
   const handleRevert = (platformId: string) => {
     const override = overrideByPlatformId[platformId];
     if (!override) return;
-    setTemplates(revertToPlatformDefault(override.id));
+    revertToPlatformDefault(override.id);
+    reload();
     toast({ title: 'Reverted to platform default' });
   };
 
@@ -156,11 +159,49 @@ export function TemplateListView({ scope, basePath }: Props) {
       ...template,
       status: template.status === 'Active' ? 'Inactive' : 'Active',
     } as CommunicationTemplate;
-    setTemplates(upsertTemplate(updated));
+    upsertTemplate(updated);
+    reload();
+  };
+
+  const toggleLocked = (template: CommunicationTemplate) => {
+    setTemplateLocked(template.id, !template.locked);
+    reload();
+    toast({
+      title: template.locked
+        ? 'Universities can now customise this template'
+        : 'Template fixed for all universities',
+      description: template.locked
+        ? undefined
+        : 'Universities will use this wording as it is and cannot edit it.',
+    });
+  };
+
+  const saveAssignment = (mode: 'all' | 'selected', universityIds: string[]) => {
+    if (!assignTemplate) return;
+    setTemplateAssignment(assignTemplate.id, { mode, universityIds });
+    setAssignTemplate(null);
+    reload();
+    toast({
+      title: 'Assignment updated',
+      description:
+        mode === 'all'
+          ? 'Available to all universities.'
+          : `Available to ${universityIds.length} selected university${
+              universityIds.length === 1 ? '' : 's'
+            }.`,
+    });
+  };
+
+  const assignmentSummary = (template: CommunicationTemplate) => {
+    const assignment = templateAssignment(template);
+    return assignment.mode === 'all'
+      ? `All universities (${universityCount})`
+      : `${assignment.universityIds.length} selected`;
   };
 
   const activeCount = templates.filter((t) => t.status === 'Active').length;
   const overrideCount = Object.keys(overrideByPlatformId).length;
+  const lockedCount = templates.filter((t) => t.locked).length;
 
   return (
     <div className="space-y-6">
