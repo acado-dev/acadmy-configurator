@@ -367,7 +367,30 @@ export function TemplateListView({ scope, basePath }: Props) {
                           </Badge>
                         </Button>
                       </TableCell>
+                      {scope === 'admin' && (
+                        <TableCell>
+                          {template.owner === 'platform' ? (
+                            <button
+                              className="text-left"
+                              onClick={() => setAssignTemplate(template)}
+                            >
+                              <span className="flex items-center gap-1 text-sm hover:underline">
+                                <Building2 className="h-3.5 w-3.5 text-muted-foreground" />
+                                {assignmentSummary(template)}
+                              </span>
+                            </button>
+                          ) : (
+                            <span className="text-sm text-muted-foreground">Own university</span>
+                          )}
+                        </TableCell>
+                      )}
                       <TableCell>
+                        {template.locked && (
+                          <Badge className="mb-1 gap-1 bg-primary/10 text-primary hover:bg-primary/10">
+                            <Lock className="h-3 w-3" />
+                            Fixed
+                          </Badge>
+                        )}
                         {template.owner === 'platform' ? (
                           override ? (
                             <Badge className="bg-amber-500/15 text-amber-600 hover:bg-amber-500/15">
