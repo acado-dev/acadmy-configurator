@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { triggerCommunication, triggerSummary, sendInboxMessage } from '@/lib/messaging';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { 
   ArrowLeft, 
@@ -93,9 +94,18 @@ const ApplicationReview = () => {
     });
     setDocumentRequests(getDocumentRequests(application.id));
     if (application.status === 'submitted') handleStatusChange('under_review');
+    const dispatched = triggerCommunication('document_requested', {
+      name: application.applicantName,
+      email: application.applicantEmail,
+      mobile_number: application.applicantPhone,
+      document_name: data.documentType,
+      application_id: application.id,
+      course: application.courseName,
+      deadline: data.dueDate,
+    });
     toast({
       title: 'Document requested',
-      description: `${data.documentType} requested from ${application.applicantName} (${REASON_LABELS[data.reason]}).`,
+      description: `${data.documentType} requested from ${application.applicantName} (${REASON_LABELS[data.reason]}). ${triggerSummary(dispatched)}.`,
     });
   };
 
@@ -255,21 +265,55 @@ const ApplicationReview = () => {
 
 
 
+  const applicantContext = () => ({
+    name: application?.applicantName,
+    email: application?.applicantEmail,
+    mobile_number: application?.applicantPhone,
+    course: application?.courseName,
+    application_id: application?.id,
+    university: 'ACADO Institute of Technology',
+  });
+
+  const STATUS_TRIGGERS: Record<string, string> = {
+    shortlisted: 'application_shortlisted',
+    interview_scheduled: 'interview_scheduled',
+    accepted: 'acceptance_letter',
+    rejected: 'application_rejected',
+    waitlisted: 'application_on_hold',
+  };
+
   const handleStatusChange = (newStatus: string) => {
     if (application) {
       updateApplicationStatus(application.id, newStatus as any);
       setApplication({ ...application, status: newStatus });
+      const triggerKey = STATUS_TRIGGERS[newStatus];
+      const dispatched = triggerKey
+        ? triggerCommunication(triggerKey, applicantContext())
+        : undefined;
       toast({
         title: "Status Updated",
-        description: `Application status changed to ${newStatus}`,
+        description: `Application status changed to ${newStatus}${
+          dispatched ? ` · ${triggerSummary(dispatched)}` : ''
+        }`,
       });
     }
   };
 
   const handleSendCommunication = () => {
+    if (application) {
+      sendInboxMessage({
+        fromName: 'Admissions Office',
+        fromScope: 'university',
+        toName: application.applicantName,
+        toEmail: application.applicantEmail,
+        toScope: 'student',
+        subject: `Update on your application ${application.id}`,
+        body: `<p>${communicationMessage.replace(/\n/g, '<br/>')}</p>`,
+      });
+    }
     toast({
       title: "Communication Sent",
-      description: `${communicationType === 'email' ? 'Email' : 'SMS'} sent to applicant`,
+      description: `${communicationType === 'email' ? 'Email' : 'SMS'} sent to applicant and delivered to their inbox`,
     });
     setShowCommunicationDialog(false);
     setCommunicationMessage('');

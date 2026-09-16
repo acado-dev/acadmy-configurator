@@ -149,6 +149,17 @@ const Layout = () => {
       ]
     },
     {
+      id: 'communication',
+      label: 'Communication',
+      icon: Mail,
+      subItems: [
+        { label: 'Templates', path: '/communication/templates', icon: FileCode },
+        { label: 'Trigger Points', path: '/communication/templates/triggers', icon: Cog },
+        { label: 'Message Log', path: '/communication/templates/log', icon: Mail },
+        { label: 'Internal Inbox', path: '/inbox', icon: Users },
+      ]
+    },
+    {
       id: 'settings',
       label: 'Settings',
       icon: Settings,

@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Mail, Lock, User, Phone } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { AcadoLogo } from "@/components/AcadoLogo";
+import { triggerCommunication } from "@/lib/messaging";
 
 const UserRegister = () => {
   const [formData, setFormData] = useState({
@@ -39,9 +40,17 @@ const UserRegister = () => {
       name: `${formData.firstName} ${formData.lastName}`
     }));
     
+    const context = {
+      name: `${formData.firstName} ${formData.lastName}`,
+      email: formData.email,
+      verification_link: `${window.location.origin}/user/login`,
+    };
+    triggerCommunication('user_registration', context);
+    triggerCommunication('account_verification', context);
+
     toast({
       title: "Registration Successful!",
-      description: "Your account has been created. Let's build your portfolio!",
+      description: "Your welcome and verification messages have been sent. Let's build your portfolio!",
     });
     
     navigate("/user/portfolio/create");

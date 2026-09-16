@@ -8,8 +8,10 @@ import {
   Menu,
   Home,
   BookOpen,
-  Bell
+  Bell,
+  Inbox
 } from "lucide-react";
+import { getUnreadCount } from "@/lib/messaging";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { AcadoLogo } from "./AcadoLogo";
@@ -34,10 +36,13 @@ const UserLayout = () => {
     navigate("/user/login");
   };
 
+  const inboxUnread = getUnreadCount("student", user?.email);
+
   const navigationItems = [
     { path: "/user/dashboard", label: "Dashboard", icon: Home },
     { path: "/user/courses", label: "Courses", icon: BookOpen },
     { path: "/user/applications", label: "Applications", icon: FileText },
+    { path: "/user/inbox", label: "Inbox", icon: Inbox, badge: inboxUnread },
     { path: "/user/notifications", label: "Notifications", icon: Bell, badge: unreadCount },
     { path: "/user/portfolio", label: "Portfolio", icon: User },
   ];

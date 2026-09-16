@@ -8,6 +8,7 @@ import { Event } from "@/types/event";
 import EventDetailsStep from "@/components/events/EventDetailsStep";
 import EventStagesStep from "@/components/events/EventStagesStep";
 import EventReviewStep from "@/components/events/EventReviewStep";
+import { triggerCommunication, triggerSummary } from "@/lib/messaging";
 
 const CreateEvent = () => {
   const navigate = useNavigate();
@@ -111,9 +112,20 @@ const CreateEvent = () => {
     }
 
     localStorage.setItem("events", JSON.stringify(events));
+    const dispatched = triggerCommunication(
+      isEditMode ? 'event_updated' : 'event_published',
+      {
+        name: 'Jane Smith',
+        email: 'jane.smith@example.com',
+        event_name: publishedEvent.title,
+        event_date: [publishedEvent.eventDate, publishedEvent.eventTime]
+          .filter(Boolean)
+          .join(' '),
+      },
+    );
     toast({
-      title: "Event published",
-      description: "Your event is now live and visible to learners.",
+      title: isEditMode ? "Event updated" : "Event published",
+      description: `Your event is now live and visible to learners. ${triggerSummary(dispatched)}.`,
     });
     navigate("/events");
   };

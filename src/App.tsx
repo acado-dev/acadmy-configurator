@@ -93,6 +93,22 @@ import InterestedUsers from '@/pages/InterestedUsers';
 import UserSearch from '@/pages/UserSearch';
 import MailTemplate from '@/pages/MailTemplate';
 import BulkEmail from '@/pages/BulkEmail';
+import {
+  AdminTemplates,
+  AdminTemplateEditor,
+  AdminTriggerPoints,
+  AdminMessageLog,
+  AdminInbox,
+} from '@/pages/communication/AdminCommunication';
+import {
+  UniversityTemplates,
+  UniversityTemplateEditor,
+  UniversityTriggerPoints,
+  UniversityMessageLog,
+  UniversityInbox,
+} from '@/pages/communication/UniversityCommunication';
+import UserInbox from '@/pages/user/Inbox';
+import ForgotPassword from '@/pages/ForgotPassword';
 import ContentCategories from '@/pages/ContentCategories';
 import CriteriaAgentPage from '@/pages/CriteriaAgentPage';
 import ApplicationMatching from '@/pages/ApplicationMatching';
@@ -125,6 +141,8 @@ const App = () => {
           <Routes>
             {/* Admin Routes */}
             <Route path="/login" element={<Login />} />
+            <Route path="/forgot-password" element={<ForgotPassword loginPath="/login" />} />
+            <Route path="/user/forgot-password" element={<ForgotPassword loginPath="/user/login" />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/" element={
               <ProtectedRoute>
@@ -188,6 +206,14 @@ const App = () => {
               {/* Settings */}
               <Route path="mail-template" element={<MailTemplate />} />
               <Route path="bulk-email" element={<BulkEmail />} />
+
+              {/* Communication */}
+              <Route path="communication/templates" element={<AdminTemplates />} />
+              <Route path="communication/templates/new" element={<AdminTemplateEditor />} />
+              <Route path="communication/templates/triggers" element={<AdminTriggerPoints />} />
+              <Route path="communication/templates/log" element={<AdminMessageLog />} />
+              <Route path="communication/templates/:templateId" element={<AdminTemplateEditor />} />
+              <Route path="inbox" element={<AdminInbox />} />
               
               {/* Applications - Master Admin */}
               <Route path="applications-overview" element={<ApplicationsOverview />} />
@@ -242,6 +268,7 @@ const App = () => {
               <Route path="applications/:applicationId" element={<ApplicationDetail />} />
               <Route path="communications/:applicationId" element={<Communications />} />
               <Route path="notifications" element={<Notifications />} />
+              <Route path="inbox" element={<UserInbox />} />
             </Route>
             
             {/* University Admin Routes */}
@@ -297,7 +324,13 @@ const App = () => {
               <Route path="talent-pool/document-upload" element={<TalentPoolDocumentUpload />} />
               <Route path="talent-pool/export" element={<TalentPoolExport />} />
               <Route path="talent" element={<TalentPool />} />
-              <Route path="communications" element={<UniversityDashboard />} />
+              <Route path="communications" element={<UniversityTemplates />} />
+              <Route path="communication/templates" element={<UniversityTemplates />} />
+              <Route path="communication/templates/new" element={<UniversityTemplateEditor />} />
+              <Route path="communication/templates/triggers" element={<UniversityTriggerPoints />} />
+              <Route path="communication/templates/log" element={<UniversityMessageLog />} />
+              <Route path="communication/templates/:templateId" element={<UniversityTemplateEditor />} />
+              <Route path="inbox" element={<UniversityInbox />} />
               <Route path="users" element={<UserManagement />} />
               <Route path="analytics" element={<UniversityAnalytics />} />
               <Route path="reports" element={<UniversityReports />} />
