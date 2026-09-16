@@ -520,6 +520,15 @@ export function TemplateListView({ scope, basePath }: Props) {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {assignTemplate && (
+        <AssignTemplateDialog
+          template={assignTemplate}
+          open={!!assignTemplate}
+          onOpenChange={(open) => !open && setAssignTemplate(null)}
+          onSave={saveAssignment}
+        />
+      )}
     </div>
   );
 }
