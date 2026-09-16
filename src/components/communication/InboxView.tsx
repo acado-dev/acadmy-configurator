@@ -33,7 +33,9 @@ import {
   Search,
   Send,
   Trash2,
+  Users,
 } from 'lucide-react';
+import { AudienceGroup, getAudienceGroups } from '@/lib/messageAudiences';
 import { useToast } from '@/hooks/use-toast';
 import { InboxMessage, InboxScope } from '@/types/communication';
 import {
