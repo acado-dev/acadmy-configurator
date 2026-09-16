@@ -82,10 +82,17 @@ export function TemplateListView({ scope, basePath }: Props) {
   const [channelFilter, setChannelFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [assignTemplate, setAssignTemplate] = useState<CommunicationTemplate | null>(null);
+  const [universityCount, setUniversityCount] = useState(0);
+
+  const reload = () =>
+    setTemplates(scope === 'university' ? getTemplatesForUniversity() : getTemplates());
 
   useEffect(() => {
-    setTemplates(getTemplates());
-  }, []);
+    reload();
+    setUniversityCount(getUniversityOptions().length);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [scope]);
 
   const overrideByPlatformId = useMemo(() => {
     const map: Record<string, CommunicationTemplate> = {};
