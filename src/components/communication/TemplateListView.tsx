@@ -30,14 +30,17 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import {
+  Building2,
   Copy,
   Edit,
+  Lock,
   MessageSquareDashed,
   Plus,
   RotateCcw,
   Search,
   Send,
   Trash2,
+  Unlock,
   Wand2,
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
@@ -49,9 +52,15 @@ import {
   deleteTemplate,
   duplicateTemplate,
   getTemplates,
+  getTemplatesForUniversity,
+  getUniversityOptions,
   revertToPlatformDefault,
+  setTemplateAssignment,
+  setTemplateLocked,
+  templateAssignment,
   upsertTemplate,
 } from '@/lib/communicationTemplates';
+import { AssignTemplateDialog } from './AssignTemplateDialog';
 import {
   COMMUNICATION_TRIGGERS,
   TRIGGER_CATEGORY_LABELS,
@@ -73,10 +82,17 @@ export function TemplateListView({ scope, basePath }: Props) {
   const [channelFilter, setChannelFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [assignTemplate, setAssignTemplate] = useState<CommunicationTemplate | null>(null);
+  const [universityCount, setUniversityCount] = useState(0);
+
+  const reload = () =>
+    setTemplates(scope === 'university' ? getTemplatesForUniversity() : getTemplates());
 
   useEffect(() => {
-    setTemplates(getTemplates());
-  }, []);
+    reload();
+    setUniversityCount(getUniversityOptions().length);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [scope]);
 
   const overrideByPlatformId = useMemo(() => {
     const map: Record<string, CommunicationTemplate> = {};
@@ -91,7 +107,8 @@ export function TemplateListView({ scope, basePath }: Props) {
   const visible = useMemo(() => {
     let list = templates;
     if (scope === 'university') {
-      // Show platform templates (with override state) plus university-only ones
+      // Only templates assigned to this university (fixed platform ones are excluded),
+      // shown with their override state plus university-only templates.
       list = templates.filter((t) => t.owner === 'platform' || !t.basedOnId);
     }
     return list.filter((t) => {
@@ -111,26 +128,29 @@ export function TemplateListView({ scope, basePath }: Props) {
   }, [templates, scope, search, triggerFilter, channelFilter, statusFilter]);
 
   const handleDuplicate = (id: string) => {
-    setTemplates(duplicateTemplate(id));
+    duplicateTemplate(id);
+    reload();
     toast({ title: 'Template duplicated' });
   };
 
   const handleDelete = (id: string) => {
-    setTemplates(deleteTemplate(id));
+    deleteTemplate(id);
+    reload();
     setDeleteId(null);
     toast({ title: 'Template deleted' });
   };
 
   const handleCustomize = (id: string) => {
     const copy = customizeForUniversity(id);
-    setTemplates(getTemplates());
+    reload();
     if (copy) navigate(`${basePath}/${copy.id}`);
   };
 
   const handleRevert = (platformId: string) => {
     const override = overrideByPlatformId[platformId];
     if (!override) return;
-    setTemplates(revertToPlatformDefault(override.id));
+    revertToPlatformDefault(override.id);
+    reload();
     toast({ title: 'Reverted to platform default' });
   };
 
@@ -139,11 +159,49 @@ export function TemplateListView({ scope, basePath }: Props) {
       ...template,
       status: template.status === 'Active' ? 'Inactive' : 'Active',
     } as CommunicationTemplate;
-    setTemplates(upsertTemplate(updated));
+    upsertTemplate(updated);
+    reload();
+  };
+
+  const toggleLocked = (template: CommunicationTemplate) => {
+    setTemplateLocked(template.id, !template.locked);
+    reload();
+    toast({
+      title: template.locked
+        ? 'Universities can now customise this template'
+        : 'Template fixed for all universities',
+      description: template.locked
+        ? undefined
+        : 'Universities will use this wording as it is and cannot edit it.',
+    });
+  };
+
+  const saveAssignment = (mode: 'all' | 'selected', universityIds: string[]) => {
+    if (!assignTemplate) return;
+    setTemplateAssignment(assignTemplate.id, { mode, universityIds });
+    setAssignTemplate(null);
+    reload();
+    toast({
+      title: 'Assignment updated',
+      description:
+        mode === 'all'
+          ? 'Available to all universities.'
+          : `Available to ${universityIds.length} selected university${
+              universityIds.length === 1 ? '' : 's'
+            }.`,
+    });
+  };
+
+  const assignmentSummary = (template: CommunicationTemplate) => {
+    const assignment = templateAssignment(template);
+    return assignment.mode === 'all'
+      ? `All universities (${universityCount})`
+      : `${assignment.universityIds.length} selected`;
   };
 
   const activeCount = templates.filter((t) => t.status === 'Active').length;
   const overrideCount = Object.keys(overrideByPlatformId).length;
+  const lockedCount = templates.filter((t) => t.locked).length;
 
   return (
     <div className="space-y-6">
@@ -154,8 +212,8 @@ export function TemplateListView({ scope, basePath }: Props) {
           </h1>
           <p className="text-muted-foreground mt-1">
             {scope === 'admin'
-              ? 'Configure the message that goes out on every platform trigger, across Email, SMS, WhatsApp and Inbox.'
-              : 'Use the platform defaults as they are, or customise them for your university.'}
+              ? 'Configure the message that goes out on every platform trigger, mark templates as fixed and choose which universities get them.'
+              : 'These are the templates assigned to your university. Use them as they are, or customise them.'}
           </p>
         </div>
         <div className="flex gap-2">
@@ -178,9 +236,14 @@ export function TemplateListView({ scope, basePath }: Props) {
 
       <div className="grid gap-4 md:grid-cols-4">
         {[
-          { label: 'Templates', value: templates.length },
+          {
+            label: scope === 'admin' ? 'Templates' : 'Assigned to you',
+            value: templates.length,
+          },
           { label: 'Active', value: activeCount },
-          { label: 'Trigger points', value: COMMUNICATION_TRIGGERS.length },
+          scope === 'admin'
+            ? { label: 'Fixed (not editable by universities)', value: lockedCount }
+            : { label: 'Trigger points', value: COMMUNICATION_TRIGGERS.length },
           {
             label: scope === 'admin' ? 'University overrides' : 'Customised by you',
             value: overrideCount,
@@ -257,6 +320,7 @@ export function TemplateListView({ scope, basePath }: Props) {
                 <TableHead>Trigger point</TableHead>
                 <TableHead>Channels</TableHead>
                 <TableHead>Status</TableHead>
+                {scope === 'admin' && <TableHead>Assigned to</TableHead>}
                 <TableHead>Source</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
@@ -264,7 +328,7 @@ export function TemplateListView({ scope, basePath }: Props) {
             <TableBody>
               {visible.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={6} className="py-10 text-center text-muted-foreground">
+                  <TableCell colSpan={7} className="py-10 text-center text-muted-foreground">
                     <MessageSquareDashed className="mx-auto mb-2 h-6 w-6" />
                     No templates match your filters.
                   </TableCell>
@@ -303,7 +367,30 @@ export function TemplateListView({ scope, basePath }: Props) {
                           </Badge>
                         </Button>
                       </TableCell>
+                      {scope === 'admin' && (
+                        <TableCell>
+                          {template.owner === 'platform' ? (
+                            <button
+                              className="text-left"
+                              onClick={() => setAssignTemplate(template)}
+                            >
+                              <span className="flex items-center gap-1 text-sm hover:underline">
+                                <Building2 className="h-3.5 w-3.5 text-muted-foreground" />
+                                {assignmentSummary(template)}
+                              </span>
+                            </button>
+                          ) : (
+                            <span className="text-sm text-muted-foreground">Own university</span>
+                          )}
+                        </TableCell>
+                      )}
                       <TableCell>
+                        {template.locked && (
+                          <Badge className="mb-1 gap-1 bg-primary/10 text-primary hover:bg-primary/10">
+                            <Lock className="h-3 w-3" />
+                            Fixed
+                          </Badge>
+                        )}
                         {template.owner === 'platform' ? (
                           override ? (
                             <Badge className="bg-amber-500/15 text-amber-600 hover:bg-amber-500/15">
@@ -344,6 +431,34 @@ export function TemplateListView({ scope, basePath }: Props) {
                                 onClick={() => handleRevert(template.id)}
                               >
                                 <RotateCcw className="h-4 w-4" />
+                              </Button>
+                            </>
+                          )}
+                          {scope === 'admin' && template.owner === 'platform' && (
+                            <>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                title={
+                                  template.locked
+                                    ? 'Allow universities to customise'
+                                    : 'Fix this template (universities cannot change it)'
+                                }
+                                onClick={() => toggleLocked(template)}
+                              >
+                                {template.locked ? (
+                                  <Lock className="h-4 w-4 text-primary" />
+                                ) : (
+                                  <Unlock className="h-4 w-4" />
+                                )}
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                title="Assign to universities"
+                                onClick={() => setAssignTemplate(template)}
+                              >
+                                <Building2 className="h-4 w-4" />
                               </Button>
                             </>
                           )}
@@ -405,6 +520,15 @@ export function TemplateListView({ scope, basePath }: Props) {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {assignTemplate && (
+        <AssignTemplateDialog
+          template={assignTemplate}
+          open={!!assignTemplate}
+          onOpenChange={(open) => !open && setAssignTemplate(null)}
+          onSave={saveAssignment}
+        />
+      )}
     </div>
   );
 }
