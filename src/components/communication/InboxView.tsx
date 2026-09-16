@@ -70,20 +70,34 @@ export function InboxView({ scope, senderName, title }: Props) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [reply, setReply] = useState('');
   const [composeOpen, setComposeOpen] = useState(false);
-  const [compose, setCompose] = useState({
+  const emptyCompose = {
+    mode: 'single' as 'single' | 'group',
+    groupId: '',
     toName: '',
     toEmail: '',
     subject: '',
     body: '',
     templateId: 'none',
-  });
+  };
+  const [compose, setCompose] = useState(emptyCompose);
+  const [audienceGroups, setAudienceGroups] = useState<AudienceGroup[]>([]);
 
   const refresh = () => setMessages(getInboxMessages());
+  const resetCompose = () => {
+    setCompose(emptyCompose);
+    setComposeOpen(false);
+  };
 
   useEffect(() => {
     seedMessagingIfEmpty();
     refresh();
+    setAudienceGroups(getAudienceGroups());
   }, []);
+
+  const selectedGroup = useMemo(
+    () => audienceGroups.find((g) => g.id === compose.groupId),
+    [audienceGroups, compose.groupId]
+  );
 
   const scopeMessages = useMemo(() => {
     return messages.filter((m) =>
