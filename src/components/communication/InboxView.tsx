@@ -153,10 +153,55 @@ export function InboxView({ scope, senderName, title }: Props) {
   };
 
   const handleCompose = () => {
-    if (!compose.toEmail.trim() || !compose.subject.trim()) {
+    const body = compose.body.startsWith('<')
+      ? compose.body
+      : `<p>${compose.body.replace(/\n/g, '<br/>')}</p>`;
+
+    if (!compose.subject.trim()) {
       toast({
         title: 'Missing details',
-        description: 'A recipient and a subject are needed.',
+        description: 'A subject is needed.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    if (compose.mode === 'group') {
+      const group = selectedGroup;
+      if (!group) {
+        toast({
+          title: 'Pick a group',
+          description: 'Choose who should receive this message.',
+          variant: 'destructive',
+        });
+        return;
+      }
+      group.recipients.forEach((r) =>
+        sendInboxMessage({
+          fromName: senderName,
+          fromScope: scope,
+          toName: r.name,
+          toEmail: r.email,
+          toScope: r.scope,
+          subject: compose.subject,
+          body,
+        })
+      );
+      resetCompose();
+      refresh();
+      toast({
+        title: `Sent to ${group.recipients.length} recipient${
+          group.recipients.length === 1 ? '' : 's'
+        }`,
+        description: group.label,
+      });
+      return;
+    }
+
+    if (!compose.toEmail.trim()) {
+      toast({
+        title: 'Missing details',
+        description: 'A recipient email is needed.',
         variant: 'destructive',
       });
       return;
@@ -168,12 +213,9 @@ export function InboxView({ scope, senderName, title }: Props) {
       toEmail: compose.toEmail,
       toScope: 'student',
       subject: compose.subject,
-      body: compose.body.startsWith('<')
-        ? compose.body
-        : `<p>${compose.body.replace(/\n/g, '<br/>')}</p>`,
+      body,
     });
-    setCompose({ toName: '', toEmail: '', subject: '', body: '', templateId: 'none' });
-    setComposeOpen(false);
+    resetCompose();
     refresh();
     toast({ title: 'Message sent' });
   };
