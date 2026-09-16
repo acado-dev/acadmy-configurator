@@ -118,9 +118,9 @@ const CreateEvent = () => {
         name: 'Jane Smith',
         email: 'jane.smith@example.com',
         event_name: publishedEvent.title,
-        event_date: publishedEvent.startDate
-          ? new Date(publishedEvent.startDate).toLocaleString()
-          : undefined,
+        event_date: [publishedEvent.eventDate, publishedEvent.eventTime]
+          .filter(Boolean)
+          .join(' '),
       },
     );
     toast({
