@@ -30,14 +30,17 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import {
+  Building2,
   Copy,
   Edit,
+  Lock,
   MessageSquareDashed,
   Plus,
   RotateCcw,
   Search,
   Send,
   Trash2,
+  Unlock,
   Wand2,
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
@@ -49,9 +52,15 @@ import {
   deleteTemplate,
   duplicateTemplate,
   getTemplates,
+  getTemplatesForUniversity,
+  getUniversityOptions,
   revertToPlatformDefault,
+  setTemplateAssignment,
+  setTemplateLocked,
+  templateAssignment,
   upsertTemplate,
 } from '@/lib/communicationTemplates';
+import { AssignTemplateDialog } from './AssignTemplateDialog';
 import {
   COMMUNICATION_TRIGGERS,
   TRIGGER_CATEGORY_LABELS,
