@@ -236,9 +236,14 @@ export function TemplateListView({ scope, basePath }: Props) {
 
       <div className="grid gap-4 md:grid-cols-4">
         {[
-          { label: 'Templates', value: templates.length },
+          {
+            label: scope === 'admin' ? 'Templates' : 'Assigned to you',
+            value: templates.length,
+          },
           { label: 'Active', value: activeCount },
-          { label: 'Trigger points', value: COMMUNICATION_TRIGGERS.length },
+          scope === 'admin'
+            ? { label: 'Fixed (not editable by universities)', value: lockedCount }
+            : { label: 'Trigger points', value: COMMUNICATION_TRIGGERS.length },
           {
             label: scope === 'admin' ? 'University overrides' : 'Customised by you',
             value: overrideCount,
