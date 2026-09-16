@@ -107,7 +107,8 @@ export function TemplateListView({ scope, basePath }: Props) {
   const visible = useMemo(() => {
     let list = templates;
     if (scope === 'university') {
-      // Show platform templates (with override state) plus university-only ones
+      // Only templates assigned to this university (fixed platform ones are excluded),
+      // shown with their override state plus university-only templates.
       list = templates.filter((t) => t.owner === 'platform' || !t.basedOnId);
     }
     return list.filter((t) => {
