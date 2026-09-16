@@ -136,6 +136,14 @@ const DEFAULT_COPY: Record<string, { subject: string; body: string; sms: string 
   },
 };
 
+/** Triggers whose wording is fixed by the platform and cannot be changed by a university. */
+const MANDATORY_TRIGGERS = [
+  'user_registration',
+  'account_verification',
+  'forgot_password',
+  'password_changed',
+];
+
 const buildDefaultTemplate = (triggerKey: string, index: number): CommunicationTemplate => {
   const trigger = COMMUNICATION_TRIGGERS.find((t) => t.key === triggerKey)!;
   const copy = DEFAULT_COPY[triggerKey];
@@ -147,6 +155,8 @@ const buildDefaultTemplate = (triggerKey: string, index: number): CommunicationT
     triggerKey,
     status: 'Active',
     owner: 'platform',
+    locked: MANDATORY_TRIGGERS.includes(triggerKey),
+    assignedTo: { mode: 'all', universityIds: [] },
     channels: {
       email: { enabled: true, subject: copy.subject, body: copy.body },
       sms: { enabled: trigger.category !== 'events', body: copy.sms },
