@@ -111,9 +111,20 @@ const CreateEvent = () => {
     }
 
     localStorage.setItem("events", JSON.stringify(events));
+    const dispatched = triggerCommunication(
+      isEditMode ? 'event_updated' : 'event_published',
+      {
+        name: 'Jane Smith',
+        email: 'jane.smith@example.com',
+        event_name: publishedEvent.title,
+        event_date: publishedEvent.startDate
+          ? new Date(publishedEvent.startDate).toLocaleString()
+          : undefined,
+      },
+    );
     toast({
-      title: "Event published",
-      description: "Your event is now live and visible to learners.",
+      title: isEditMode ? "Event updated" : "Event published",
+      description: `Your event is now live and visible to learners. ${triggerSummary(dispatched)}.`,
     });
     navigate("/events");
   };
