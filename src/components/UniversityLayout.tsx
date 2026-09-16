@@ -88,7 +88,8 @@ const UniversityLayout = () => {
       icon: Megaphone,
       subItems: [
         { label: 'Content', path: '/university/content', icon: FileText },
-        { label: 'Communications', path: '/university/communications', icon: Mail },
+        { label: 'Communication Templates', path: '/university/communication/templates', icon: Mail },
+        { label: 'Inbox', path: '/university/inbox', icon: MessagesSquare },
         { label: 'Events', path: '/university/events', icon: GraduationCap },
       ]
     },
