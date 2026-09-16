@@ -8,6 +8,7 @@ import { Event } from "@/types/event";
 import EventDetailsStep from "@/components/events/EventDetailsStep";
 import EventStagesStep from "@/components/events/EventStagesStep";
 import EventReviewStep from "@/components/events/EventReviewStep";
+import { triggerCommunication, triggerSummary } from "@/lib/messaging";
 
 const CreateEvent = () => {
   const navigate = useNavigate();
