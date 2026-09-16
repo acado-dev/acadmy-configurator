@@ -212,8 +212,8 @@ export function TemplateListView({ scope, basePath }: Props) {
           </h1>
           <p className="text-muted-foreground mt-1">
             {scope === 'admin'
-              ? 'Configure the message that goes out on every platform trigger, across Email, SMS, WhatsApp and Inbox.'
-              : 'Use the platform defaults as they are, or customise them for your university.'}
+              ? 'Configure the message that goes out on every platform trigger, mark templates as fixed and choose which universities get them.'
+              : 'These are the templates assigned to your university. Use them as they are, or customise them.'}
           </p>
         </div>
         <div className="flex gap-2">
