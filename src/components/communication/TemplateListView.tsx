@@ -434,6 +434,34 @@ export function TemplateListView({ scope, basePath }: Props) {
                               </Button>
                             </>
                           )}
+                          {scope === 'admin' && template.owner === 'platform' && (
+                            <>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                title={
+                                  template.locked
+                                    ? 'Allow universities to customise'
+                                    : 'Fix this template (universities cannot change it)'
+                                }
+                                onClick={() => toggleLocked(template)}
+                              >
+                                {template.locked ? (
+                                  <Lock className="h-4 w-4 text-primary" />
+                                ) : (
+                                  <Unlock className="h-4 w-4" />
+                                )}
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                title="Assign to universities"
+                                onClick={() => setAssignTemplate(template)}
+                              >
+                                <Building2 className="h-4 w-4" />
+                              </Button>
+                            </>
+                          )}
                           {(scope === 'admin' || template.owner === 'university') && (
                             <Button
                               variant="ghost"
