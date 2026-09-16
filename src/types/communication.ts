@@ -20,6 +20,12 @@ export interface ChannelContent {
 
 export type TemplateOwner = 'platform' | 'university';
 
+/** Which universities a platform template is made available to. */
+export interface TemplateAssignment {
+  mode: 'all' | 'selected';
+  universityIds: string[];
+}
+
 export interface CommunicationTemplate {
   id: string;
   name: string;
@@ -30,6 +36,10 @@ export interface CommunicationTemplate {
   /** Set when owner === 'university' and this overrides a platform template */
   basedOnId?: string;
   universityId?: string;
+  /** Mandatory / fixed: universities can neither edit nor disable it. */
+  locked?: boolean;
+  /** Availability of a platform template to universities. */
+  assignedTo?: TemplateAssignment;
   channels: Record<CommunicationChannel, ChannelContent>;
   createdAt: string;
   updatedAt: string;
