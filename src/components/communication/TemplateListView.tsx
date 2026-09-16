@@ -320,6 +320,7 @@ export function TemplateListView({ scope, basePath }: Props) {
                 <TableHead>Trigger point</TableHead>
                 <TableHead>Channels</TableHead>
                 <TableHead>Status</TableHead>
+                {scope === 'admin' && <TableHead>Assigned to</TableHead>}
                 <TableHead>Source</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
@@ -327,7 +328,7 @@ export function TemplateListView({ scope, basePath }: Props) {
             <TableBody>
               {visible.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={6} className="py-10 text-center text-muted-foreground">
+                  <TableCell colSpan={7} className="py-10 text-center text-muted-foreground">
                     <MessageSquareDashed className="mx-auto mb-2 h-6 w-6" />
                     No templates match your filters.
                   </TableCell>
