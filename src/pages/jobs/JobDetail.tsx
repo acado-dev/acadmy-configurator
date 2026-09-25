@@ -24,6 +24,7 @@ export default function JobDetail() {
   return (
     <div className="p-6 space-y-6 max-w-5xl">
       <Button variant="ghost" onClick={() => navigate(base)}><ArrowLeft className="h-4 w-4 mr-2" />Back</Button>
+      {o.bannerUrl && <img src={o.bannerUrl} alt={`${o.title} banner`} className="w-full max-h-64 object-cover rounded-lg border" />}
       <div className="flex flex-wrap justify-between gap-3">
         <div>
           <div className="flex gap-2 mb-1"><Badge>{o.type}</Badge><Badge variant="outline">{o.status}</Badge></div>

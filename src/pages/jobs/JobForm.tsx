@@ -26,6 +26,18 @@ export default function JobForm() {
   const [created, setCreated] = useState<Opportunity | null>(null);
   const set = (k: string, v: any) => setF((p: any) => ({ ...p, [k]: v }));
 
+  const BANNER_MAX_BYTES = 10 * 1024 * 1024;
+  const BANNER_TYPES = ['image/jpeg', 'image/jpg', 'image/png'];
+
+  const onBannerFile = (file?: File | null) => {
+    if (!file) return;
+    if (!BANNER_TYPES.includes(file.type)) return toast.error('Banner must be a JPG, JPEG or PNG image');
+    if (file.size > BANNER_MAX_BYTES) return toast.error('Banner must be 10 MB or smaller');
+    const reader = new FileReader();
+    reader.onload = () => setF((p: any) => ({ ...p, bannerUrl: reader.result as string, bannerFileName: file.name }));
+    reader.readAsDataURL(file);
+  };
+
   const submit = () => {
     if (!f.title || !f.companyId || !f.location || !f.startDate || !f.endDate) return toast.error('Please fill title, company, location and dates');
     if (f.endDate < f.startDate) return toast.error('End date must be after start date');
@@ -74,6 +86,30 @@ export default function JobForm() {
           <div className="space-y-2"><Label>Status</Label>
             <Select value={f.status} onValueChange={(v) => set('status', v)}><SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent><SelectItem value="Open">Open</SelectItem><SelectItem value="Draft">Draft</SelectItem><SelectItem value="Closed">Closed</SelectItem></SelectContent></Select></div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader><CardTitle>Banner Image</CardTitle></CardHeader>
+        <CardContent className="space-y-3">
+          <div className="space-y-2">
+            <Label>Upload Banner (JPG, JPEG or PNG · max 10 MB)</Label>
+            <Input type="file" accept=".jpg,.jpeg,.png" onChange={(e) => onBannerFile(e.target.files?.[0])} />
+          </div>
+          <div className="space-y-2">
+            <Label>Or paste an image URL</Label>
+            <Input
+              value={f.bannerUrl && !f.bannerUrl.startsWith('data:') ? f.bannerUrl : ''}
+              onChange={(e) => set('bannerUrl', e.target.value)}
+              placeholder="https://example.com/banner.jpg"
+            />
+          </div>
+          {f.bannerUrl && (
+            <div className="space-y-1">
+              <img src={f.bannerUrl} alt="Banner preview" className="w-full max-h-40 object-cover rounded-md border" />
+              <Button variant="ghost" size="sm" onClick={() => set('bannerUrl', '')}>Remove banner</Button>
+            </div>
+          )}
         </CardContent>
       </Card>
 
