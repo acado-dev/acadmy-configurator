@@ -90,6 +90,30 @@ export default function JobForm() {
       </Card>
 
       <Card>
+        <CardHeader><CardTitle>Banner Image</CardTitle></CardHeader>
+        <CardContent className="space-y-3">
+          <div className="space-y-2">
+            <Label>Upload Banner (JPG, JPEG or PNG · max 10 MB)</Label>
+            <Input type="file" accept=".jpg,.jpeg,.png" onChange={(e) => onBannerFile(e.target.files?.[0])} />
+          </div>
+          <div className="space-y-2">
+            <Label>Or paste an image URL</Label>
+            <Input
+              value={f.bannerUrl && !f.bannerUrl.startsWith('data:') ? f.bannerUrl : ''}
+              onChange={(e) => set('bannerUrl', e.target.value)}
+              placeholder="https://example.com/banner.jpg"
+            />
+          </div>
+          {f.bannerUrl && (
+            <div className="space-y-1">
+              <img src={f.bannerUrl} alt="Banner preview" className="w-full max-h-40 object-cover rounded-md border" />
+              <Button variant="ghost" size="sm" onClick={() => set('bannerUrl', '')}>Remove banner</Button>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      <Card>
         <CardHeader><CardTitle>Company Mapping</CardTitle></CardHeader>
         <CardContent className="space-y-2">
           <Label>Offered By / Company *</Label>
