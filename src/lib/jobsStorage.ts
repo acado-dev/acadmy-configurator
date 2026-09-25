@@ -20,6 +20,8 @@ export interface Opportunity {
   duration?: string;
   stipendOrSalary?: string;
   openings?: number;
+  bannerUrl?: string; // data URL from upload or external image URL
+  bannerFileName?: string;
   status: OpportunityStatus;
   createdBy: string; // 'super_admin' | 'university_admin'
   createdAt: string;
