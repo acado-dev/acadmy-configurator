@@ -92,7 +92,13 @@ export interface SendMessageInput {
   subject: string;
   body: string;
   triggerKey?: string;
+  groupLabel?: string;
+  groupType?: string;
+  groupRecipientNames?: string[];
+  groupSendId?: string;
   templateName?: string;
+  audience?: InboxMessage['audience'];
+  groupMessageId?: string;
 }
 
 export const sendInboxMessage = (input: SendMessageInput): InboxMessage => {
@@ -102,12 +108,18 @@ export const sendInboxMessage = (input: SendMessageInput): InboxMessage => {
     fromName: input.fromName,
     fromScope: input.fromScope,
     toName: input.toName,
+    groupLabel: input.groupLabel,
+    groupType: input.groupType,
+    groupRecipientNames: input.groupRecipientNames,
+    groupSendId: input.groupSendId,
     toEmail: input.toEmail,
     toScope: input.toScope,
     subject: input.subject,
     body: input.body,
     triggerKey: input.triggerKey,
     templateName: input.templateName,
+    audience: input.audience,
+    groupMessageId: input.groupMessageId,
     read: false,
     archived: false,
     createdAt: new Date().toISOString(),

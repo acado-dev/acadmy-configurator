@@ -9,6 +9,8 @@ export interface Recipient {
 
 export interface AudienceGroup {
   id: string;
+  type: string;
+  name: string;
   label: string;
   description: string;
   recipients: Recipient[];
@@ -68,24 +70,32 @@ export const getAudienceGroups = (): AudienceGroup[] => {
   const groups: AudienceGroup[] = [
     {
       id: 'all_platform_users',
+      type: 'Platform users',
+      name: 'All platform users',
       label: 'All platform users',
       description: 'Every learner, faculty and staff member on the platform',
       recipients: asRecipients(users),
     },
     {
       id: 'all_learners',
+      type: 'Learners',
+      name: 'All learners / students',
       label: 'All learners / students',
       description: 'Everyone registered as a learner',
       recipients: asRecipients(learners),
     },
     {
       id: 'faculty_staff',
+      type: 'Platform users',
+      name: 'Faculty & staff',
       label: 'Faculty & staff',
       description: 'Teaching and administrative users',
       recipients: asRecipients(facultyStaff),
     },
     {
       id: 'all_universities',
+      type: 'Universities',
+      name: 'All universities',
       label: 'All universities',
       description: 'Admissions contact of every university',
       recipients: dedupe(
@@ -98,6 +108,8 @@ export const getAudienceGroups = (): AudienceGroup[] => {
     },
     {
       id: 'community_members',
+      type: 'Community members',
+      name: 'ACADO community',
       label: 'Community members',
       description: 'Candidates in the talent pool and community',
       recipients: dedupe(
@@ -116,6 +128,8 @@ export const getAudienceGroups = (): AudienceGroup[] => {
     if (!members.length) return;
     groups.push({
       id: `university:${u.id}`,
+      type: 'University learners',
+      name: u.name,
       label: `${u.name} — learners`,
       description: 'Learners belonging to this university',
       recipients: asRecipients(members),
@@ -132,6 +146,8 @@ export const getAudienceGroups = (): AudienceGroup[] => {
     if (!participants.length) return;
     groups.push({
       id: `event:${event.id}`,
+      type: 'Event participants',
+      name: event.title,
       label: `Event — ${event.title}`,
       description: 'Learners who registered or participated in this event',
       recipients: dedupe(participants),
