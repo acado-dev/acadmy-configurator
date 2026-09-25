@@ -63,7 +63,7 @@ export default function JobApplicants() {
             <SelectContent><SelectItem value="all">All shortlist statuses</SelectItem><SelectItem value="Pending">Pending</SelectItem>
               <SelectItem value="Shortlisted">Shortlisted</SelectItem><SelectItem value="Not Shortlisted">Not Shortlisted</SelectItem></SelectContent></Select>
         </div>
-        <Table>
+        <div className="overflow-x-auto"><Table>
           <TableHeader><TableRow>
             <TableHead>Applicant</TableHead><TableHead>Email / Contact</TableHead><TableHead>Applied</TableHead><TableHead>Resume</TableHead>
             <TableHead>Application Status</TableHead><TableHead>Shortlist</TableHead><TableHead className="text-right">Actions</TableHead>
@@ -79,14 +79,13 @@ export default function JobApplicants() {
                 <TableCell><Badge variant="secondary">{a.applicationStatus}</Badge></TableCell>
                 <TableCell>{badge(a.shortlistStatus)}</TableCell>
                 <TableCell className="text-right whitespace-nowrap space-x-1">
-                  <Button size="sm" variant="outline" onClick={() => setResumeOf(a)}>View Resume</Button>
-                  <Button size="sm" disabled={a.shortlistStatus === 'Shortlisted'} onClick={() => update(a, 'Shortlisted')}><CheckCircle2 className="h-4 w-4 mr-1" />Shortlist</Button>
-                  <Button size="sm" variant="outline" disabled={a.shortlistStatus === 'Not Shortlisted'} onClick={() => update(a, 'Not Shortlisted')}><XCircle className="h-4 w-4 mr-1" />Not Shortlisted</Button>
+                  <Button size="sm" title="Shortlist" disabled={a.shortlistStatus === 'Shortlisted'} onClick={() => update(a, 'Shortlisted')}><CheckCircle2 className="h-4 w-4" /></Button>
+                  <Button size="sm" variant="outline" title="Mark as Not Shortlisted" disabled={a.shortlistStatus === 'Not Shortlisted'} onClick={() => update(a, 'Not Shortlisted')}><XCircle className="h-4 w-4" /></Button>
                 </TableCell>
               </TableRow>
             ))}
           </TableBody>
-        </Table>
+        </Table></div>
       </CardContent></Card>
 
       <Dialog open={!!resumeOf} onOpenChange={(o) => !o && setResumeOf(null)}>
