@@ -104,6 +104,15 @@ const Layout = () => {
       ]
     },
     {
+      id: 'jobs-internships',
+      label: 'Jobs & Internships',
+      icon: Briefcase,
+      subItems: [
+        { label: 'All Opportunities', path: '/jobs', icon: Briefcase },
+        { label: 'Create New', path: '/jobs/new', icon: FileText },
+      ]
+    },
+    {
       id: 'talent-management',
       label: 'Talent Management',
       icon: Briefcase,
