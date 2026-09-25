@@ -93,6 +93,8 @@ export interface SendMessageInput {
   body: string;
   triggerKey?: string;
   templateName?: string;
+  audience?: InboxMessage['audience'];
+  groupMessageId?: string;
 }
 
 export const sendInboxMessage = (input: SendMessageInput): InboxMessage => {
@@ -108,6 +110,8 @@ export const sendInboxMessage = (input: SendMessageInput): InboxMessage => {
     body: input.body,
     triggerKey: input.triggerKey,
     templateName: input.templateName,
+    audience: input.audience,
+    groupMessageId: input.groupMessageId,
     read: false,
     archived: false,
     createdAt: new Date().toISOString(),

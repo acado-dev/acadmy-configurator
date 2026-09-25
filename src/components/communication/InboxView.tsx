@@ -109,7 +109,7 @@ export function InboxView({ scope, senderName, title }: Props) {
 
   const folderMessages = useMemo(() => {
     const q = search.toLowerCase();
-    return scopeMessages
+    const filtered = scopeMessages
       .filter((m) => {
         const isOutgoing = m.fromScope === scope;
         if (folder === 'archived') return m.archived;
@@ -122,9 +122,23 @@ export function InboxView({ scope, senderName, title }: Props) {
           m.subject.toLowerCase().includes(q) ||
           stripHtml(m.body).toLowerCase().includes(q) ||
           m.fromName.toLowerCase().includes(q) ||
-          m.toName.toLowerCase().includes(q)
+          m.toName.toLowerCase().includes(q) ||
+          m.audience?.type.toLowerCase().includes(q) ||
+          m.audience?.name.toLowerCase().includes(q) ||
+          m.audience?.recipients.some((recipient) =>
+            recipient.name.toLowerCase().includes(q)
+          )
       )
       .sort((a, b) => +new Date(b.createdAt) - +new Date(a.createdAt));
+
+    if (folder !== 'sent') return filtered;
+    const seenGroupMessages = new Set<string>();
+    return filtered.filter((message) => {
+      if (!message.groupMessageId) return true;
+      if (seenGroupMessages.has(message.groupMessageId)) return false;
+      seenGroupMessages.add(message.groupMessageId);
+      return true;
+    });
   }, [scopeMessages, folder, search, scope]);
 
   const selected = useMemo(
@@ -192,6 +206,13 @@ export function InboxView({ scope, senderName, title }: Props) {
         });
         return;
       }
+      const groupMessageId = `group-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+      const audience = {
+        id: group.id,
+        type: group.type,
+        name: group.name,
+        recipients: group.recipients.map(({ name, email }) => ({ name, email })),
+      };
       group.recipients.forEach((r) =>
         sendInboxMessage({
           fromName: senderName,
@@ -201,6 +222,8 @@ export function InboxView({ scope, senderName, title }: Props) {
           toScope: r.scope,
           subject: compose.subject,
           body,
+          audience,
+          groupMessageId,
         })
       );
       resetCompose();
@@ -387,7 +410,7 @@ export function InboxView({ scope, senderName, title }: Props) {
         )}
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-[360px_1fr]">
+      <div className="grid gap-4 lg:grid-cols-[430px_1fr]">
         <Card className="overflow-hidden">
           <CardHeader className="space-y-3 pb-3">
             <Tabs value={folder} onValueChange={(value) => setFolder(value as Folder)}>
@@ -434,14 +457,35 @@ export function InboxView({ scope, senderName, title }: Props) {
                       selected?.id === message.id ? 'bg-accent' : ''
                     }`}
                   >
-                    <div className="flex items-center justify-between gap-2">
-                      <span
-                        className={`truncate text-sm ${
-                          message.read ? 'font-normal' : 'font-semibold'
-                        }`}
-                      >
-                        {folder === 'sent' ? message.toName : message.fromName}
-                      </span>
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="min-w-0 flex-1">
+                        {folder === 'sent' && message.audience ? (
+                          <div className="space-y-1">
+                            <div className="flex flex-wrap items-center gap-1.5">
+                              <Badge variant="secondary" className="text-[10px] font-medium">
+                                {message.audience.type}
+                              </Badge>
+                              <span className="text-sm font-semibold">
+                                {message.audience.name}
+                              </span>
+                            </div>
+                            <p className="text-xs leading-5 text-muted-foreground">
+                              <span className="font-medium text-foreground">
+                                {message.audience.recipients.length} recipients:
+                              </span>{' '}
+                              {message.audience.recipients.map((recipient) => recipient.name).join(', ')}
+                            </p>
+                          </div>
+                        ) : (
+                          <span
+                            className={`block truncate text-sm ${
+                              message.read ? 'font-normal' : 'font-semibold'
+                            }`}
+                          >
+                            {folder === 'sent' ? `To: ${message.toName}` : message.fromName}
+                          </span>
+                        )}
+                      </div>
                       <span className="shrink-0 text-[11px] text-muted-foreground">
                         {new Date(message.createdAt).toLocaleDateString()}
                       </span>

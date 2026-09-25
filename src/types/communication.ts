@@ -63,6 +63,18 @@ export interface MessageLogEntry {
 
 export type InboxScope = 'student' | 'university' | 'admin';
 
+export interface InboxRecipientSummary {
+  name: string;
+  email: string;
+}
+
+export interface InboxAudienceSummary {
+  id: string;
+  type: string;
+  name: string;
+  recipients: InboxRecipientSummary[];
+}
+
 export interface InboxMessage {
   id: string;
   threadId: string;
@@ -75,6 +87,9 @@ export interface InboxMessage {
   body: string;
   triggerKey?: string;
   templateName?: string;
+  /** Shared metadata used to display one recipient summary for a group send. */
+  audience?: InboxAudienceSummary;
+  groupMessageId?: string;
   read: boolean;
   archived: boolean;
   createdAt: string;
