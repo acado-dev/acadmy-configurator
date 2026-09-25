@@ -121,6 +121,10 @@ import InterviewList from '@/pages/university/selection/InterviewList';
 import InterviewForm from '@/pages/university/selection/InterviewForm';
 import ResponsesList from '@/pages/university/selection/ResponsesList';
 import ResponseReview from '@/pages/university/selection/ResponseReview';
+import JobsListing from '@/pages/jobs/JobsListing';
+import JobForm from '@/pages/jobs/JobForm';
+import JobDetail from '@/pages/jobs/JobDetail';
+import JobApplicants from '@/pages/jobs/JobApplicants';
 
 
 const queryClient = new QueryClient();
@@ -192,6 +196,11 @@ const App = () => {
               <Route path="events/:id/stages/:stageId/responses/:responseId" element={<EventResponseDetail />} />
               
               {/* Scholarships */}
+              <Route path="jobs" element={<JobsListing />} />
+              <Route path="jobs/new" element={<JobForm />} />
+              <Route path="jobs/:id/edit" element={<JobForm />} />
+              <Route path="jobs/:id/applicants" element={<JobApplicants />} />
+              <Route path="jobs/:id" element={<JobDetail />} />
               <Route path="scholarships" element={<Scholarships />} />
               <Route path="scholarships/create" element={<CreateScholarship />} />
               <Route path="scholarships/edit/:id" element={<CreateScholarship />} />
@@ -331,6 +340,11 @@ const App = () => {
               <Route path="communication/templates/log" element={<UniversityMessageLog />} />
               <Route path="communication/templates/:templateId" element={<UniversityTemplateEditor />} />
               <Route path="inbox" element={<UniversityInbox />} />
+              <Route path="jobs" element={<JobsListing />} />
+              <Route path="jobs/new" element={<JobForm />} />
+              <Route path="jobs/:id/edit" element={<JobForm />} />
+              <Route path="jobs/:id/applicants" element={<JobApplicants />} />
+              <Route path="jobs/:id" element={<JobDetail />} />
               <Route path="users" element={<UserManagement />} />
               <Route path="analytics" element={<UniversityAnalytics />} />
               <Route path="reports" element={<UniversityReports />} />

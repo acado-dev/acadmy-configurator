@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { 
   Home, 
+  Briefcase,
   FileText, 
   Building2, 
   BookOpen, 
@@ -91,6 +92,15 @@ const UniversityLayout = () => {
         { label: 'Communication Templates', path: '/university/communication/templates', icon: Mail },
         { label: 'Inbox', path: '/university/inbox', icon: MessagesSquare },
         { label: 'Events', path: '/university/events', icon: GraduationCap },
+      ]
+    },
+    {
+      id: 'jobs-internships',
+      label: 'Jobs & Internships',
+      icon: Briefcase,
+      subItems: [
+        { label: 'All Opportunities', path: '/university/jobs', icon: Briefcase },
+        { label: 'Create New', path: '/university/jobs/new', icon: FileText },
       ]
     },
     {
