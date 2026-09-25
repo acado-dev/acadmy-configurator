@@ -76,6 +76,10 @@ export interface InboxAudienceSummary {
 }
 
 export interface InboxMessage {
+  groupLabel?: string;
+  groupType?: string;
+  groupRecipientNames?: string[];
+  groupSendId?: string;
   id: string;
   threadId: string;
   fromName: string;
