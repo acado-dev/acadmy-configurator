@@ -101,6 +101,7 @@ const UniversityLayout = () => {
       subItems: [
         { label: 'All Opportunities', path: '/university/jobs', icon: Briefcase },
         { label: 'Create New', path: '/university/jobs/new', icon: FileText },
+        { label: 'Skills Master', path: '/university/jobs/skills', icon: FileText },
       ]
     },
     {

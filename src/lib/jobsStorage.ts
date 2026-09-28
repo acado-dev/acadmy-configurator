@@ -59,14 +59,62 @@ export interface JobApplication {
 
 export interface Company { id: string; name: string; city?: string }
 
+export interface SkillOption {
+  id: string;
+  name: string;
+  category: string;
+  createdAt: string;
+}
+
 const OPP_KEY = 'jobOpportunities';
 const APP_KEY = 'jobApplications';
+const SKILL_KEY = 'jobSkills';
 
-export const SKILL_OPTIONS = [
-  'JavaScript', 'React', 'TypeScript', 'Python', 'Java', 'SQL', 'Data Analysis', 'Machine Learning',
-  'UI/UX Design', 'Figma', 'Communication', 'Marketing', 'Sales', 'Accounting', 'Excel',
-  'Project Management', 'Cloud (AWS/Azure)', 'Content Writing', 'Customer Support', 'Leadership',
+const DEFAULT_SKILLS: [string, string][] = [
+  ['JavaScript', 'Programming'], ['React', 'Programming'], ['TypeScript', 'Programming'],
+  ['Python', 'Programming'], ['Java', 'Programming'], ['SQL', 'Data & Analytics'],
+  ['Data Analysis', 'Data & Analytics'], ['Machine Learning', 'Data & Analytics'], ['Excel', 'Data & Analytics'],
+  ['UI/UX Design', 'Design'], ['Figma', 'Design'], ['Content Writing', 'Marketing'],
+  ['Marketing', 'Marketing'], ['Sales', 'Business'], ['Accounting', 'Business'],
+  ['Project Management', 'Business'], ['Cloud (AWS/Azure)', 'Programming'],
+  ['Customer Support', 'Soft Skills'], ['Communication', 'Soft Skills'], ['Leadership', 'Soft Skills'],
 ];
+
+function seedSkills() {
+  if (localStorage.getItem(SKILL_KEY)) return;
+  const now = new Date().toISOString();
+  localStorage.setItem(SKILL_KEY, JSON.stringify(DEFAULT_SKILLS.map(([name, category], i) => ({ id: `skill-${i + 1}`, name, category, createdAt: now }))));
+}
+
+export function getSkills(): SkillOption[] {
+  seedSkills();
+  try { return JSON.parse(localStorage.getItem(SKILL_KEY) || '[]'); } catch { return []; }
+}
+
+export function getSkillCategories(): string[] {
+  return Array.from(new Set(getSkills().map((s) => s.category).filter(Boolean))).sort();
+}
+
+export function saveSkill(input: { id?: string; name: string; category: string }): SkillOption {
+  const list = getSkills();
+  if (input.id) {
+    const idx = list.findIndex((s) => s.id === input.id);
+    if (idx >= 0) {
+      list[idx] = { ...list[idx], name: input.name, category: input.category };
+      localStorage.setItem(SKILL_KEY, JSON.stringify(list));
+      return list[idx];
+    }
+  }
+  const created: SkillOption = { id: uid('skill'), name: input.name, category: input.category, createdAt: new Date().toISOString() };
+  localStorage.setItem(SKILL_KEY, JSON.stringify([created, ...list]));
+  return created;
+}
+
+export function deleteSkill(id: string) {
+  localStorage.setItem(SKILL_KEY, JSON.stringify(getSkills().filter((s) => s.id !== id)));
+}
+
+export const SKILL_OPTIONS = DEFAULT_SKILLS.map(([name]) => name);
 
 const SAMPLE_COMPANIES: Company[] = [
   { id: 'ind-techsphere', name: 'TechSphere Solutions', city: 'Bengaluru' },
