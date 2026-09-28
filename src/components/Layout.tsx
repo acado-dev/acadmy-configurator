@@ -110,6 +110,7 @@ const Layout = () => {
       subItems: [
         { label: 'All Opportunities', path: '/jobs', icon: Briefcase },
         { label: 'Create New', path: '/jobs/new', icon: FileText },
+        { label: 'Skills Master', path: '/jobs/skills', icon: FileText },
       ]
     },
     {

@@ -125,6 +125,7 @@ import JobsListing from '@/pages/jobs/JobsListing';
 import JobForm from '@/pages/jobs/JobForm';
 import JobDetail from '@/pages/jobs/JobDetail';
 import JobApplicants from '@/pages/jobs/JobApplicants';
+import SkillsMaster from '@/pages/jobs/SkillsMaster';
 
 
 const queryClient = new QueryClient();
@@ -198,6 +199,7 @@ const App = () => {
               {/* Scholarships */}
               <Route path="jobs" element={<JobsListing />} />
               <Route path="jobs/new" element={<JobForm />} />
+              <Route path="jobs/skills" element={<SkillsMaster />} />
               <Route path="jobs/:id/edit" element={<JobForm />} />
               <Route path="jobs/:id/applicants" element={<JobApplicants />} />
               <Route path="jobs/:id" element={<JobDetail />} />
@@ -342,6 +344,7 @@ const App = () => {
               <Route path="inbox" element={<UniversityInbox />} />
               <Route path="jobs" element={<JobsListing />} />
               <Route path="jobs/new" element={<JobForm />} />
+              <Route path="jobs/skills" element={<SkillsMaster />} />
               <Route path="jobs/:id/edit" element={<JobForm />} />
               <Route path="jobs/:id/applicants" element={<JobApplicants />} />
               <Route path="jobs/:id" element={<JobDetail />} />
