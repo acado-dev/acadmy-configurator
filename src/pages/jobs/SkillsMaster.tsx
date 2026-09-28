@@ -53,21 +53,13 @@ export default function SkillsMaster() {
         <Button onClick={openNew}><Plus className="h-4 w-4 mr-2" />Create Skill</Button>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-        <Card><CardContent className="p-4"><p className="text-sm text-muted-foreground">Total Skills</p><p className="text-2xl font-bold">{skills.length}</p></CardContent></Card>
-        <Card><CardContent className="p-4"><p className="text-sm text-muted-foreground">Categories</p><p className="text-2xl font-bold">{categories.length}</p></CardContent></Card>
-        <Card><CardContent className="p-4"><p className="text-sm text-muted-foreground">In Use</p><p className="text-2xl font-bold">{skills.filter((s) => usedBy(s.name) > 0).length}</p></CardContent></Card>
-      </div>
-
       <Card>
         <CardContent className="p-4 space-y-4">
           <div className="flex flex-wrap gap-3">
             <div className="relative flex-1 min-w-[220px]">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input className="pl-9" placeholder="Search skill name or category..." value={q} onChange={(e) => setQ(e.target.value)} />
+              <Input className="pl-9" placeholder="Search skill name..." value={q} onChange={(e) => setQ(e.target.value)} />
             </div>
-            <Select value={category} onValueChange={setCategory}><SelectTrigger className="w-48"><SelectValue /></SelectTrigger>
-              <SelectContent><SelectItem value="all">All categories</SelectItem>{categories.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent></Select>
             <Select value={usage} onValueChange={setUsage}><SelectTrigger className="w-48"><SelectValue /></SelectTrigger>
               <SelectContent><SelectItem value="all">All skills</SelectItem><SelectItem value="used">Used in opportunities</SelectItem><SelectItem value="unused">Not used yet</SelectItem></SelectContent></Select>
           </div>
