@@ -66,16 +66,15 @@ export default function SkillsMaster() {
 
           <Table>
             <TableHeader><TableRow>
-              <TableHead>Skill</TableHead><TableHead>Category</TableHead><TableHead>Used In</TableHead><TableHead className="text-right">Actions</TableHead>
+              <TableHead>Skill</TableHead><TableHead>Used In</TableHead><TableHead className="text-right">Actions</TableHead>
             </TableRow></TableHeader>
             <TableBody>
-              {filtered.length === 0 && <TableRow><TableCell colSpan={4} className="text-center text-muted-foreground py-8">No skills found.</TableCell></TableRow>}
+              {filtered.length === 0 && <TableRow><TableCell colSpan={3} className="text-center text-muted-foreground py-8">No skills found.</TableCell></TableRow>}
               {filtered.map((s) => {
                 const used = usedBy(s.name);
                 return (
                   <TableRow key={s.id}>
                     <TableCell className="font-medium">{s.name}</TableCell>
-                    <TableCell><Badge variant="secondary">{s.category}</Badge></TableCell>
                     <TableCell>{used > 0 ? <Badge variant="default">{used} {used === 1 ? 'opportunity' : 'opportunities'}</Badge> : <span className="text-muted-foreground text-sm">Not used</span>}</TableCell>
                     <TableCell className="text-right whitespace-nowrap">
                       <Button variant="ghost" size="icon" title="Edit" onClick={() => openEdit(s)}><Pencil className="h-4 w-4" /></Button>
