@@ -11,6 +11,7 @@ export interface Opportunity {
   companyId: string;
   companyName: string;
   description: string;
+  responsibilities?: string;
   location: string;
   workMode: WorkMode;
   eligibility: string;
