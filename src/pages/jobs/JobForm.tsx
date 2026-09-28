@@ -9,7 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ArrowLeft, X } from 'lucide-react';
 import { toast } from 'sonner';
-import { getIndustryCompanies, getOpportunity, saveOpportunity, SKILL_OPTIONS, Opportunity } from '@/lib/jobsStorage';
+import { getIndustryCompanies, getOpportunity, getSkills, saveOpportunity, Opportunity } from '@/lib/jobsStorage';
 import { useJobsBase } from './JobsListing';
 import OpportunityQRDialog from '@/components/jobs/OpportunityQRDialog';
 
@@ -75,7 +75,7 @@ export default function JobForm() {
           <div className="md:col-span-2 space-y-2"><Label>Skills Required</Label>
             <Select value="" onValueChange={(v) => !f.skills.includes(v) && set('skills', [...f.skills, v])}>
               <SelectTrigger><SelectValue placeholder="Add a skill" /></SelectTrigger>
-              <SelectContent>{SKILL_OPTIONS.filter((s) => !f.skills.includes(s)).map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent></Select>
+              <SelectContent>{getSkills().map((s) => s.name).filter((s) => !f.skills.includes(s)).map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent></Select>
             <div className="flex flex-wrap gap-2">{f.skills.map((s: string) => (
               <Badge key={s} variant="secondary" className="gap-1">{s}<X className="h-3 w-3 cursor-pointer" onClick={() => set('skills', f.skills.filter((x: string) => x !== s))} /></Badge>
             ))}</div></div>
