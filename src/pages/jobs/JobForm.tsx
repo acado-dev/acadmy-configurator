@@ -71,6 +71,7 @@ export default function JobForm() {
               <SelectContent><SelectItem value="On-site">On-site</SelectItem><SelectItem value="Hybrid">Hybrid</SelectItem><SelectItem value="Remote">Remote</SelectItem></SelectContent></Select></div>
           <div className="space-y-2"><Label>Location *</Label><Input value={f.location} onChange={(e) => set('location', e.target.value)} /></div>
           <div className="md:col-span-2 space-y-2"><Label>Description</Label><Textarea rows={4} value={f.description} onChange={(e) => set('description', e.target.value)} /></div>
+          <div className="md:col-span-2 space-y-2"><Label>Job Responsibilities</Label><Textarea rows={4} value={f.responsibilities || ''} onChange={(e) => set('responsibilities', e.target.value)} placeholder="e.g. Build responsive UI components, review code, collaborate with designers" /></div>
           <div className="md:col-span-2 space-y-2"><Label>Experience / Eligibility</Label><Input value={f.eligibility} onChange={(e) => set('eligibility', e.target.value)} placeholder="e.g. 0-2 years, any graduate" /></div>
           <div className="md:col-span-2 space-y-2"><Label>Skills Required</Label>
             <Select value="" onValueChange={(v) => !f.skills.includes(v) && set('skills', [...f.skills, v])}>

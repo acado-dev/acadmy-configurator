@@ -41,6 +41,7 @@ export default function JobDetail() {
         <CardContent className="grid md:grid-cols-2 gap-4">
           {rows.filter(([, v]) => v).map(([k, v]) => <div key={k}><p className="text-xs text-muted-foreground">{k}</p><p className="font-medium">{v}</p></div>)}
           <div className="md:col-span-2"><p className="text-xs text-muted-foreground">Description</p><p className="whitespace-pre-wrap">{o.description || '—'}</p></div>
+          {o.responsibilities && <div className="md:col-span-2"><p className="text-xs text-muted-foreground">Job Responsibilities</p><p className="whitespace-pre-wrap">{o.responsibilities}</p></div>}
           <div className="md:col-span-2"><p className="text-xs text-muted-foreground mb-1">Skills</p><div className="flex flex-wrap gap-2">{o.skills.map((s) => <Badge key={s} variant="secondary">{s}</Badge>)}</div></div>
         </CardContent>
       </Card>
