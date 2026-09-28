@@ -92,9 +92,7 @@ export default function SkillsMaster() {
         <DialogContent>
           <DialogHeader><DialogTitle>{editing === 'new' ? 'Create Skill' : 'Edit Skill'}</DialogTitle></DialogHeader>
           <div className="space-y-4">
-            <div className="space-y-2"><Label>Skill Name *</Label><Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="e.g. JavaScript" /></div>
-            <div className="space-y-2"><Label>Category</Label><Input value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} placeholder="e.g. Programming" list="skill-categories" />
-              <datalist id="skill-categories">{categories.map((c) => <option key={c} value={c} />)}</datalist></div>
+          <div className="space-y-2"><Label>Skill Name *</Label><Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="e.g. JavaScript" /></div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setEditing(null)}>Cancel</Button>
