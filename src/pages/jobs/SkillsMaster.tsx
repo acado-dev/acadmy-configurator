@@ -16,31 +16,28 @@ export default function SkillsMaster() {
   const [skills, setSkills] = useState(getSkills());
   const opps = getOpportunities();
   const [q, setQ] = useState('');
-  const [category, setCategory] = useState('all');
   const [usage, setUsage] = useState('all');
   const [editing, setEditing] = useState<SkillOption | 'new' | null>(null);
-  const [form, setForm] = useState({ name: '', category: '' });
+  const [form, setForm] = useState({ name: '' });
   const [toDelete, setToDelete] = useState<SkillOption | null>(null);
 
   const usedBy = (name: string) => opps.filter((o) => o.skills.includes(name)).length;
-  const categories = useMemo(() => Array.from(new Set(skills.map((s) => s.category).filter(Boolean))).sort(), [skills]);
 
   const filtered = useMemo(() => skills.filter((s) => {
     const used = usedBy(s.name);
-    return (category === 'all' || s.category === category) &&
-      (usage === 'all' || (usage === 'used' ? used > 0 : used === 0)) &&
-      `${s.name} ${s.category}`.toLowerCase().includes(q.toLowerCase());
-  }), [skills, q, category, usage, opps]);
+    return (usage === 'all' || (usage === 'used' ? used > 0 : used === 0)) &&
+      s.name.toLowerCase().includes(q.toLowerCase());
+  }), [skills, q, usage, opps]);
 
-  const openNew = () => { setForm({ name: '', category: '' }); setEditing('new'); };
-  const openEdit = (s: SkillOption) => { setForm({ name: s.name, category: s.category }); setEditing(s); };
+  const openNew = () => { setForm({ name: '' }); setEditing('new'); };
+  const openEdit = (s: SkillOption) => { setForm({ name: s.name }); setEditing(s); };
 
   const save = () => {
     const name = form.name.trim();
     if (!name) return toast.error('Please enter a skill name');
     const dup = skills.find((s) => s.name.toLowerCase() === name.toLowerCase() && (editing === 'new' || s.id !== (editing as SkillOption).id));
     if (dup) return toast.error('A skill with this name already exists');
-    saveSkill({ id: editing === 'new' ? undefined : (editing as SkillOption).id, name, category: form.category.trim() || 'General' });
+    saveSkill({ id: editing === 'new' ? undefined : (editing as SkillOption).id, name, category: (editing !== 'new' ? (editing as SkillOption).category : '') || 'General' });
     setSkills(getSkills());
     setEditing(null);
     toast.success(editing === 'new' ? 'Skill created' : 'Skill updated');
