@@ -49,11 +49,19 @@ const UniversityLayout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [expandedMenus, setExpandedMenus] = useState<string[]>(['university-setup']);
   
-  // Mock university data - in production, fetch from auth context
+  let admin: { universityId?: string; universityName?: string; email?: string } | null = null;
+  let institution: { name?: string; logo?: string } | undefined;
+  try {
+    admin = JSON.parse(localStorage.getItem('universityAdmin') || 'null');
+    const institutions = JSON.parse(localStorage.getItem('acado_universities') || '[]');
+    institution = institutions.find((item: { id: string }) => item.id === admin?.universityId);
+  } catch {
+    // Invalid local account data must not select another institution.
+  }
   const universityData = {
-    name: "Stanford University",
-    logo: "/stanford-logo.png",
-    adminEmail: "admin@stanford.edu",
+    name: institution?.name || admin?.universityName || 'University Admin',
+    logo: institution?.logo || '',
+    adminEmail: admin?.email || '',
     pendingApplications: 12
   };
 
