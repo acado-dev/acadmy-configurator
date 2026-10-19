@@ -1,0 +1,42 @@
+import { useState } from 'react';
+import { Plus, Search, Eye, Trash2, Download, Users } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Badge } from '@/components/ui/badge';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogAction, AlertDialogCancel } from '@/components/ui/alert-dialog';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Subscriber, getSubscribers, recordSubscription, unsubscribe, deleteSubscriber, updateSubscriberName, maskContactEmail, exportSubscribers, eligibleSubscribers } from '@/lib/websiteCommunication';
+import { toast } from 'sonner';
+
+export default function NewsletterSubscribers() {
+  const [subscribers, setSubscribers] = useState(getSubscribers);
+  const [search, setSearch] = useState(''); const [filter, setFilter] = useState('all');
+  const [editing, setEditing] = useState<Subscriber | 'new' | null>(null); const [remove, setRemove] = useState<Subscriber | null>(null);
+  const [name, setName] = useState(''); const [email, setEmail] = useState(''); const [source, setSource] = useState(''); const [confirmed, setConfirmed] = useState(false);
+  const refresh = () => setSubscribers(getSubscribers());
+  const open = (s: Subscriber | 'new') => { setEditing(s); setName(s === 'new' ? '' : s.name); setEmail(s === 'new' ? '' : s.email); setSource(''); setConfirmed(false); };
+  const save = () => { try { if (editing === 'new') recordSubscription({ name, email, source, consent: confirmed }); else if (editing) updateSubscriberName(editing.id, name); refresh(); setEditing(null); toast.success('Subscriber saved'); } catch (error) { toast.error(error instanceof Error && !('issues' in error) ? error.message : 'Enter a valid email and consent record, and confirm permission.'); } };
+  const filtered = subscribers.filter(s => (filter === 'all' || s.status === filter) && `${s.name} ${maskContactEmail(s.email)}`.toLowerCase().includes(search.toLowerCase()));
+  return <div className="space-y-6">
+    <header className="flex flex-wrap justify-between items-center gap-3"><h1 className="text-2xl font-bold flex items-center gap-2"><Users className="h-6 w-6 text-primary" />Newsletter Subscribers</h1><div className="flex flex-wrap gap-2"><Button variant="outline" onClick={() => exportSubscribers(filtered)}><Download className="h-4 w-4 mr-2" />Export</Button><Button onClick={() => open('new')}><Plus className="h-4 w-4 mr-2" />Add subscriber</Button></div></header>
+    <div className="text-sm text-muted-foreground">{subscribers.length} records · {eligibleSubscribers(subscribers).length} consented recipients eligible for delivery</div>
+    <div className="flex flex-wrap gap-3"><div className="relative flex-1 min-w-48"><Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" /><Input className="pl-9" aria-label="Search subscribers" placeholder="Search subscriber name or masked email…" value={search} onChange={e => setSearch(e.target.value)} /></div><Select value={filter} onValueChange={setFilter}><SelectTrigger className="w-48"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="all">All statuses</SelectItem><SelectItem value="Subscribed">Subscribed</SelectItem><SelectItem value="Unsubscribed">Unsubscribed</SelectItem></SelectContent></Select></div>
+    <div className="border rounded-lg overflow-x-auto"><Table><TableHeader><TableRow><TableHead>Subscriber</TableHead><TableHead>Email</TableHead><TableHead>Status</TableHead><TableHead>Consent date</TableHead><TableHead className="min-w-48">Consent source</TableHead><TableHead>Actions</TableHead></TableRow></TableHeader><TableBody>{filtered.map(s => <TableRow key={s.id}><TableCell className="font-medium">{s.name || '—'} {s.sample && <Badge variant="outline">Sample</Badge>}</TableCell><TableCell>{maskContactEmail(s.email)}</TableCell><TableCell><Badge variant={s.status === 'Subscribed' ? 'default' : 'secondary'}>{s.status}</Badge></TableCell><TableCell>{s.consentAt ? new Date(s.consentAt).toLocaleDateString() : 'No consent'}</TableCell><TableCell className="text-sm">{s.consentSource}</TableCell><TableCell className="whitespace-nowrap"><Button size="icon" variant="ghost" aria-label={`View subscriber ${s.name || s.id}`} title="View and manage subscriber" onClick={() => open(s)}><Eye className="h-4 w-4" /></Button><Button size="icon" variant="ghost" aria-label={`Delete subscriber ${s.name || s.id}`} title="Delete subscriber" onClick={() => setRemove(s)}><Trash2 className="h-4 w-4 text-destructive" /></Button></TableCell></TableRow>)}{!filtered.length && <TableRow><TableCell colSpan={6} className="text-center py-12 text-muted-foreground">No subscribers found.</TableCell></TableRow>}</TableBody></Table></div>
+    <Dialog open={Boolean(editing)} onOpenChange={o => { if (!o) setEditing(null); }}><DialogContent className="max-h-[90vh] overflow-y-auto"><DialogHeader><DialogTitle>{editing === 'new' ? 'Add consented subscriber' : 'Subscriber profile'}</DialogTitle></DialogHeader>
+      <div className="space-y-2"><Label htmlFor="subscriber-name">Name</Label><Input id="subscriber-name" maxLength={200} value={name} onChange={e => setName(e.target.value)} /></div>
+      <div className="space-y-2"><Label htmlFor="subscriber-email">Email *</Label><Input id="subscriber-email" type="email" maxLength={255} value={email} disabled={editing !== 'new'} onChange={e => setEmail(e.target.value)} /></div>
+      {editing && editing !== 'new' && <div className="space-y-2 text-sm"><Badge variant="secondary">{editing.status}</Badge><p>Consent: {editing.consentAt ? new Date(editing.consentAt).toLocaleString() : 'Not confirmed'}</p><p className="break-words">{editing.consentSource}</p><p>Updated: {new Date(editing.updatedAt).toLocaleString()}</p></div>}
+      {(editing === 'new' || (editing?.status === 'Unsubscribed' && !editing.sample)) && <><div className="space-y-2"><Label htmlFor="consent-source">Consent evidence / source *</Label><Input id="consent-source" maxLength={500} placeholder="e.g. Signed signup form, confirmed 19 Oct" value={source} onChange={e => setSource(e.target.value)} /></div><div className="flex items-start gap-3"><Checkbox id="subscriber-consent" checked={confirmed} onCheckedChange={v => setConfirmed(v === true)} /><Label htmlFor="subscriber-consent" className="text-sm leading-relaxed">The email owner explicitly confirmed permission to receive ACADO newsletters.</Label></div></>}
+      <DialogFooter className="gap-2 flex-wrap">
+        {editing && editing !== 'new' && editing.status === 'Subscribed' && <Button variant="outline" onClick={() => { unsubscribe(editing.id); refresh(); setEditing({ ...editing, status: 'Unsubscribed' }); toast.success('Subscriber unsubscribed'); }}>Unsubscribe</Button>}
+        {editing && editing !== 'new' && editing.status === 'Unsubscribed' && !editing.sample && <Button variant="outline" disabled={!confirmed || !source.trim()} onClick={() => { try { recordSubscription({ name, email, consent: confirmed, source }, editing.id); refresh(); setEditing(null); toast.success('New consent recorded'); } catch (error) { toast.error(error instanceof Error ? error.message : 'Unable to subscribe'); } }}>Record new consent</Button>}
+        <Button onClick={save}>Save</Button>
+      </DialogFooter>
+    </DialogContent></Dialog>
+    <AlertDialog open={Boolean(remove)} onOpenChange={o => { if (!o) setRemove(null); }}><AlertDialogContent><AlertDialogHeader><AlertDialogTitle>Delete subscriber record?</AlertDialogTitle><AlertDialogDescription>This removes the subscriber and their consent record permanently. Unsubscribe instead to retain their history.</AlertDialogDescription></AlertDialogHeader><AlertDialogFooter><AlertDialogCancel>Cancel</AlertDialogCancel><AlertDialogAction onClick={() => { if (!remove) return; deleteSubscriber(remove.id); refresh(); setRemove(null); toast.success('Subscriber deleted'); }}>Delete</AlertDialogAction></AlertDialogFooter></AlertDialogContent></AlertDialog>
+  </div>;
+}
