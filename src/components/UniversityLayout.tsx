@@ -78,7 +78,7 @@ const UniversityLayout = () => {
       icon: Building2,
       subItems: [
         { label: 'Dashboard', path: '/university/dashboard', icon: LayoutDashboard },
-        { label: 'University Info', path: '/university/info', icon: Info },
+        { label: 'University Details', path: '/university/info', icon: Info },
         { label: 'Users', path: '/university/users', icon: UserPlus },
         { label: 'Courses', path: '/university/courses', icon: BookOpen },
       ]
@@ -298,7 +298,7 @@ const UniversityLayout = () => {
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => navigate("/university/info")} className="cursor-pointer">
                   <Building2 className="mr-2 h-4 w-4" />
-                  University Info
+                  University Details
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => navigate("/university/preferences")} className="cursor-pointer">
                   <Settings className="mr-2 h-4 w-4" />
