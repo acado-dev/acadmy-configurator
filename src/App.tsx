@@ -126,6 +126,10 @@ import JobForm from '@/pages/jobs/JobForm';
 import JobDetail from '@/pages/jobs/JobDetail';
 import JobApplicants from '@/pages/jobs/JobApplicants';
 import SkillsMaster from '@/pages/jobs/SkillsMaster';
+import ContactQueries from '@/pages/communication/ContactQueries';
+import Newsletters from '@/pages/communication/Newsletters';
+import NewsletterEditor from '@/pages/communication/NewsletterEditor';
+import NewsletterSubscribers from '@/pages/communication/NewsletterSubscribers';
 
 
 const queryClient = new QueryClient();
@@ -219,6 +223,11 @@ const App = () => {
               <Route path="bulk-email" element={<BulkEmail />} />
 
               {/* Communication */}
+              <Route path="communication/contact-us" element={<ContactQueries />} />
+              <Route path="communication/newsletters" element={<Newsletters />} />
+              <Route path="communication/newsletters/new" element={<NewsletterEditor />} />
+              <Route path="communication/newsletters/:newsletterId/edit" element={<NewsletterEditor />} />
+              <Route path="communication/subscribers" element={<NewsletterSubscribers />} />
               <Route path="communication/templates" element={<AdminTemplates />} />
               <Route path="communication/templates/new" element={<AdminTemplateEditor />} />
               <Route path="communication/templates/triggers" element={<AdminTriggerPoints />} />

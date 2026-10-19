@@ -167,6 +167,9 @@ const Layout = () => {
         { label: 'Trigger Points', path: '/communication/templates/triggers', icon: Cog },
         { label: 'Message Log', path: '/communication/templates/log', icon: Mail },
         { label: 'Internal Inbox', path: '/inbox', icon: Users },
+        { label: 'Contact Us', path: '/communication/contact-us', icon: Mail },
+        { label: 'Newsletters', path: '/communication/newsletters', icon: Rss },
+        { label: 'Newsletter Subscribers', path: '/communication/subscribers', icon: Users },
       ]
     },
     {
