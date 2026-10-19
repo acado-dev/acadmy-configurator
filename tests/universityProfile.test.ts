@@ -1,6 +1,6 @@
 import { describe, it as test } from 'node:test';
 import assert from 'node:assert/strict';
-import { emptyUniversityProfile, resolveUniversityProfileId, updateUniversityProfiles } from './universityProfile';
+import { emptyUniversityProfile, resolveUniversityProfileId, updateUniversityProfiles } from '../src/lib/universityProfile';
 
 describe('University administrator profile editing', () => {
   test('resolves the administrator’s own university, not another institution', () => {
