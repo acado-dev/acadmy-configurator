@@ -6,6 +6,6 @@
 - Reuse the university details editor for both admin panels; university admins resolve their institution from the signed-in `universityAdmin.universityId`, never a route parameter or an arbitrary sample, so profile edits stay institution-specific.
 - Persist university profile changes to the shared `acado_universities` localStorage collection so both panels read the same institution record.
 
-- Communities management uses Cloud tables, private image storage and protected user_roles university assignments; demo localStorage login must never grant community access because these records are shared across users.
+- Communities uses a dedicated seeded localStorage prototype store; never bypass or weaken Cloud policies to make demo screens accessible, because live data must remain isolated.
 - Keep the legacy Posts module at /communities separate from Communities management at /community-management; shared admin screens preserve the /university prefix.
-- Community universities are explicitly imported from existing institution records by a verified Super Admin; never infer account roles or university assignments from browser data.
+- Prototype Communities uses the current dashboard context for institution-scoped presentation only; it does not authenticate against or read/write Cloud records.
