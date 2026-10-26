@@ -9,7 +9,8 @@ import {
   Home,
   BookOpen,
   Bell,
-  Inbox
+  Inbox,
+  Users
 } from "lucide-react";
 import { getUnreadCount } from "@/lib/messaging";
 import { useState } from "react";
@@ -41,6 +42,7 @@ const UserLayout = () => {
   const navigationItems = [
     { path: "/user/dashboard", label: "Dashboard", icon: Home },
     { path: "/user/courses", label: "Courses", icon: BookOpen },
+    { path: "/user/communities", label: "Communities", icon: Users },
     { path: "/user/applications", label: "Applications", icon: FileText },
     { path: "/user/inbox", label: "Inbox", icon: Inbox, badge: inboxUnread },
     { path: "/user/notifications", label: "Notifications", icon: Bell, badge: unreadCount },

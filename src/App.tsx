@@ -131,6 +131,7 @@ import Newsletters from '@/pages/communication/Newsletters';
 import NewsletterEditor from '@/pages/communication/NewsletterEditor';
 import NewsletterSubscribers from '@/pages/communication/NewsletterSubscribers';
 import CommunityAdmin from '@/pages/communities/CommunityAdmin';
+import LearnerCommunities from '@/pages/communities/LearnerCommunities';
 
 
 const queryClient = new QueryClient();
@@ -286,6 +287,7 @@ const App = () => {
               </UserProtectedRoute>
             }>
               <Route path="dashboard" element={<UserDashboard />} />
+              <Route path="communities" element={<LearnerCommunities />} />
               <Route path="courses" element={<CourseListing />} />
               <Route path="courses/:courseId" element={<UserCourseDetail />} />
               <Route path="apply/:formId" element={<ApplicationWizard />} />

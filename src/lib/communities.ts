@@ -7,16 +7,7 @@ export type Post = Database['public']['Tables']['community_posts']['Row'];
 export type University = Database['public']['Tables']['community_universities']['Row'];
 export type CommunityRole = Database['public']['Tables']['user_roles']['Row'];
 export const communityQueryKey = ['community-management'];
-export function activePostCategories(categories: Category[], universityId: string) {
-  return categories.filter(c => c.active && c.university_id === universityId);
-}
-export function visibleLearnerCommunities(communities: Community[]) { return communities.filter(c => c.active); }
-export function communityCounts(id: string, members: Member[], posts: Post[]) {
-  return { members: members.filter(m => m.community_id === id).length, posts: posts.filter(p => p.community_id === id).length };
-}
-export function canManageUniversity(roles: CommunityRole[], universityId: string) {
-  return roles.some(r => r.role === 'super_admin' || (r.role === 'organization_admin' && r.university_id === universityId));
-}
+export { activePostCategories, visibleLearnerCommunities, communityCounts, canManageUniversity } from './communityRules';
 export async function fetchCommunityData() {
   const results = await Promise.all([
     supabase.from('communities').select('*'), supabase.from('community_categories').select('*'),

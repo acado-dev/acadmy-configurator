@@ -113,7 +113,7 @@ const UniversityLayout = () => {
       ]
     },
     {
-      id: 'talent-pool',
+      id: 'community-management',
       label: 'Communities',
       icon: Users,
       subItems: [
@@ -122,7 +122,7 @@ const UniversityLayout = () => {
       ]
     },
     {
-      id: 'talent-pool-existing',
+      id: 'talent-pool',
       label: 'Talent Pool',
       icon: Users,
       subItems: [
