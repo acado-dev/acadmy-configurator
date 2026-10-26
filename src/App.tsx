@@ -130,6 +130,8 @@ import ContactQueries from '@/pages/communication/ContactQueries';
 import Newsletters from '@/pages/communication/Newsletters';
 import NewsletterEditor from '@/pages/communication/NewsletterEditor';
 import NewsletterSubscribers from '@/pages/communication/NewsletterSubscribers';
+import CommunityAdmin from '@/pages/communities/CommunityAdmin';
+import LearnerCommunities from '@/pages/communities/LearnerCommunities';
 
 
 const queryClient = new QueryClient();
@@ -181,6 +183,11 @@ const App = () => {
               <Route path="users" element={<Users />} />
               <Route path="criteria-agent/:courseId" element={<CriteriaAgentPage />} />
               {/* Community Posts */}
+              <Route path="community-management" element={<CommunityAdmin />} />
+              <Route path="community-management/categories" element={<CommunityAdmin page="categories" />} />
+              <Route path="community-management/new" element={<CommunityAdmin page="form" />} />
+              <Route path="community-management/:id/edit" element={<CommunityAdmin page="form" />} />
+              <Route path="community-management/:id" element={<CommunityAdmin page="detail" />} />
               <Route path="communities" element={<CommunityPosts />} />
               <Route path="communities/create" element={<CreateCommunityPost />} />
               <Route path="communities/edit/:postId" element={<CreateCommunityPost />} />
@@ -280,6 +287,7 @@ const App = () => {
               </UserProtectedRoute>
             }>
               <Route path="dashboard" element={<UserDashboard />} />
+              <Route path="communities" element={<LearnerCommunities />} />
               <Route path="courses" element={<CourseListing />} />
               <Route path="courses/:courseId" element={<UserCourseDetail />} />
               <Route path="apply/:formId" element={<ApplicationWizard />} />
@@ -299,6 +307,11 @@ const App = () => {
               </UniversityProtectedRoute>
             }>
               <Route index element={<UniversityDashboard />} />
+              <Route path="community-management" element={<CommunityAdmin />} />
+              <Route path="community-management/categories" element={<CommunityAdmin page="categories" />} />
+              <Route path="community-management/new" element={<CommunityAdmin page="form" />} />
+              <Route path="community-management/:id/edit" element={<CommunityAdmin page="form" />} />
+              <Route path="community-management/:id" element={<CommunityAdmin page="detail" />} />
               <Route path="dashboard" element={<UniversityDashboard />} />
               <Route path="info" element={<UniversityInfo />} />
               <Route path="courses" element={<UniversityCourses />} />

@@ -1,0 +1,7 @@
+CREATE POLICY community_media_read ON storage.objects FOR SELECT TO authenticated USING(bucket_id='community-media' AND (public.can_manage_community_university(auth.uid(),(storage.foldername(name))[1]) OR EXISTS(SELECT 1 FROM public.communities c WHERE c.thumbnail=storage.objects.name AND c.active AND public.can_read_community_university(auth.uid(),c.university_id))));
+CREATE POLICY community_media_insert ON storage.objects FOR INSERT TO authenticated WITH CHECK(bucket_id='community-media' AND public.can_manage_community_university(auth.uid(),(storage.foldername(name))[1]) AND lower(storage.extension(name)) IN ('jpg','jpeg','png','webp'));
+CREATE POLICY community_media_delete ON storage.objects FOR DELETE TO authenticated USING(bucket_id='community-media' AND public.can_manage_community_university(auth.uid(),(storage.foldername(name))[1]));
+REVOKE EXECUTE ON FUNCTION public.community_member_candidates(text) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.community_member_candidates(text) TO authenticated;
+REVOKE EXECUTE ON FUNCTION public.can_manage_community_university(uuid,text),public.can_read_community_university(uuid,text) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.can_manage_community_university(uuid,text),public.can_read_community_university(uuid,text) TO authenticated;

@@ -114,6 +114,15 @@ const Layout = () => {
       ]
     },
     {
+      id: 'community-management',
+      label: 'Communities',
+      icon: Users,
+      subItems: [
+        { label: 'All Communities', path: '/community-management', icon: Users },
+        { label: 'Categories', path: '/community-management/categories', icon: Hash },
+      ]
+    },
+    {
       id: 'talent-management',
       label: 'Talent Management',
       icon: Briefcase,
