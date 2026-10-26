@@ -97,7 +97,7 @@ const Layout = () => {
       icon: Globe,
       subItems: [
         { label: 'Wall', path: '/wall', icon: FileText },
-        { label: 'Communities', path: '/communities', icon: Users },
+        { label: 'Posts', path: '/communities', icon: Users },
         { label: 'Reels', path: '/reels', icon: Rss },
         { label: 'Events', path: '/events', icon: Calendar },
         { label: 'Scholarships', path: '/scholarships', icon: Gift },
