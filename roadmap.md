@@ -10,4 +10,5 @@
 - [x] Add admin listing, forms, details, membership management and moderation in both panels.
 - [x] Add shared learner community access, active-category dropdown and inactive-community hiding; no existing learner Community screen was present to integrate or redesign.
 - [x] Test status, category, count and university-boundary rules; verify demo login cannot bypass secure community access.
-- [ ] Activate and verify the authenticated management flow — blocked: there are no verified Cloud accounts or protected admin/university assignments. Existing dashboard accounts are browser-local demos; they cannot safely grant backend access.
+- [x] Replace community verification screens with an isolated, prepopulated prototype store; keep unused Cloud data protections unchanged.
+- [ ] Verify seeded community, category and membership prototype flows.
