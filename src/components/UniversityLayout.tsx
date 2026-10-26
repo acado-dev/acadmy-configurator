@@ -114,6 +114,15 @@ const UniversityLayout = () => {
     },
     {
       id: 'talent-pool',
+      label: 'Communities',
+      icon: Users,
+      subItems: [
+        { label: 'All Communities', path: '/university/community-management', icon: Users },
+        { label: 'Categories', path: '/university/community-management/categories', icon: FileText },
+      ]
+    },
+    {
+      id: 'talent-pool-existing',
       label: 'Talent Pool',
       icon: Users,
       subItems: [
