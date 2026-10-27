@@ -10,6 +10,13 @@ import { Separator } from '@/components/ui/separator';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { toast } from '@/hooks/use-toast';
+import CourseDetailsEditor, {
+  CourseDetailsData,
+  emptyCourseDetails,
+  extractCourseDetails,
+} from '@/components/courses/CourseDetailsEditor';
+import { ensureCourseDetailsSeed } from '@/lib/courseDetails';
+import { Course } from '@/types/course';
 
 interface CourseCampaign {
   courseId: string;
