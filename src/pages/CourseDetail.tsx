@@ -23,6 +23,7 @@ const CourseDetail = () => {
   const [learningOutcomes, setLearningOutcomes] = useState<LearningOutcome[]>([]);
 
   useEffect(() => {
+    ensureCourseDetailsSeed();
     const courses = JSON.parse(localStorage.getItem('courses') || '[]');
     const categories = JSON.parse(localStorage.getItem('courseCategories') || '[]');
     const levels = JSON.parse(localStorage.getItem('courseLevels') || '[]');
@@ -191,6 +192,17 @@ const CourseDetail = () => {
               <Badge variant={course.isActive ? 'secondary' : 'outline'}>
                 {course.isActive ? 'Active' : 'Inactive'}
               </Badge>
+            </div>
+
+            <div className="flex items-start gap-3">
+              <Heart className="w-5 h-5 text-muted-foreground mt-0.5" />
+              <div>
+                <p className="text-sm text-muted-foreground">Interested Users</p>
+                <p className="font-medium">
+                  {getCourseInterestCount(course.id)}{' '}
+                  {getCourseInterestCount(course.id) === 1 ? 'person' : 'people'} marked interest
+                </p>
+              </div>
             </div>
           </Card>
 
