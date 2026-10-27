@@ -50,6 +50,7 @@ const UniversityAddEditCourse = () => {
   const [applicationFormId, setApplicationFormId] = useState('');
   const [informationCollected, setInformationCollected] = useState('');
   const [matchingCriteriaConfigured, setMatchingCriteriaConfigured] = useState(false);
+  const [details, setDetails] = useState<CourseDetailsData>(emptyCourseDetails);
 
   // Reference data
   const [categories, setCategories] = useState<CourseCategory[]>([]);

@@ -46,6 +46,7 @@ const AddEditCourse = () => {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [isActive, setIsActive] = useState(true);
+  const [details, setDetails] = useState<CourseDetailsData>(emptyCourseDetails);
 
   // Reference data
   const [categories, setCategories] = useState<CourseCategory[]>([]);
