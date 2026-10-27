@@ -97,6 +97,7 @@ const UniversityAddEditCourse = () => {
       setApplicationFormId(course.applicationFormId || '');
       setInformationCollected(course.informationCollected || '');
       setMatchingCriteriaConfigured(course.matchingCriteriaConfigured || false);
+      setDetails(extractCourseDetails(course));
     }
   };
 

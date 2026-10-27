@@ -87,6 +87,7 @@ const AddEditCourse = () => {
       setStartDate(course.startDate || '');
       setEndDate(course.endDate || '');
       setIsActive(course.isActive);
+      setDetails(extractCourseDetails(course));
     }
   };
 
