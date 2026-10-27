@@ -295,10 +295,13 @@ const UniversityDetails = ({ profileId, universityAdmin = false, initialName = '
             <p className="text-muted-foreground mt-1">Configure the content shown on the university detail page</p>
           </div>
         </div>
+        <div className="flex flex-wrap gap-2">
+        <Button variant="outline" onClick={() => navigate(universityAdmin ? '/university/student-life' : `/universities/${university.id}/student-life`)}>Student Life</Button>
         <Button onClick={handleSave} disabled={saving} variant="gradient" className="gap-2">
           <Save className="w-4 h-4" />
           {saving ? 'Saving...' : 'Save Changes'}
         </Button>
+        </div>
       </div>
 
       <Tabs defaultValue="identity" className="w-full">

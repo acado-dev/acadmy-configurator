@@ -398,6 +398,7 @@ const Universities = () => {
 
                   {/* CTA Buttons */}
                   <div className="flex items-center gap-2 flex-shrink-0">
+                    <Button variant="outline" size="sm" onClick={() => navigate(`/universities/${university.id}/student-life`)}>Student Life</Button>
                     <Button
                       variant="default"
                       size="sm"
