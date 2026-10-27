@@ -444,6 +444,26 @@ const UniversityView = () => {
 
         {/* Statistics Tab */}
         <TabsContent value="statistics" className="space-y-6">
+          {university.keyStatistics && university.keyStatistics.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Key Statistics</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                  {university.keyStatistics.map((stat) => (
+                    <div key={stat.id} className="text-center p-4 rounded-lg bg-primary/5 hover:bg-primary/10 transition-colors">
+                      <p className="text-3xl font-bold text-primary">
+                        {stat.value}{stat.unit ? <span className="text-lg font-semibold ml-1">{stat.unit}</span> : null}
+                      </p>
+                      <p className="text-sm font-medium mt-1">{stat.label}</p>
+                      {stat.context && <p className="text-xs text-muted-foreground mt-1">{stat.context}</p>}
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
           {university.factsAndFigures && (
             <Card>
               <CardHeader>
