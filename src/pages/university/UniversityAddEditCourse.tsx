@@ -15,6 +15,12 @@ import { CourseCategory } from '@/types/courseCategory';
 import { CourseLevel } from '@/types/courseLevel';
 import { CourseType } from '@/types/courseType';
 import { toast } from '@/hooks/use-toast';
+import CourseDetailsEditor, {
+  CourseDetailsData,
+  emptyCourseDetails,
+  extractCourseDetails,
+} from '@/components/courses/CourseDetailsEditor';
+import { ensureCourseDetailsSeed } from '@/lib/courseDetails';
 
 const UniversityAddEditCourse = () => {
   const navigate = useNavigate();
@@ -45,6 +51,7 @@ const UniversityAddEditCourse = () => {
   const [applicationFormId, setApplicationFormId] = useState('');
   const [informationCollected, setInformationCollected] = useState('');
   const [matchingCriteriaConfigured, setMatchingCriteriaConfigured] = useState(false);
+  const [details, setDetails] = useState<CourseDetailsData>(emptyCourseDetails);
 
   // Reference data
   const [categories, setCategories] = useState<CourseCategory[]>([]);
@@ -60,6 +67,7 @@ const UniversityAddEditCourse = () => {
   }, [courseId]);
 
   const loadReferenceData = () => {
+    ensureCourseDetailsSeed();
     setCategories(JSON.parse(localStorage.getItem('courseCategories') || '[]'));
     setLevels(JSON.parse(localStorage.getItem('courseLevels') || '[]'));
     setTypes(JSON.parse(localStorage.getItem('courseTypes') || '[]'));
@@ -91,6 +99,7 @@ const UniversityAddEditCourse = () => {
       setApplicationFormId(course.applicationFormId || '');
       setInformationCollected(course.informationCollected || '');
       setMatchingCriteriaConfigured(course.matchingCriteriaConfigured || false);
+      setDetails(extractCourseDetails(course));
     }
   };
 
@@ -142,6 +151,7 @@ const UniversityAddEditCourse = () => {
       applicationFormId,
       informationCollected,
       matchingCriteriaConfigured,
+      ...details,
       createdAt: courseId ? courses.find((c: any) => c.id === courseId)?.createdAt : new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
@@ -512,6 +522,9 @@ const UniversityAddEditCourse = () => {
             </div>
           </div>
         </Card>
+
+        {/* Extended course detail configuration */}
+        <CourseDetailsEditor value={details} onChange={setDetails} />
 
         <Card className="p-6">
           <div className="flex items-center justify-between">

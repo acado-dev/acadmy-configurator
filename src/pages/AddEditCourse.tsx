@@ -16,6 +16,12 @@ import { CourseLevel } from '@/types/courseLevel';
 import { CourseType } from '@/types/courseType';
 import { University } from '@/types/application';
 import { toast } from '@/hooks/use-toast';
+import CourseDetailsEditor, {
+  CourseDetailsData,
+  emptyCourseDetails,
+  extractCourseDetails,
+} from '@/components/courses/CourseDetailsEditor';
+import { ensureCourseDetailsSeed } from '@/lib/courseDetails';
 
 const AddEditCourse = () => {
   const navigate = useNavigate();
@@ -41,6 +47,7 @@ const AddEditCourse = () => {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [isActive, setIsActive] = useState(true);
+  const [details, setDetails] = useState<CourseDetailsData>(emptyCourseDetails);
 
   // Reference data
   const [categories, setCategories] = useState<CourseCategory[]>([]);
@@ -56,6 +63,7 @@ const AddEditCourse = () => {
   }, [courseId]);
 
   const loadReferenceData = () => {
+    ensureCourseDetailsSeed();
     setCategories(JSON.parse(localStorage.getItem('courseCategories') || '[]'));
     setLevels(JSON.parse(localStorage.getItem('courseLevels') || '[]'));
     setTypes(JSON.parse(localStorage.getItem('courseTypes') || '[]'));
@@ -81,6 +89,7 @@ const AddEditCourse = () => {
       setStartDate(course.startDate || '');
       setEndDate(course.endDate || '');
       setIsActive(course.isActive);
+      setDetails(extractCourseDetails(course));
     }
   };
 
@@ -117,6 +126,7 @@ const AddEditCourse = () => {
       startDate: startDate || undefined,
       endDate: endDate || undefined,
       learningOutcomeIds: courseId ? courses.find((c: Course) => c.id === courseId)?.learningOutcomeIds || [] : [],
+      ...details,
       isActive,
       createdAt: courseId ? courses.find((c: Course) => c.id === courseId)?.createdAt || now : now,
       updatedAt: now,
@@ -493,6 +503,9 @@ const AddEditCourse = () => {
             </div>
           </div>
         </Card>
+
+        {/* Extended course detail configuration */}
+        <CourseDetailsEditor value={details} onChange={setDetails} />
 
         {/* Schedule & Status */}
         <Card className="p-6">
