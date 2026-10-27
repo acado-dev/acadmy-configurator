@@ -19,6 +19,6 @@
 - [x] Verified in browser: learner sections render, interest dedupe works, admin form prefills and saves.
 
 # Student Life configuration
-- [ ] Add university-linked prototype content and separate drafts/published snapshots with sample data.
-- [ ] Add shared eight-section editor and university navigation links for both admin panels.
-- [ ] Add preview and published-only internal learner page; verify save, publish, unpublish, ordering and university isolation.
+- [x] Add university-linked prototype content and separate drafts/published snapshots with sample data.
+- [x] Add shared eight-section editor and university navigation links for both admin panels.
+- [x] Add preview and published-only internal learner page; verify save, publish, unpublish, ordering and university isolation. Seven publication-rule tests and both admin flows passed; narrow-screen layout checked.
