@@ -149,6 +149,7 @@ const UniversityAddEditCourse = () => {
       applicationFormId,
       informationCollected,
       matchingCriteriaConfigured,
+      ...details,
       createdAt: courseId ? courses.find((c: any) => c.id === courseId)?.createdAt : new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };

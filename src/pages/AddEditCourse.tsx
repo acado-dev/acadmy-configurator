@@ -124,6 +124,7 @@ const AddEditCourse = () => {
       startDate: startDate || undefined,
       endDate: endDate || undefined,
       learningOutcomeIds: courseId ? courses.find((c: Course) => c.id === courseId)?.learningOutcomeIds || [] : [],
+      ...details,
       isActive,
       createdAt: courseId ? courses.find((c: Course) => c.id === courseId)?.createdAt || now : now,
       updatedAt: now,
