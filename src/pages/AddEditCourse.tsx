@@ -16,6 +16,11 @@ import { CourseLevel } from '@/types/courseLevel';
 import { CourseType } from '@/types/courseType';
 import { University } from '@/types/application';
 import { toast } from '@/hooks/use-toast';
+import CourseDetailsEditor, {
+  CourseDetailsData,
+  emptyCourseDetails,
+  extractCourseDetails,
+} from '@/components/courses/CourseDetailsEditor';
 
 const AddEditCourse = () => {
   const navigate = useNavigate();
