@@ -20,6 +20,7 @@ import CourseDetailsEditor, {
   emptyCourseDetails,
   extractCourseDetails,
 } from '@/components/courses/CourseDetailsEditor';
+import { ensureCourseDetailsSeed } from '@/lib/courseDetails';
 
 const UniversityAddEditCourse = () => {
   const navigate = useNavigate();

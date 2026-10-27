@@ -21,6 +21,7 @@ import CourseDetailsEditor, {
   emptyCourseDetails,
   extractCourseDetails,
 } from '@/components/courses/CourseDetailsEditor';
+import { ensureCourseDetailsSeed } from '@/lib/courseDetails';
 
 const AddEditCourse = () => {
   const navigate = useNavigate();
