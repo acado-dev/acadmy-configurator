@@ -79,21 +79,27 @@ const CourseCampaign = () => {
   const [collaboration, setCollaboration] = useState('');
   const [careerOpportunities, setCareerOpportunities] = useState('');
   const [courseUSP, setCourseUSP] = useState('');
+  const [courseDetails, setCourseDetails] = useState<CourseDetailsData>(emptyCourseDetails);
+  const [courseStoreKey, setCourseStoreKey] = useState<'courses' | 'universityCourses'>('courses');
 
   useEffect(() => {
     if (courseId) {
+      ensureCourseDetailsSeed();
       loadCampaignData();
-      loadCourseName();
+      loadCourse();
     }
   }, [courseId]);
 
-  const loadCourseName = () => {
+  const loadCourse = () => {
     const courses = JSON.parse(localStorage.getItem('courses') || '[]');
     const universityCourses = JSON.parse(localStorage.getItem('universityCourses') || '[]');
-    const allCourses = [...courses, ...universityCourses];
-    const course = allCourses.find((c: any) => c.id === courseId);
+    const inMaster = courses.find((c: Course) => c.id === courseId);
+    const inUniversity = universityCourses.find((c: Course) => c.id === courseId);
+    const course = inMaster || inUniversity;
     if (course) {
       setCourseName(course.name);
+      setCourseStoreKey(inMaster ? 'courses' : 'universityCourses');
+      setCourseDetails(extractCourseDetails(course));
     }
   };
 
