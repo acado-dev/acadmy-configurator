@@ -560,6 +560,15 @@ const CourseCampaign = () => {
           </div>
         </Card>
 
+        <Card className="p-6">
+          <h2 className="text-xl font-semibold mb-1">Course Detail Page Content</h2>
+          <p className="text-sm text-muted-foreground mb-4">
+            Structured content shown on the learner-facing course detail page — quick facts,
+            benefits, skills, career pathways, testimonials and information sections.
+          </p>
+          <CourseDetailsEditor value={courseDetails} onChange={setCourseDetails} />
+        </Card>
+
         <div className="flex justify-end gap-4">
           <Button
             type="button"
