@@ -62,6 +62,7 @@ const AddEditCourse = () => {
   }, [courseId]);
 
   const loadReferenceData = () => {
+    ensureCourseDetailsSeed();
     setCategories(JSON.parse(localStorage.getItem('courseCategories') || '[]'));
     setLevels(JSON.parse(localStorage.getItem('courseLevels') || '[]'));
     setTypes(JSON.parse(localStorage.getItem('courseTypes') || '[]'));
