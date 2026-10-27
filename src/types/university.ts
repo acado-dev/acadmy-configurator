@@ -8,9 +8,11 @@ export interface UniversityDetails {
   name: string;
   shortName?: string;
   tagline?: string;
+  slug?: string;
   foundedYear: number;
   logo?: string;
   coverImage?: string;
+  heroImageAlt?: string;
   templateImage?: string;
   brochureUrl?: string;
   website?: string;
