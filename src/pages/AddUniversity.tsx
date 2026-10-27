@@ -326,14 +326,14 @@ const AddUniversity = () => {
                 <div>
                   <Label htmlFor="parentInstitution">Parent Institution</Label>
                   <Select
-                    value={formData.parentInstitutionId}
-                    onValueChange={(value) => handleInputChange('parentInstitutionId', value)}
+                    value={formData.parentInstitutionId || 'none'}
+                    onValueChange={(value) => handleInputChange('parentInstitutionId', value === 'none' ? '' : value)}
                   >
                     <SelectTrigger id="parentInstitution" className="mt-1">
                       <SelectValue placeholder="Select Parent Institution (Optional)" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">None (Main Institution)</SelectItem>
+                      <SelectItem value="none">None (Main Institution)</SelectItem>
                       {getParentInstitutions().map((uni) => (
                         <SelectItem key={uni.id} value={uni.id}>
                           {uni.name}
