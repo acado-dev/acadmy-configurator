@@ -17,3 +17,8 @@
 - [x] Shared detail editor in both Super Admin and University Admin course forms; seeded demo course (Research Fellowship in Business Innovation).
 - [x] Learner course page renders configured content dynamically with "I am interested" unique-user tracking; interest count shown on admin course detail.
 - [x] Verified in browser: learner sections render, interest dedupe works, admin form prefills and saves.
+
+# Student Life configuration
+- [ ] Add university-linked prototype content and separate drafts/published snapshots with sample data.
+- [ ] Add shared eight-section editor and university navigation links for both admin panels.
+- [ ] Add preview and published-only internal learner page; verify save, publish, unpublish, ordering and university isolation.

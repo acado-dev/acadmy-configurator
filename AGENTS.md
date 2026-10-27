@@ -9,3 +9,4 @@
 - Communities uses a dedicated seeded localStorage prototype store; never bypass or weaken Cloud policies to make demo screens accessible, because live data must remain isolated.
 - Keep the legacy Posts module at /communities separate from Communities management at /community-management; shared admin screens preserve the /university prefix.
 - Prototype Communities uses the current dashboard context for institution-scoped presentation only; it does not authenticate against or read/write Cloud records.
+- Student Life uses a dedicated university-keyed prototype store with independent draft/published snapshots; resolve university admins from their existing account context, reuse one renderer for admin preview and the internal learner page, and never mutate the university profile or Cloud data while saving content.
