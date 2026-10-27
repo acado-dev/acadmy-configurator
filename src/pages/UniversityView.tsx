@@ -226,6 +226,32 @@ const UniversityView = () => {
             </CardContent>
           </Card>
 
+          {university.overviewCallout && (
+            <Card className="border-primary/30 bg-primary/5">
+              <CardContent className="pt-6">
+                <p className="leading-relaxed font-medium">{university.overviewCallout}</p>
+              </CardContent>
+            </Card>
+          )}
+
+          {university.atAGlanceFacts && university.atAGlanceFacts.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle>At a Glance</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-2">
+                  {university.atAGlanceFacts.map((fact, idx) => (
+                    <li key={idx} className="flex items-start gap-2">
+                      <Award className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                      <span>{fact}</span>
+                    </li>
+                  ))}
+                </ul>
+              </CardContent>
+            </Card>
+          )}
+
           {university.about?.description && (
             <Card>
               <CardHeader>
