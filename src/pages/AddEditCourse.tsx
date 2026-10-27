@@ -502,6 +502,9 @@ const AddEditCourse = () => {
           </div>
         </Card>
 
+        {/* Extended course detail configuration */}
+        <CourseDetailsEditor value={details} onChange={setDetails} />
+
         {/* Schedule & Status */}
         <Card className="p-6">
           <div className="space-y-4">

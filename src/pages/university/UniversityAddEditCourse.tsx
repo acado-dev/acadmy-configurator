@@ -521,6 +521,9 @@ const UniversityAddEditCourse = () => {
           </div>
         </Card>
 
+        {/* Extended course detail configuration */}
+        <CourseDetailsEditor value={details} onChange={setDetails} />
+
         <Card className="p-6">
           <div className="flex items-center justify-between">
             <div>
