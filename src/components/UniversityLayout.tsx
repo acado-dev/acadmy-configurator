@@ -46,6 +46,7 @@ import { Badge } from "@/components/ui/badge";
 const UniversityLayout = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const isStudentLife = location.pathname === '/university/student-life';
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [expandedMenus, setExpandedMenus] = useState<string[]>(['university-setup']);
   
@@ -183,7 +184,8 @@ const UniversityLayout = () => {
       {/* Sidebar */}
       <aside className={cn(
         "fixed left-0 top-0 bottom-0 bg-card border-r border-border transition-all duration-300 z-50 overflow-y-auto",
-        isSidebarOpen ? "w-64" : "w-0"
+        isSidebarOpen ? "w-64" : "w-0",
+        isStudentLife && isSidebarOpen && "hidden md:block"
       )}>
         <div className={cn("p-4", !isSidebarOpen && "hidden")}>
           {/* ACADO Logo */}
@@ -271,10 +273,10 @@ const UniversityLayout = () => {
       {/* Main Content */}
       <div className={cn(
         "transition-all duration-300",
-        isSidebarOpen ? "ml-64" : "ml-0"
+        isSidebarOpen ? (isStudentLife ? "ml-0 md:ml-64" : "ml-64") : "ml-0"
       )}>
         {/* Header */}
-        <header className="bg-card border-b border-border px-6 py-4 flex items-center justify-between">
+        <header className={cn("bg-card border-b border-border px-6 py-4 flex items-center justify-between", isStudentLife && "flex-wrap gap-3")}>
           <div className="flex items-center gap-4">
             <button
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
@@ -282,7 +284,7 @@ const UniversityLayout = () => {
             >
               {isSidebarOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
-            <div className="flex items-center gap-2">
+            <div className={cn("flex items-center gap-2", isStudentLife && "min-w-0 flex-wrap")}>
               <AcadoLogo className="h-6" />
               <span className="text-sm text-muted-foreground">|</span>
               <h1 className="text-lg font-semibold text-foreground">

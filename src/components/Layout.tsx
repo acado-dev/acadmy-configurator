@@ -56,6 +56,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 const Layout = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const isStudentLife = location.pathname.endsWith('/student-life');
   const { userEmail, logout } = useAuth();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [expandedMenus, setExpandedMenus] = useState<string[]>(['university-setup']);
@@ -198,7 +199,8 @@ const Layout = () => {
       {/* Sidebar */}
       <aside className={cn(
         "fixed left-0 top-0 bottom-0 bg-card border-r border-border transition-all duration-300 z-50 overflow-y-auto",
-        isSidebarOpen ? "w-64" : "w-0"
+        isSidebarOpen ? "w-64" : "w-0",
+        isStudentLife && isSidebarOpen && "hidden md:block"
       )}>
         <div className={cn("p-4", !isSidebarOpen && "hidden")}>
           {/* Logo */}
@@ -255,10 +257,10 @@ const Layout = () => {
       {/* Main Content */}
       <div className={cn(
         "transition-all duration-300",
-        isSidebarOpen ? "ml-64" : "ml-0"
+        isSidebarOpen ? (isStudentLife ? "ml-0 md:ml-64" : "ml-64") : "ml-0"
       )}>
         {/* Header */}
-        <header className="bg-card border-b border-border px-6 py-4 flex items-center justify-between">
+        <header className={cn("bg-card border-b border-border px-6 py-4 flex items-center justify-between", isStudentLife && "flex-wrap gap-3")}>
           <div className="flex items-center gap-4">
             <button
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
