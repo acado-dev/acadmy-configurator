@@ -100,6 +100,29 @@ export interface UniversityDetails {
   admission?: string;
   placements?: string;
   faq?: string;
+
+  // Facts & Overview (configurable)
+  keyStatistics?: KeyStatistic[];
+  atAGlanceFacts?: string[];
+  overviewCallout?: string;
+  sectionOrder?: string[];
+
+  // Highlights (repeatable cards)
+  highlightCards?: HighlightCard[];
+
+  // Campus, Video & Gallery
+  video?: UniversityVideo;
+  gallery?: GalleryImage[];
+
+  // International Partners
+  internationalPartners?: InternationalPartner[];
+
+  // Admissions & Support
+  admissionCards?: AdmissionCard[];
+  applicationRequirements?: string;
+  admissionContact?: AdmissionContact;
+  faqs?: UniversityFaq[];
+
   
   // Meta Information
   createdAt: Date;
