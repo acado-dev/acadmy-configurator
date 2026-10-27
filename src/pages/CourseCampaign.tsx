@@ -10,6 +10,13 @@ import { Separator } from '@/components/ui/separator';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { toast } from '@/hooks/use-toast';
+import CourseDetailsEditor, {
+  CourseDetailsData,
+  emptyCourseDetails,
+  extractCourseDetails,
+} from '@/components/courses/CourseDetailsEditor';
+import { ensureCourseDetailsSeed } from '@/lib/courseDetails';
+import { Course } from '@/types/course';
 
 interface CourseCampaign {
   courseId: string;
@@ -72,21 +79,27 @@ const CourseCampaign = () => {
   const [collaboration, setCollaboration] = useState('');
   const [careerOpportunities, setCareerOpportunities] = useState('');
   const [courseUSP, setCourseUSP] = useState('');
+  const [courseDetails, setCourseDetails] = useState<CourseDetailsData>(emptyCourseDetails);
+  const [courseStoreKey, setCourseStoreKey] = useState<'courses' | 'universityCourses'>('courses');
 
   useEffect(() => {
     if (courseId) {
+      ensureCourseDetailsSeed();
       loadCampaignData();
-      loadCourseName();
+      loadCourse();
     }
   }, [courseId]);
 
-  const loadCourseName = () => {
+  const loadCourse = () => {
     const courses = JSON.parse(localStorage.getItem('courses') || '[]');
     const universityCourses = JSON.parse(localStorage.getItem('universityCourses') || '[]');
-    const allCourses = [...courses, ...universityCourses];
-    const course = allCourses.find((c: any) => c.id === courseId);
+    const inMaster = courses.find((c: Course) => c.id === courseId);
+    const inUniversity = universityCourses.find((c: Course) => c.id === courseId);
+    const course = inMaster || inUniversity;
     if (course) {
       setCourseName(course.name);
+      setCourseStoreKey(inMaster ? 'courses' : 'universityCourses');
+      setCourseDetails(extractCourseDetails(course));
     }
   };
 
@@ -185,7 +198,20 @@ const CourseCampaign = () => {
     }
 
     localStorage.setItem('courseCampaigns', JSON.stringify(campaigns));
-    
+
+    // Persist the learner-facing detail page content (testimonials, career
+    // paths, skills, info sections, etc.) onto the course record itself.
+    const courseList: Course[] = JSON.parse(localStorage.getItem(courseStoreKey) || '[]');
+    const courseIndex = courseList.findIndex((c) => c.id === courseId);
+    if (courseIndex !== -1) {
+      courseList[courseIndex] = {
+        ...courseList[courseIndex],
+        ...courseDetails,
+        updatedAt: new Date().toISOString(),
+      };
+      localStorage.setItem(courseStoreKey, JSON.stringify(courseList));
+    }
+
     toast({
       title: 'Success',
       description: 'Course campaign saved successfully',
@@ -532,6 +558,15 @@ const CourseCampaign = () => {
               />
             </div>
           </div>
+        </Card>
+
+        <Card className="p-6">
+          <h2 className="text-xl font-semibold mb-1">Course Detail Page Content</h2>
+          <p className="text-sm text-muted-foreground mb-4">
+            Structured content shown on the learner-facing course detail page — quick facts,
+            benefits, skills, career pathways, testimonials and information sections.
+          </p>
+          <CourseDetailsEditor value={courseDetails} onChange={setCourseDetails} />
         </Card>
 
         <div className="flex justify-end gap-4">
