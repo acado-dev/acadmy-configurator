@@ -87,6 +87,7 @@ const UniversityLayout = () => {
       subItems: [
         { label: 'Dashboard', path: '/university/dashboard', icon: LayoutDashboard },
         { label: 'University Details', path: '/university/info', icon: Info },
+        { label: 'Student Life', path: '/university/student-life', icon: Users },
         { label: 'Users', path: '/university/users', icon: UserPlus },
         { label: 'Courses', path: '/university/courses', icon: BookOpen },
       ]

@@ -132,6 +132,8 @@ import NewsletterEditor from '@/pages/communication/NewsletterEditor';
 import NewsletterSubscribers from '@/pages/communication/NewsletterSubscribers';
 import CommunityAdmin from '@/pages/communities/CommunityAdmin';
 import LearnerCommunities from '@/pages/communities/LearnerCommunities';
+import StudentLifeConfiguration from '@/pages/StudentLifeConfiguration';
+import StudentLife from '@/pages/user/StudentLife';
 
 
 const queryClient = new QueryClient();
@@ -171,6 +173,7 @@ const App = () => {
               <Route path="universities/edit/:universityId" element={<AddUniversity />} />
               <Route path="universities/:universityId/view" element={<UniversityView />} />
               <Route path="universities/:universityId/details" element={<UniversityDetails />} />
+              <Route path="universities/:universityId/student-life" element={<StudentLifeConfiguration />} />
               <Route path="courses" element={<Courses />} />
               <Route path="courses/add" element={<AddEditCourse />} />
               <Route path="courses/edit/:courseId" element={<AddEditCourse />} />
@@ -288,6 +291,7 @@ const App = () => {
             }>
               <Route path="dashboard" element={<UserDashboard />} />
               <Route path="communities" element={<LearnerCommunities />} />
+              <Route path="universities/:universityId/student-life" element={<StudentLife />} />
               <Route path="courses" element={<CourseListing />} />
               <Route path="courses/:courseId" element={<UserCourseDetail />} />
               <Route path="apply/:formId" element={<ApplicationWizard />} />
@@ -314,6 +318,7 @@ const App = () => {
               <Route path="community-management/:id" element={<CommunityAdmin page="detail" />} />
               <Route path="dashboard" element={<UniversityDashboard />} />
               <Route path="info" element={<UniversityInfo />} />
+              <Route path="student-life" element={<StudentLifeConfiguration />} />
               <Route path="courses" element={<UniversityCourses />} />
               <Route path="courses/new" element={<UniversityAddEditCourse />} />
               <Route path="courses/:courseId/edit" element={<UniversityAddEditCourse />} />
