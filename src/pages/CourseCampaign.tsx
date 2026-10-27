@@ -198,7 +198,20 @@ const CourseCampaign = () => {
     }
 
     localStorage.setItem('courseCampaigns', JSON.stringify(campaigns));
-    
+
+    // Persist the learner-facing detail page content (testimonials, career
+    // paths, skills, info sections, etc.) onto the course record itself.
+    const courseList: Course[] = JSON.parse(localStorage.getItem(courseStoreKey) || '[]');
+    const courseIndex = courseList.findIndex((c) => c.id === courseId);
+    if (courseIndex !== -1) {
+      courseList[courseIndex] = {
+        ...courseList[courseIndex],
+        ...courseDetails,
+        updatedAt: new Date().toISOString(),
+      };
+      localStorage.setItem(courseStoreKey, JSON.stringify(courseList));
+    }
+
     toast({
       title: 'Success',
       description: 'Course campaign saved successfully',
