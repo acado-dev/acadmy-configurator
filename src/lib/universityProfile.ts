@@ -19,5 +19,8 @@ export function emptyUniversityProfile(id: string, name = ''): UniversityDetails
     community: { description: '', studentCount: 0, facultyCount: 0, alumniInCountries: 0, activeProjects: 0 },
     fieldsOfEducation: [], socialResponsibility: { description: '', commitments: [], initiatives: [] },
     testimonials: [], createdAt: new Date(), updatedAt: new Date(), isActive: true, isVerified: false,
+    keyStatistics: [], atAGlanceFacts: [], overviewCallout: '', sectionOrder: [],
+    highlightCards: [], video: {}, gallery: [], internationalPartners: [],
+    admissionCards: [], applicationRequirements: '', admissionContact: {}, faqs: [],
   };
 }

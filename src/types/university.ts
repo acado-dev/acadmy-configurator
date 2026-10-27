@@ -8,9 +8,11 @@ export interface UniversityDetails {
   name: string;
   shortName?: string;
   tagline?: string;
+  slug?: string;
   foundedYear: number;
   logo?: string;
   coverImage?: string;
+  heroImageAlt?: string;
   templateImage?: string;
   brochureUrl?: string;
   website?: string;
@@ -98,6 +100,29 @@ export interface UniversityDetails {
   admission?: string;
   placements?: string;
   faq?: string;
+
+  // Facts & Overview (configurable)
+  keyStatistics?: KeyStatistic[];
+  atAGlanceFacts?: string[];
+  overviewCallout?: string;
+  sectionOrder?: string[];
+
+  // Highlights (repeatable cards)
+  highlightCards?: HighlightCard[];
+
+  // Campus, Video & Gallery
+  video?: UniversityVideo;
+  gallery?: GalleryImage[];
+
+  // International Partners
+  internationalPartners?: InternationalPartner[];
+
+  // Admissions & Support
+  admissionCards?: AdmissionCard[];
+  applicationRequirements?: string;
+  admissionContact?: AdmissionContact;
+  faqs?: UniversityFaq[];
+
   
   // Meta Information
   createdAt: Date;
@@ -110,8 +135,77 @@ export interface Campus {
   id: string;
   name: string;
   location: string;
+  description?: string;
   specializations: string[];
   facilities?: string[];
+}
+
+// Configurable key statistic shown in Facts & Overview
+export interface KeyStatistic {
+  id: string;
+  label: string;
+  value: string;
+  unit?: string;
+  context?: string; // supporting context / period, e.g. "2025 intake"
+}
+
+// Repeatable highlight card ("What makes us stand out")
+export interface HighlightCard {
+  id: string;
+  title: string;
+  description: string;
+  detailedContent?: string; // optional expanded / modal content
+  image?: string;
+  order: number;
+}
+
+// University video block
+export interface UniversityVideo {
+  title?: string;
+  url?: string;
+  poster?: string;
+  caption?: string;
+}
+
+// Photo gallery entry
+export interface GalleryImage {
+  id: string;
+  image: string;
+  alt?: string;
+  caption?: string;
+  order: number;
+}
+
+// International partner entry
+export interface InternationalPartner {
+  id: string;
+  name: string;
+  type?: string; // category, e.g. "Alliance", "Exchange Partner"
+  description?: string;
+  logo?: string;
+}
+
+// Admissions information card
+export interface AdmissionCard {
+  id: string;
+  title: string;
+  description: string;
+  detailedContent?: string;
+  icon?: string;
+}
+
+// Admissions contact details
+export interface AdmissionContact {
+  email?: string;
+  phone?: string;
+}
+
+// Structured FAQ entry
+export interface UniversityFaq {
+  id: string;
+  question: string;
+  answer: string;
+  order: number;
 }
 
 export interface EducationField {

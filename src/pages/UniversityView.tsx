@@ -155,8 +155,12 @@ const UniversityView = () => {
 
       {/* Main Content in Tabs */}
       <Tabs defaultValue="overview" className="w-full">
-        <TabsList className="grid w-full grid-cols-2 md:grid-cols-5 h-auto">
+        <TabsList className="flex flex-wrap w-full h-auto gap-1 justify-start">
           <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="highlights">Highlights</TabsTrigger>
+          <TabsTrigger value="campus">Campus & Media</TabsTrigger>
+          <TabsTrigger value="partners">Partners</TabsTrigger>
+          <TabsTrigger value="admissions">Admissions</TabsTrigger>
           <TabsTrigger value="contact">Contact</TabsTrigger>
           <TabsTrigger value="details">Details</TabsTrigger>
           <TabsTrigger value="statistics">Statistics</TabsTrigger>
@@ -221,6 +225,32 @@ const UniversityView = () => {
               </div>
             </CardContent>
           </Card>
+
+          {university.overviewCallout && (
+            <Card className="border-primary/30 bg-primary/5">
+              <CardContent className="pt-6">
+                <p className="leading-relaxed font-medium">{university.overviewCallout}</p>
+              </CardContent>
+            </Card>
+          )}
+
+          {university.atAGlanceFacts && university.atAGlanceFacts.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle>At a Glance</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-2">
+                  {university.atAGlanceFacts.map((fact, idx) => (
+                    <li key={idx} className="flex items-start gap-2">
+                      <Award className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                      <span>{fact}</span>
+                    </li>
+                  ))}
+                </ul>
+              </CardContent>
+            </Card>
+          )}
 
           {university.about?.description && (
             <Card>
@@ -414,6 +444,26 @@ const UniversityView = () => {
 
         {/* Statistics Tab */}
         <TabsContent value="statistics" className="space-y-6">
+          {university.keyStatistics && university.keyStatistics.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Key Statistics</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                  {university.keyStatistics.map((stat) => (
+                    <div key={stat.id} className="text-center p-4 rounded-lg bg-primary/5 hover:bg-primary/10 transition-colors">
+                      <p className="text-3xl font-bold text-primary">
+                        {stat.value}{stat.unit ? <span className="text-lg font-semibold ml-1">{stat.unit}</span> : null}
+                      </p>
+                      <p className="text-sm font-medium mt-1">{stat.label}</p>
+                      {stat.context && <p className="text-xs text-muted-foreground mt-1">{stat.context}</p>}
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
           {university.factsAndFigures && (
             <Card>
               <CardHeader>
@@ -596,6 +646,215 @@ const UniversityView = () => {
                     </li>
                   ))}
                 </ul>
+              </CardContent>
+            </Card>
+          )}
+        </TabsContent>
+
+        {/* Highlights Tab */}
+        <TabsContent value="highlights" className="space-y-6">
+          {university.highlightCards && university.highlightCards.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {[...university.highlightCards].sort((a, b) => a.order - b.order).map((card) => (
+                <Card key={card.id} className="overflow-hidden hover:shadow-md transition-shadow">
+                  {card.image && (
+                    <img src={card.image} alt={card.title} className="h-40 w-full object-cover" />
+                  )}
+                  <CardHeader>
+                    <CardTitle className="text-lg">{card.title}</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <p className="text-sm text-muted-foreground">{card.description}</p>
+                    {card.detailedContent && (
+                      <p className="text-sm leading-relaxed whitespace-pre-wrap">{card.detailedContent}</p>
+                    )}
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          ) : (
+            <Card><CardContent className="pt-6"><p className="text-muted-foreground">No highlights configured yet.</p></CardContent></Card>
+          )}
+        </TabsContent>
+
+        {/* Campus & Media Tab */}
+        <TabsContent value="campus" className="space-y-6">
+          {university.location?.campuses && university.location.campuses.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <MapPin className="w-5 h-5 text-primary" />
+                  Campus Locations
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {university.location.campuses.map((campus) => (
+                  <div key={campus.id} className="border rounded-lg p-4">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <h4 className="font-semibold">{campus.name}</h4>
+                      {campus.location && <Badge variant="outline">{campus.location}</Badge>}
+                    </div>
+                    {campus.description && (
+                      <p className="text-sm text-muted-foreground mt-2">{campus.description}</p>
+                    )}
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          )}
+
+          {university.video && (university.video.url || university.video.poster || university.video.title) && (
+            <Card>
+              <CardHeader>
+                <CardTitle>{university.video.title || 'University Video'}</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {university.video.url ? (
+                  <video
+                    controls
+                    poster={university.video.poster || undefined}
+                    className="w-full rounded-lg border max-h-96"
+                    src={university.video.url}
+                  />
+                ) : university.video.poster ? (
+                  <img src={university.video.poster} alt={university.video.title || 'Video poster'} className="w-full rounded-lg border max-h-96 object-cover" />
+                ) : null}
+                {university.video.caption && (
+                  <p className="text-sm text-muted-foreground">{university.video.caption}</p>
+                )}
+              </CardContent>
+            </Card>
+          )}
+
+          {university.gallery && university.gallery.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Photo Gallery</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {[...university.gallery].sort((a, b) => a.order - b.order).map((img) => (
+                    <figure key={img.id} className="space-y-2">
+                      {img.image ? (
+                        <img src={img.image} alt={img.alt || img.caption || 'Gallery image'} className="h-40 w-full object-cover rounded-lg border" />
+                      ) : (
+                        <div className="h-40 w-full rounded-lg border bg-muted flex items-center justify-center text-muted-foreground text-sm">No image</div>
+                      )}
+                      {img.caption && <figcaption className="text-sm text-muted-foreground">{img.caption}</figcaption>}
+                    </figure>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+        </TabsContent>
+
+        {/* Partners Tab */}
+        <TabsContent value="partners" className="space-y-6">
+          {university.internationalPartners && university.internationalPartners.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {university.internationalPartners.map((partner) => (
+                <Card key={partner.id} className="hover:shadow-md transition-shadow">
+                  <CardHeader>
+                    <div className="flex items-center gap-3">
+                      {partner.logo ? (
+                        <img src={partner.logo} alt={`${partner.name} logo`} className="h-10 w-10 object-contain rounded" />
+                      ) : (
+                        <div className="h-10 w-10 rounded bg-primary/10 flex items-center justify-center">
+                          <Globe className="w-5 h-5 text-primary" />
+                        </div>
+                      )}
+                      <div>
+                        <CardTitle className="text-base">{partner.name}</CardTitle>
+                        {partner.type && <Badge variant="secondary" className="mt-1">{partner.type}</Badge>}
+                      </div>
+                    </div>
+                  </CardHeader>
+                  {partner.description && (
+                    <CardContent>
+                      <p className="text-sm text-muted-foreground">{partner.description}</p>
+                    </CardContent>
+                  )}
+                </Card>
+              ))}
+            </div>
+          ) : (
+            <Card><CardContent className="pt-6"><p className="text-muted-foreground">No international partners configured yet.</p></CardContent></Card>
+          )}
+        </TabsContent>
+
+        {/* Admissions Tab */}
+        <TabsContent value="admissions" className="space-y-6">
+          {university.admissionCards && university.admissionCards.length > 0 && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {university.admissionCards.map((card) => (
+                <Card key={card.id} className="hover:shadow-md transition-shadow">
+                  <CardHeader>
+                    <div className="flex items-center gap-3">
+                      {card.icon && <img src={card.icon} alt="" className="h-8 w-8 object-contain rounded" />}
+                      <CardTitle className="text-base">{card.title}</CardTitle>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="space-y-2">
+                    <p className="text-sm text-muted-foreground">{card.description}</p>
+                    {card.detailedContent && (
+                      <p className="text-sm leading-relaxed whitespace-pre-wrap">{card.detailedContent}</p>
+                    )}
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
+
+          {university.applicationRequirements && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Application Requirements</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="whitespace-pre-wrap leading-relaxed">{university.applicationRequirements}</p>
+              </CardContent>
+            </Card>
+          )}
+
+          {university.admissionContact && (university.admissionContact.email || university.admissionContact.phone) && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Admissions Contact</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {university.admissionContact.email && (
+                  <div className="flex items-center gap-3">
+                    <Mail className="w-4 h-4 text-primary" />
+                    <a href={`mailto:${university.admissionContact.email}`} className="font-medium hover:text-primary">
+                      {university.admissionContact.email}
+                    </a>
+                  </div>
+                )}
+                {university.admissionContact.phone && (
+                  <div className="flex items-center gap-3">
+                    <Phone className="w-4 h-4 text-primary" />
+                    <a href={`tel:${university.admissionContact.phone}`} className="font-medium hover:text-primary">
+                      {university.admissionContact.phone}
+                    </a>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          )}
+
+          {university.faqs && university.faqs.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Frequently Asked Questions</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {[...university.faqs].sort((a, b) => a.order - b.order).map((faq) => (
+                  <div key={faq.id} className="border rounded-lg p-4">
+                    <p className="font-semibold">{faq.question}</p>
+                    <p className="text-sm text-muted-foreground mt-2 whitespace-pre-wrap">{faq.answer}</p>
+                  </div>
+                ))}
               </CardContent>
             </Card>
           )}
