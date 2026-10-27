@@ -155,8 +155,12 @@ const UniversityView = () => {
 
       {/* Main Content in Tabs */}
       <Tabs defaultValue="overview" className="w-full">
-        <TabsList className="grid w-full grid-cols-2 md:grid-cols-5 h-auto">
+        <TabsList className="flex flex-wrap w-full h-auto gap-1 justify-start">
           <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="highlights">Highlights</TabsTrigger>
+          <TabsTrigger value="campus">Campus & Media</TabsTrigger>
+          <TabsTrigger value="partners">Partners</TabsTrigger>
+          <TabsTrigger value="admissions">Admissions</TabsTrigger>
           <TabsTrigger value="contact">Contact</TabsTrigger>
           <TabsTrigger value="details">Details</TabsTrigger>
           <TabsTrigger value="statistics">Statistics</TabsTrigger>
