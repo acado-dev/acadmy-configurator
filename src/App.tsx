@@ -134,6 +134,8 @@ import CommunityAdmin from '@/pages/communities/CommunityAdmin';
 import LearnerCommunities from '@/pages/communities/LearnerCommunities';
 import StudentLifeConfiguration from '@/pages/StudentLifeConfiguration';
 import StudentLife from '@/pages/user/StudentLife';
+import CityLifeConfiguration from '@/pages/CityLifeConfiguration';
+import CityLife from '@/pages/user/CityLife';
 
 
 const queryClient = new QueryClient();
@@ -174,6 +176,7 @@ const App = () => {
               <Route path="universities/:universityId/view" element={<UniversityView />} />
               <Route path="universities/:universityId/details" element={<UniversityDetails />} />
               <Route path="universities/:universityId/student-life" element={<StudentLifeConfiguration />} />
+              <Route path="universities/:universityId/city-life" element={<CityLifeConfiguration />} />
               <Route path="courses" element={<Courses />} />
               <Route path="courses/add" element={<AddEditCourse />} />
               <Route path="courses/edit/:courseId" element={<AddEditCourse />} />
@@ -292,6 +295,7 @@ const App = () => {
               <Route path="dashboard" element={<UserDashboard />} />
               <Route path="communities" element={<LearnerCommunities />} />
               <Route path="universities/:universityId/student-life" element={<StudentLife />} />
+              <Route path="universities/:universityId/city-life" element={<CityLife />} />
               <Route path="courses" element={<CourseListing />} />
               <Route path="courses/:courseId" element={<UserCourseDetail />} />
               <Route path="apply/:formId" element={<ApplicationWizard />} />
@@ -319,6 +323,7 @@ const App = () => {
               <Route path="dashboard" element={<UniversityDashboard />} />
               <Route path="info" element={<UniversityInfo />} />
               <Route path="student-life" element={<StudentLifeConfiguration />} />
+              <Route path="city-life" element={<CityLifeConfiguration />} />
               <Route path="courses" element={<UniversityCourses />} />
               <Route path="courses/new" element={<UniversityAddEditCourse />} />
               <Route path="courses/:courseId/edit" element={<UniversityAddEditCourse />} />
