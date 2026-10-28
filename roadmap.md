@@ -1,4 +1,10 @@
 # Contact Us and Newsletters
+# City Life configuration
+- [ ] Add Cloud-scoped drafts, published snapshots and media with verified admin authorization.
+- [ ] Add ten-section editor in both panels and internal learner screen, without changing Course Detail.
+- [ ] Verify ordering, publication, external links and unavailable weather behavior.
+
+# Contact Us and Newsletters
 - [x] Add Super Admin contact query list, detail and contact actions.
 - [x] Add newsletter creation, editing, preview and subscriber management with consent checks.
 - [x] Integrate navigation and verify persistence and consent rules.
