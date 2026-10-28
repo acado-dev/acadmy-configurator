@@ -1,8 +1,8 @@
-# Contact Us and Newsletters
 # City Life configuration
-- [ ] Add Cloud-scoped drafts, published snapshots and media with verified admin authorization.
-- [ ] Add ten-section editor in both panels and internal learner screen, without changing Course Detail.
-- [ ] Verify ordering, publication, external links and unavailable weather behavior.
+- [x] Add Cloud-scoped drafts, published snapshots and private media with backend admin authorization.
+- [x] Add ten-section editor in both panels and internal learner screen, without changing Course Detail.
+- [x] Verify ordering, published-only learner content, Cloud image access, university isolation, external links and unavailable weather; seven rules tests passed.
+- [ ] Authenticated save/publish/upload flow verification — blocked: Cloud has no auth users or assigned admin roles; existing prototype logins cannot authorize Cloud writes. Sample draft remains unpublished. Weather and AI guidance intentionally show unavailable until services are connected.
 
 # Contact Us and Newsletters
 - [x] Add Super Admin contact query list, detail and contact actions.
