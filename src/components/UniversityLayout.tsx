@@ -46,7 +46,7 @@ import { Badge } from "@/components/ui/badge";
 const UniversityLayout = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const isStudentLife = location.pathname === '/university/student-life';
+  const isStudentLife = ['/university/student-life','/university/city-life'].includes(location.pathname);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [expandedMenus, setExpandedMenus] = useState<string[]>(['university-setup']);
   
@@ -89,6 +89,7 @@ const UniversityLayout = () => {
         { label: 'Dashboard', path: '/university/dashboard', icon: LayoutDashboard },
         { label: 'University Details', path: '/university/info', icon: Info },
         { label: 'Student Life', path: '/university/student-life', icon: Users },
+        { label: 'City Life', path: '/university/city-life', icon: Building2 },
         { label: 'Users', path: '/university/users', icon: UserPlus },
         { label: 'Courses', path: '/university/courses', icon: BookOpen },
       ]

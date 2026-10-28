@@ -192,6 +192,33 @@ export type Database = {
         }
         Relationships: []
       }
+      university_city_life: {
+        Row: {
+          draft: Json
+          published: Json | null
+          published_at: string | null
+          saved_at: string
+          university_id: string
+          university_name: string
+        }
+        Insert: {
+          draft?: Json
+          published?: Json | null
+          published_at?: string | null
+          saved_at?: string
+          university_id: string
+          university_name: string
+        }
+        Update: {
+          draft?: Json
+          published?: Json | null
+          published_at?: string | null
+          saved_at?: string
+          university_id?: string
+          university_name?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           id: string
@@ -225,6 +252,15 @@ export type Database = {
       can_read_community_university: {
         Args: { uid: string; university: string }
         Returns: boolean
+      }
+      city_life_published: {
+        Args: { university: string }
+        Returns: {
+          content: Json
+          published_at: string
+          university_id: string
+          university_name: string
+        }[]
       }
       community_member_candidates: {
         Args: { university: string }

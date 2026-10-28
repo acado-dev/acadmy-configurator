@@ -89,6 +89,7 @@ const UniversityView = () => {
         </div>
         <div className="flex gap-2 flex-wrap">
           <Button variant="outline" size="sm" onClick={() => navigate(`/universities/${university.id}/student-life`)}>Student Life</Button>
+          <Button variant="outline" size="sm" onClick={() => navigate(`/universities/${university.id}/city-life`)}>City Life</Button>
           <Button 
             variant="outline" 
             size="sm"
