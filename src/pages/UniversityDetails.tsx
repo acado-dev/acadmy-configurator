@@ -297,6 +297,7 @@ const UniversityDetails = ({ profileId, universityAdmin = false, initialName = '
         </div>
         <div className="flex flex-wrap gap-2">
         <Button variant="outline" onClick={() => navigate(universityAdmin ? '/university/student-life' : `/universities/${university.id}/student-life`)}>Student Life</Button>
+        <Button variant="outline" onClick={() => navigate(universityAdmin ? '/university/city-life' : `/universities/${university.id}/city-life`)}>City Life</Button>
         <Button onClick={handleSave} disabled={saving} variant="gradient" className="gap-2">
           <Save className="w-4 h-4" />
           {saving ? 'Saving...' : 'Save Changes'}

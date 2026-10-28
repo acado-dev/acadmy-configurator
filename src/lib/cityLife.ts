@@ -21,7 +21,10 @@ export async function saveCity(id: string, name: string, content: CityContent, a
   if (action === 'publish') { const errors = validateCity(content); if (errors.length) throw new Error(errors.join('\n')); }
   const { data: auth } = await supabase.auth.getUser();
   if (!auth.user) throw new Error('A Cloud admin account is required to save City Life.');
-  const { data, error } = await supabase.from('university_city_life').upsert({ university_id: id, university_name: name, draft: content as unknown as Json, ...(action === 'publish' ? { published: content as unknown as Json } : action === 'unpublish' ? { published: null } : {}) }).select().single();
+  const existing = await loadCity(id);
+  const values = { university_name: name, draft: content as unknown as Json, ...(action === 'publish' ? { published: content as unknown as Json } : action === 'unpublish' ? { published: null } : {}) };
+  const query = existing ? supabase.from('university_city_life').update(values).eq('university_id',id) : supabase.from('university_city_life').insert({ university_id: id, ...values });
+  const { data, error } = await query.select().single();
   if (error) throw error;
   return { ...data, draft: data.draft as unknown as CityContent, published: data.published as unknown as CityContent | null };
 }
