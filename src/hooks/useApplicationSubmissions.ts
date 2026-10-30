@@ -75,7 +75,7 @@ export const useApplicationSubmissions = () => {
     const dataVersion = localStorage.getItem('applicationSubmissions_version');
     
     // Force reload with new mock data if version changed
-    if (stored && dataVersion === '2') {
+    if (stored && dataVersion === '3') {
       const parsedApps = JSON.parse(stored);
       setApplications(parsedApps);
       calculateStats(parsedApps);
@@ -84,7 +84,7 @@ export const useApplicationSubmissions = () => {
       const mockApplications = generateMockApplications();
       setApplications(mockApplications);
       localStorage.setItem('applicationSubmissions', JSON.stringify(mockApplications));
-      localStorage.setItem('applicationSubmissions_version', '2');
+      localStorage.setItem('applicationSubmissions_version', '3');
       calculateStats(mockApplications);
     }
   };
