@@ -445,6 +445,93 @@ export const useApplicationSubmissions = () => {
         submittedAt: new Date('2024-01-20'),
         lastUpdated: new Date('2024-02-01'),
         documents: []
+      },
+      {
+        id: 'APP-008',
+        applicantName: 'Priya Sharma',
+        applicantEmail: 'priya.sharma@example.com',
+        applicantPhone: '+91 98765 43210',
+        courseId: 'mscs',
+        courseName: 'MS in Computer Science',
+        universityId: 'harvard',
+        universityName: 'Harvard University',
+        formId: 'form-2',
+        formData: {
+          gpa: '3.9',
+          greScore: '330',
+          programmingExperience: '5 years'
+        },
+        matchScore: 94,
+        matchDetails: [],
+        status: 'accepted' as const,
+        submittedAt: new Date('2024-02-05'),
+        lastUpdated: new Date('2024-03-01'),
+        documents: []
+      },
+      {
+        id: 'APP-009',
+        applicantName: 'James Wilson',
+        applicantEmail: 'james.wilson@example.com',
+        applicantPhone: '+44 7700 900123',
+        courseId: 'data-science',
+        courseName: 'Data Science Certificate',
+        universityId: 'mit',
+        universityName: 'MIT',
+        formId: 'form-4',
+        formData: {
+          background: 'Mathematics',
+          pythonExperience: 'Expert'
+        },
+        matchScore: 91,
+        matchDetails: [],
+        status: 'accepted' as const,
+        submittedAt: new Date('2024-02-18'),
+        lastUpdated: new Date('2024-03-10'),
+        documents: []
+      },
+      {
+        id: 'APP-010',
+        applicantName: 'Aisha Khan',
+        applicantEmail: 'aisha.khan@example.com',
+        applicantPhone: '+44 7700 900456',
+        courseId: 'mba',
+        courseName: 'MBA in International Business',
+        universityId: 'harvard',
+        universityName: 'Harvard University',
+        formId: 'form-1',
+        formData: {
+          gpa: '3.7',
+          greScore: '322',
+          workExperience: '6'
+        },
+        matchScore: 89,
+        matchDetails: [],
+        status: 'accepted' as const,
+        submittedAt: new Date('2024-02-22'),
+        lastUpdated: new Date('2024-03-12'),
+        documents: []
+      },
+      {
+        id: 'APP-011',
+        applicantName: 'Lucas Meyer',
+        applicantEmail: 'lucas.meyer@example.com',
+        applicantPhone: '+49 151 23456789',
+        courseId: 'exchange-eng',
+        courseName: 'Engineering Exchange Program',
+        universityId: 'harvard',
+        universityName: 'Harvard University',
+        formId: 'form-3',
+        formData: {
+          gpa: '3.5',
+          currentProgram: 'Electrical Engineering',
+          year: 'Senior'
+        },
+        matchScore: 81,
+        matchDetails: [],
+        status: 'accepted' as const,
+        submittedAt: new Date('2024-03-02'),
+        lastUpdated: new Date('2024-03-20'),
+        documents: []
       }
     ];
 

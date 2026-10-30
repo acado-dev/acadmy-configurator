@@ -357,6 +357,7 @@ const App = () => {
               <Route path="applications" element={<ApplicationsList />} />
               <Route path="applications/matching" element={<ApplicationMatching />} />
               <Route path="applications/document-requests" element={<DocumentRequestsList />} />
+              <Route path="applications/acceptance-letters" element={<AcceptanceLetters scope="university" />} />
               <Route path="applications/:id" element={<UniversityApplicationReview />} />
 
               <Route path="applications-overview" element={<ApplicationsOverview />} />
