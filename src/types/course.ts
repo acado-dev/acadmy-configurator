@@ -1,3 +1,10 @@
+export interface CourseProgrammeGroup {
+  key: 'learn' | 'apply' | 'grow';
+  subheader: string;
+  points: string[];
+  image?: string;
+}
+
 export interface CourseQuickFact {
   id: string;
   label: string;
@@ -82,6 +89,9 @@ export interface Course {
   highlightCallout?: string;
   quickFacts?: CourseQuickFact[];
   benefits?: CourseBenefit[];
+  programmeGroups?: CourseProgrammeGroup[];
+  careerSectionFileUrl?: string;
+  careerSectionFileName?: string;
   programmeGuideUrl?: string;
   programmeGuideName?: string;
   outcomeBullets?: string[];

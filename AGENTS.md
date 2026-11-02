@@ -1,4 +1,5 @@
 # Architecture rules
+- Course create/edit and learner detail share `resolveProgrammeGroups`: explicit Learn/Apply/Grow records override legacy benefits/outcomes/skills, preserving legacy fields without reintroducing removed points. Career attachments live once on the course, not individual roles.
 
 - Keep contact queries, newsletter drafts and consent records in the dedicated websiteCommunication store using the existing localStorage pattern; eligibility is computed centrally to prevent newsletter audiences from including contact queries, withdrawn consent or sample data.
 - Keep website communication screens within the existing Super Admin route tree; email delivery must remain explicitly unavailable until a real server-side marketing service and authenticated authorization are configured, never simulate sent campaigns.
