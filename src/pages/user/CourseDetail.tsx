@@ -22,13 +22,13 @@ import {
   Briefcase,
   Sparkles,
   Quote,
-  ListChecks,
   Users,
 } from "lucide-react";
 import { Course } from "@/types/course";
 import { University } from "@/types/application";
 import {
   ensureCourseDetailsSeed,
+  resolveProgrammeGroups,
   getCourseInterestCount,
   getInterestUserKey,
   hasUserMarkedInterest,
@@ -134,6 +134,8 @@ const CourseDetail = () => {
       : course.tuitionFee !== undefined && course.tuitionFee !== ""
         ? "No tuition fee"
         : undefined;
+  const programmeGroups = resolveProgrammeGroups(course);
+  const careerFileIsImage = course.careerSectionFileUrl?.startsWith("data:image/") || /\.(png|jpe?g|webp|gif|avif)(\?|$)/i.test(course.careerSectionFileUrl || "");
   const students = (course.testimonials || []).filter((t) => t.kind === "student");
   const faculty = (course.testimonials || []).filter((t) => t.kind === "faculty");
 
@@ -234,92 +236,39 @@ const CourseDetail = () => {
               </CardContent>
             </Card>
 
-            {/* Benefit cards */}
-            {!!course.benefits?.length && (
-              <div className="grid sm:grid-cols-3 gap-4">
-                {course.benefits.map((b) => (
-                  <Card key={b.id}>
-                    <CardContent className="pt-6 space-y-2">
-                      <Sparkles className="h-6 w-6 text-primary" />
-                      <p className="font-semibold">{b.title}</p>
-                      <p className="text-sm text-muted-foreground">{b.description}</p>
+            {programmeGroups.some((group) => group.points.some((point) => point.trim()) || group.image) && (
+              <section className="space-y-4">
+                <h2 className="text-2xl font-bold">Why Study This Programme?</h2>
+                <div className="grid sm:grid-cols-3 gap-4">
+                  {programmeGroups.map((group) => <Card key={group.key}>
+                    {group.image && <img src={group.image} alt={group.subheader} className="w-full aspect-[4/3] object-cover rounded-t-lg" />}
+                    <CardContent className="pt-6 space-y-3">
+                      <h3 className="font-semibold text-lg">{group.subheader}</h3>
+                      <ul className="space-y-2">{group.points.filter((point) => point.trim()).map((point, index) => <li key={index} className="flex items-start gap-2 text-sm">
+                        <CheckCircle className="h-4 w-4 mt-0.5 shrink-0 text-primary" /><span className="whitespace-pre-wrap break-words">{point}</span>
+                      </li>)}</ul>
                     </CardContent>
-                  </Card>
-                ))}
-              </div>
+                  </Card>)}
+                </div>
+              </section>
             )}
 
-            {/* Learning outcomes */}
-            {!!course.outcomeBullets?.length && (
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg flex items-center gap-2">
-                    <ListChecks className="h-5 w-5" />
-                    What you'll learn
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-3">
-                    {course.outcomeBullets.map((o, i) => (
-                      <li key={i} className="flex items-start gap-2">
-                        <CheckCircle className="h-5 w-5 text-primary mt-0.5 shrink-0" />
-                        <span className="text-muted-foreground">{o}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </CardContent>
-              </Card>
-            )}
-
-            {/* Skills */}
-            {!!course.skills?.length && (
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg flex items-center gap-2">
-                    <Award className="h-5 w-5" />
-                    Skills you'll gain
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="grid sm:grid-cols-2 gap-4">
-                  {course.skills.map((s) => (
-                    <div key={s.id} className="rounded-lg border p-4 space-y-1">
-                      <p className="font-medium">{s.title}</p>
-                      <p className="text-sm text-muted-foreground">{s.description}</p>
-                    </div>
-                  ))}
-                </CardContent>
-              </Card>
-            )}
-
-            {/* Career pathways */}
-            {!!course.careerPaths?.length && (
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg flex items-center gap-2">
-                    <Briefcase className="h-5 w-5" />
-                    Explore Career Pathways
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  {course.careerPaths.map((c, i) => (
-                    <div
-                      key={c.id}
-                      className="flex items-start gap-4 rounded-lg border p-4"
-                    >
-                      <span className="text-sm font-bold text-muted-foreground mt-0.5">
-                        {String(i + 1).padStart(2, "0")}
-                      </span>
-                      <div className="flex-1">
-                        <p className="font-semibold">{c.role}</p>
-                        <p className="text-sm text-muted-foreground">{c.description}</p>
-                        {c.salaryContext && (
-                          <p className="text-xs text-primary mt-1">{c.salaryContext}</p>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </CardContent>
-              </Card>
+            {(course.careerPaths?.some((career) => career.role.trim()) || course.careerSectionFileUrl) && (
+              <section className="space-y-4">
+                <h2 className="text-2xl font-bold flex items-center gap-2"><Briefcase className="h-5 w-5" />Career Pathway</h2>
+                <ul className="space-y-3">{(course.careerPaths || []).filter((career) => career.role.trim()).map((career) => <li key={career.id} className="flex items-start gap-2"><CheckCircle className="h-5 w-5 text-primary shrink-0" /><span className="font-medium break-words">{career.role}</span></li>)}</ul>
+                {course.careerSectionFileUrl && <div className="space-y-3">
+                  {careerFileIsImage && <img src={course.careerSectionFileUrl} alt="Career pathway" className="max-h-96 w-full object-contain" />}
+                  <Button variant="outline" className="gap-2" onClick={() => {
+                    const link = document.createElement('a');
+                    link.href = course.careerSectionFileUrl || '';
+                    link.download = course.careerSectionFileName || 'career-pathway';
+                    link.target = '_blank';
+                    link.rel = 'noopener noreferrer';
+                    document.body.appendChild(link); link.click(); link.remove();
+                  }}><Download className="h-4 w-4" />{course.careerSectionFileName || 'Career Pathway File'}</Button>
+                </div>}
+              </section>
             )}
 
             {/* Programme information accordions */}
