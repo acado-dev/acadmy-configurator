@@ -131,6 +131,7 @@ const UniversityAddEditCourse = () => {
     const courses = JSON.parse(localStorage.getItem('universityCourses') || '[]');
 
     const courseData: any = {
+      ...(courseId ? courses.find((course: Course) => course.id === courseId) : {}),
       id: courseId || Date.now().toString(),
       name,
       shortName,

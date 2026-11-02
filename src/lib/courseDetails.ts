@@ -1,4 +1,39 @@
-import { Course } from '@/types/course';
+import { Course, CourseProgrammeGroup } from '@/types/course';
+
+/** Resolve legacy content without mutating it. Explicit groups are authoritative,
+ * including empty groups, so deleted points never return on reload. */
+export const resolveProgrammeGroups = (course: Partial<Course>): CourseProgrammeGroup[] => {
+  const keys = ['learn', 'apply', 'grow'] as const;
+  if (course.programmeGroups !== undefined) {
+    return keys.map((key) => {
+      const saved = course.programmeGroups?.find((group) => group.key === key);
+      return {
+        key,
+        subheader: key === 'grow' ? saved?.subheader ?? 'Grow' : key === 'learn' ? 'Learn' : 'Apply',
+        points: saved?.points ? [...saved.points] : [],
+        image: saved?.image || '',
+      };
+    });
+  }
+  const groups: CourseProgrammeGroup[] = keys.map((key) => ({
+    key, subheader: key === 'learn' ? 'Learn' : key === 'apply' ? 'Apply' : 'Grow', points: [], image: '',
+  }));
+  (course.benefits || []).forEach((benefit, index) => {
+    const matching = keys.findIndex((key) => benefit.title.trim().toLowerCase() === key);
+    const target = matching >= 0 ? matching : Math.min(index, 2);
+    const group = groups[target];
+    if (target === 2 && index === 2 && matching < 0 && benefit.title) group.subheader = benefit.title;
+    const point = matching >= 0 || index === 2
+      ? benefit.description : [benefit.title, benefit.description].filter(Boolean).join(': ');
+    if (point.trim()) group.points.push(point);
+    if (!group.image && benefit.icon) group.image = benefit.icon;
+  });
+  groups[0].points.push(...(course.outcomeBullets || []).filter((point) => point.trim()));
+  groups[1].points.push(...(course.skills || []).map((skill) =>
+    [skill.title, skill.description].filter(Boolean).join(': ')).filter((point) => point.trim()));
+  groups.forEach((group) => { group.points = [...new Set(group.points)]; });
+  return groups;
+};
 
 const INTERESTS_KEY = 'courseInterests';
 

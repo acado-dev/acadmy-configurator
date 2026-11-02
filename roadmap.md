@@ -19,6 +19,8 @@
 - [x] Replace community verification screens with an isolated, prepopulated prototype store; keep unused Cloud data protections unchanged.
 - [x] Verify seeded listings, posts, organization scope, member addition, category/community creation and persistence; no verification gate or runtime errors.
 # Course detail configuration
+- [x] Simplify specified university/course fields, consolidate legacy outcomes into Learn/Apply/Grow, and add section-wide career media.
+- [x] Test legacy preservation (six tests passed) and verify both admin editors save/readback, group uploads/removal and learner rendering without runtime errors.
 - [x] Extend course model with study details, hero alt, overview blocks, quick facts, benefit cards, guide PDF, outcomes, skills, career paths, testimonials, info sections.
 - [x] Shared detail editor in both Super Admin and University Admin course forms; seeded demo course (Research Fellowship in Business Innovation).
 - [x] Learner course page renders configured content dynamically with "I am interested" unique-user tracking; interest count shown on admin course detail.

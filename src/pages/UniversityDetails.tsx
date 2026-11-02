@@ -224,18 +224,14 @@ const UniversityDetails = ({ profileId, universityAdmin = false, initialName = '
         ...current,
         // Existing fields (preserved)
         shortName: formData.shortName, name: formData.fullName.trim(),
-        rating: formData.rating, rank: formData.rank,
-        brochureUrl: formData.brochureUrl, coverImage: formData.coverImage,
-        about: { ...current.about, description: formData.about },
+        brochureUrl: formData.brochureUrl,
         whyThisUniversity: formData.whyThisUniversity, admission: formData.admission,
         placements: formData.placements, faq: formData.faq,
         testimonials: formData.testimonial
           ? [formData.testimonial, ...(current.testimonials || []).slice(1)]
           : (current.testimonials || []).slice(1),
         // Identity
-        slug: identity.slug.trim(),
         institutionType: identity.institutionType,
-        logo: identity.logo,
         heroImageAlt: identity.heroImageAlt,
         isActive: identity.isActive,
         location: { ...current.location, city: identity.city, country: identity.country, campuses },
@@ -331,11 +327,6 @@ const UniversityDetails = ({ profileId, universityAdmin = false, initialName = '
                   <Input id="shortName" value={formData.shortName} onChange={(e) => setFormData({ ...formData, shortName: e.target.value })} placeholder="Enter short name" />
                 </div>
                 <div>
-                  <Label htmlFor="slug">Internal ID / Slug</Label>
-                  <Input id="slug" value={identity.slug} onChange={(e) => setIdentity({ ...identity, slug: e.target.value })} placeholder="e.g. xamk-university-of-applied-sciences" />
-                  <p className="text-xs text-muted-foreground mt-1">System ID: {university.id}</p>
-                </div>
-                <div>
                   <Label htmlFor="institutionType">Institution Type</Label>
                   <Select value={identity.institutionType} onValueChange={(v) => setIdentity({ ...identity, institutionType: v as InstitutionType })}>
                     <SelectTrigger id="institutionType"><SelectValue /></SelectTrigger>
@@ -355,14 +346,6 @@ const UniversityDetails = ({ profileId, universityAdmin = false, initialName = '
                   <Label htmlFor="country">Country</Label>
                   <Input id="country" value={identity.country} onChange={(e) => setIdentity({ ...identity, country: e.target.value })} placeholder="Enter country" />
                 </div>
-                <div>
-                  <Label htmlFor="rating">Rating</Label>
-                  <Input id="rating" value={formData.rating} onChange={(e) => setFormData({ ...formData, rating: e.target.value })} placeholder="Enter rating (e.g., 4.5)" />
-                </div>
-                <div>
-                  <Label htmlFor="rank">Rank</Label>
-                  <Input id="rank" value={formData.rank} onChange={(e) => setFormData({ ...formData, rank: e.target.value })} placeholder="Enter rank" />
-                </div>
               </div>
               <div className="flex items-center gap-3 pt-2">
                 <Switch id="isActive" checked={identity.isActive} onCheckedChange={(v) => setIdentity({ ...identity, isActive: v })} />
@@ -371,32 +354,17 @@ const UniversityDetails = ({ profileId, universityAdmin = false, initialName = '
             </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader><CardTitle>Branding & Hero</CardTitle></CardHeader>
-            <CardContent className="space-y-4">
-              <ImageField label="Logo" value={identity.logo} onChange={(v) => setIdentity({ ...identity, logo: v })} />
-              <div>
-                <Label htmlFor="banners">Hero Image</Label>
-                <div className="flex items-center gap-2">
-                  <Input id="banners" type="file" accept="image/*" onChange={(e) => handleFileChange(e, 'coverImage')} className="cursor-pointer" />
-                </div>
-                <Input id="bannerUrl" type="url" className="mt-2" placeholder="...or paste an image URL" value={formData.coverImage.startsWith('data:') ? '' : formData.coverImage} onChange={e => setFormData({ ...formData, coverImage: e.target.value })} />
-                {formData.coverImage && <div className="mt-2 space-y-2"><img src={formData.coverImage} alt={identity.heroImageAlt || 'University hero'} className="max-h-48 w-full object-contain border rounded-lg" /><Button variant="ghost" size="sm" onClick={() => setFormData({ ...formData, coverImage: '' })}>Remove</Button></div>}
-              </div>
-              <div>
-                <Label htmlFor="heroImageAlt">Hero Image Alt Text</Label>
-                <Input id="heroImageAlt" value={identity.heroImageAlt} onChange={(e) => setIdentity({ ...identity, heroImageAlt: e.target.value })} placeholder="Describe the hero image for accessibility" />
-              </div>
-              <div>
-                <Label htmlFor="about">Description</Label>
-                <Textarea id="about" value={formData.about} onChange={(e) => setFormData({ ...formData, about: e.target.value })} placeholder="Enter information about the university..." rows={6} className="resize-none" />
-              </div>
-            </CardContent>
-          </Card>
         </TabsContent>
 
         {/* ============ 2. FACTS & OVERVIEW ============ */}
         <TabsContent value="facts" className="space-y-6">
+          <Card>
+            <CardHeader><CardTitle>Hero Image Alt Text</CardTitle></CardHeader>
+            <CardContent>
+              <Label htmlFor="heroImageAlt">Hero Image Alt Text</Label>
+              <Input id="heroImageAlt" value={identity.heroImageAlt} onChange={(event) => setIdentity({ ...identity, heroImageAlt: event.target.value })} placeholder="Describe the hero image for accessibility" />
+            </CardContent>
+          </Card>
           <Card>
             <CardHeader>
               <div className="flex items-center justify-between">

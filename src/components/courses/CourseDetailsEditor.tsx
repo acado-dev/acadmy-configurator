@@ -8,8 +8,6 @@ import {
   Link2,
   FileText,
   Quote,
-  Sparkles,
-  ListChecks,
   Briefcase,
   Info,
 } from 'lucide-react';
@@ -30,14 +28,10 @@ import {
 } from '@/components/ui/select';
 import {
   Course,
-  CourseQuickFact,
-  CourseBenefit,
-  CourseSkill,
-  CourseCareerPath,
   CourseTestimonial,
-  CourseInfoSection,
 } from '@/types/course';
-import { newEntryId } from '@/lib/courseDetails';
+import { newEntryId, resolveProgrammeGroups } from '@/lib/courseDetails';
+import CourseContentMedia from './CourseContentMedia';
 import { toast } from '@/hooks/use-toast';
 
 export type CourseDetailsData = Pick<
@@ -61,6 +55,9 @@ export type CourseDetailsData = Pick<
   | 'descriptionBlocks'
   | 'highlightCallout'
   | 'quickFacts'
+  | 'programmeGroups'
+  | 'careerSectionFileUrl'
+  | 'careerSectionFileName'
   | 'benefits'
   | 'programmeGuideUrl'
   | 'programmeGuideName'
@@ -92,6 +89,9 @@ export const emptyCourseDetails: CourseDetailsData = {
   highlightCallout: '',
   quickFacts: [],
   benefits: [],
+  programmeGroups: resolveProgrammeGroups({}),
+  careerSectionFileUrl: '',
+  careerSectionFileName: '',
   programmeGuideUrl: '',
   programmeGuideName: '',
   outcomeBullets: [],
@@ -123,6 +123,9 @@ export const extractCourseDetails = (course: Partial<Course>): CourseDetailsData
   highlightCallout: course.highlightCallout || '',
   quickFacts: course.quickFacts || [],
   benefits: course.benefits || [],
+  programmeGroups: resolveProgrammeGroups(course),
+  careerSectionFileUrl: course.careerSectionFileUrl || '',
+  careerSectionFileName: course.careerSectionFileName || '',
   programmeGuideUrl: course.programmeGuideUrl || '',
   programmeGuideName: course.programmeGuideName || '',
   outcomeBullets: course.outcomeBullets || [],
@@ -214,7 +217,7 @@ const CourseDetailsEditor: React.FC<Props> = ({ value, onChange }) => {
     reader.onloadend = () => {
       set(
         'testimonials',
-        value.testimonials!.map((t) =>
+        (value.testimonials || []).map((t) =>
           t.id === id ? { ...t, portrait: reader.result as string } : t
         )
       );
@@ -345,14 +348,6 @@ const CourseDetailsEditor: React.FC<Props> = ({ value, onChange }) => {
           <Separator />
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="space-y-2">
-              <Label>Internal ID / Slug</Label>
-              <Input
-                value={value.slug || ''}
-                onChange={(e) => set('slug', e.target.value)}
-                placeholder="e.g., research-fellowship-business-innovation"
-              />
-            </div>
-            <div className="space-y-2">
               <Label>City</Label>
               <Input
                 value={value.city || ''}
@@ -375,23 +370,6 @@ const CourseDetailsEditor: React.FC<Props> = ({ value, onChange }) => {
                 onChange={(e) => set('language', e.target.value)}
                 placeholder="e.g., English"
               />
-            </div>
-            <div className="space-y-2">
-              <Label>Study Mode</Label>
-              <Select
-                value={value.studyMode || ''}
-                onValueChange={(v) => set('studyMode', v)}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select study mode" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Full-time">Full-time</SelectItem>
-                  <SelectItem value="Part-time">Part-time</SelectItem>
-                  <SelectItem value="Online">Online</SelectItem>
-                  <SelectItem value="Blended">Blended</SelectItem>
-                </SelectContent>
-              </Select>
             </div>
             <div className="space-y-2">
               <Label>Duration</Label>
@@ -519,67 +497,10 @@ const CourseDetailsEditor: React.FC<Props> = ({ value, onChange }) => {
           <div>
             <h2 className="text-xl font-semibold mb-1">Programme Overview</h2>
             <p className="text-sm text-muted-foreground">
-              Summary, description blocks, callout, quick facts and benefit cards
+              Highlight callout, quick facts and programme guide
             </p>
           </div>
           <Separator />
-
-          <div className="space-y-2">
-            <Label>Short Summary</Label>
-            <Textarea
-              value={value.summary || ''}
-              onChange={(e) => set('summary', e.target.value)}
-              placeholder="One or two sentences shown at the top of the overview..."
-              rows={2}
-            />
-          </div>
-
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <Label>Description Blocks</Label>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => set('descriptionBlocks', [...(value.descriptionBlocks || []), ''])}
-              >
-                <Plus className="w-3.5 h-3.5 mr-1" />
-                Add Block
-              </Button>
-            </div>
-            {(value.descriptionBlocks || []).map((block, i) => (
-              <div key={i} className="flex items-start gap-2">
-                <Textarea
-                  value={block}
-                  onChange={(e) =>
-                    set(
-                      'descriptionBlocks',
-                      (value.descriptionBlocks || []).map((b, bi) =>
-                        bi === i ? e.target.value : b
-                      )
-                    )
-                  }
-                  placeholder={`Paragraph ${i + 1}...`}
-                  rows={3}
-                  className="flex-1"
-                />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  className="text-destructive"
-                  onClick={() =>
-                    set(
-                      'descriptionBlocks',
-                      (value.descriptionBlocks || []).filter((_, bi) => bi !== i)
-                    )
-                  }
-                >
-                  <Trash2 className="w-4 h-4" />
-                </Button>
-              </div>
-            ))}
-          </div>
 
           <div className="space-y-2">
             <Label>Highlight Callout</Label>
@@ -657,97 +578,6 @@ const CourseDetailsEditor: React.FC<Props> = ({ value, onChange }) => {
                 >
                   <Trash2 className="w-4 h-4" />
                 </Button>
-              </div>
-            ))}
-          </div>
-
-          {/* Benefits */}
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <Label className="flex items-center gap-2">
-                <Sparkles className="w-4 h-4" />
-                "Why Study This Programme?" Cards
-              </Label>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() =>
-                  set('benefits', [
-                    ...(value.benefits || []),
-                    { id: newEntryId(), title: '', description: '', icon: '' },
-                  ])
-                }
-              >
-                <Plus className="w-3.5 h-3.5 mr-1" />
-                Add Card
-              </Button>
-            </div>
-            {(value.benefits || []).map((b, i) => (
-              <div key={b.id} className="rounded-lg border p-4 space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-muted-foreground">
-                    Card {i + 1}
-                  </span>
-                  <div className="flex items-center gap-1">
-                    {reorderButtons(i, (value.benefits || []).length, (dir) =>
-                      set('benefits', move(value.benefits || [], i, dir))
-                    )}
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      className="h-7 w-7 text-destructive"
-                      onClick={() =>
-                        set(
-                          'benefits',
-                          (value.benefits || []).filter((x) => x.id !== b.id)
-                        )
-                      }
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </Button>
-                  </div>
-                </div>
-                <div className="grid gap-3 md:grid-cols-2">
-                  <Input
-                    value={b.title}
-                    onChange={(e) =>
-                      set(
-                        'benefits',
-                        (value.benefits || []).map((x) =>
-                          x.id === b.id ? { ...x, title: e.target.value } : x
-                        )
-                      )
-                    }
-                    placeholder="Title (e.g., Learn)"
-                  />
-                  <Input
-                    value={b.icon || ''}
-                    onChange={(e) =>
-                      set(
-                        'benefits',
-                        (value.benefits || []).map((x) =>
-                          x.id === b.id ? { ...x, icon: e.target.value } : x
-                        )
-                      )
-                    }
-                    placeholder="Icon/image URL (optional)"
-                  />
-                </div>
-                <Textarea
-                  value={b.description}
-                  onChange={(e) =>
-                    set(
-                      'benefits',
-                      (value.benefits || []).map((x) =>
-                        x.id === b.id ? { ...x, description: e.target.value } : x
-                      )
-                    )
-                  }
-                  placeholder="Short description..."
-                  rows={2}
-                />
               </div>
             ))}
           </div>
@@ -833,256 +663,43 @@ const CourseDetailsEditor: React.FC<Props> = ({ value, onChange }) => {
         </div>
       </Card>
 
-      {/* Learning Outcomes & Skills */}
-      <Card className="p-6">
-        <div className="space-y-4">
-          <div>
-            <h2 className="text-xl font-semibold mb-1">Learning Outcomes & Skills</h2>
-            <p className="text-sm text-muted-foreground">
-              Outcome bullet points and skills gained
-            </p>
-          </div>
-          <Separator />
-
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <Label className="flex items-center gap-2">
-                <ListChecks className="w-4 h-4" />
-                Learning Outcome Bullets
-              </Label>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => set('outcomeBullets', [...(value.outcomeBullets || []), ''])}
-              >
-                <Plus className="w-3.5 h-3.5 mr-1" />
-                Add Outcome
-              </Button>
-            </div>
-            {(value.outcomeBullets || []).map((o, i) => (
-              <div key={i} className="flex items-center gap-2">
-                {reorderButtons(i, (value.outcomeBullets || []).length, (dir) =>
-                  set('outcomeBullets', move(value.outcomeBullets || [], i, dir))
-                )}
-                <Input
-                  value={o}
-                  onChange={(e) =>
-                    set(
-                      'outcomeBullets',
-                      (value.outcomeBullets || []).map((x, xi) =>
-                        xi === i ? e.target.value : x
-                      )
-                    )
-                  }
-                  placeholder="e.g., Apply core Business theory to authentic problems"
-                  className="flex-1"
-                />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  className="text-destructive"
-                  onClick={() =>
-                    set(
-                      'outcomeBullets',
-                      (value.outcomeBullets || []).filter((_, xi) => xi !== i)
-                    )
-                  }
-                >
-                  <Trash2 className="w-4 h-4" />
-                </Button>
-              </div>
-            ))}
-          </div>
-
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <Label>Skills Gained</Label>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() =>
-                  set('skills', [
-                    ...(value.skills || []),
-                    { id: newEntryId(), title: '', description: '', icon: '' },
-                  ])
-                }
-              >
-                <Plus className="w-3.5 h-3.5 mr-1" />
-                Add Skill
-              </Button>
-            </div>
-            {(value.skills || []).map((s) => (
-              <div key={s.id} className="rounded-lg border p-4 space-y-3">
-                <div className="flex justify-end">
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className="h-7 w-7 text-destructive"
-                    onClick={() =>
-                      set('skills', (value.skills || []).filter((x) => x.id !== s.id))
-                    }
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                  </Button>
+      <Card className="p-6 space-y-4">
+        <h2 className="text-xl font-semibold">Why Study This Programme?</h2>
+        <Separator />
+        <div className="grid gap-6 lg:grid-cols-3">
+          {resolveProgrammeGroups(value).map((group) => {
+            const updateGroup = (patch: Partial<typeof group>) => set('programmeGroups', resolveProgrammeGroups(value).map((item) => item.key === group.key ? { ...item, ...patch } : item));
+            return (
+              <div key={group.key} className="space-y-4 min-w-0">
+                {group.key === 'grow' ? <div className="space-y-2">
+                  <Label htmlFor="grow-subheader">Grow Subheader</Label>
+                  <Input id="grow-subheader" value={group.subheader} onChange={(event) => updateGroup({ subheader: event.target.value })} />
+                </div> : <h3 className="text-lg font-semibold">{group.subheader}</h3>}
+                <div className="space-y-2">
+                  {group.points.map((point, index) => <div key={index} className="flex items-start gap-2">
+                    <Textarea aria-label={`${group.key} content point ${index + 1}`} value={point} rows={2} className="min-w-0 flex-1" onChange={(event) => updateGroup({ points: group.points.map((item, i) => i === index ? event.target.value : item) })} />
+                    <Button type="button" variant="ghost" size="icon" aria-label={`Remove ${group.key} point ${index + 1}`} title="Remove point" onClick={() => updateGroup({ points: group.points.filter((_, i) => i !== index) })}><Trash2 className="h-4 w-4 text-destructive" /></Button>
+                  </div>)}
+                  <Button type="button" variant="outline" size="sm" onClick={() => updateGroup({ points: [...group.points, ''] })}><Plus className="h-4 w-4 mr-2" />Add {group.key} point</Button>
                 </div>
-                <div className="grid gap-3 md:grid-cols-2">
-                  <Input
-                    value={s.title}
-                    onChange={(e) =>
-                      set(
-                        'skills',
-                        (value.skills || []).map((x) =>
-                          x.id === s.id ? { ...x, title: e.target.value } : x
-                        )
-                      )
-                    }
-                    placeholder="Skill title"
-                  />
-                  <Input
-                    value={s.icon || ''}
-                    onChange={(e) =>
-                      set(
-                        'skills',
-                        (value.skills || []).map((x) =>
-                          x.id === s.id ? { ...x, icon: e.target.value } : x
-                        )
-                      )
-                    }
-                    placeholder="Icon/image URL (optional)"
-                  />
-                </div>
-                <Textarea
-                  value={s.description}
-                  onChange={(e) =>
-                    set(
-                      'skills',
-                      (value.skills || []).map((x) =>
-                        x.id === s.id ? { ...x, description: e.target.value } : x
-                      )
-                    )
-                  }
-                  placeholder="Short description..."
-                  rows={2}
-                />
+                <CourseContentMedia id={`${group.key}-image`} label={`${group.key === 'learn' ? 'Learn' : group.key === 'apply' ? 'Apply' : 'Grow'} Image`} url={group.image || ''} imageOnly onChange={(image) => updateGroup({ image })} />
               </div>
-            ))}
-          </div>
+            );
+          })}
         </div>
       </Card>
 
-      {/* Career Pathways */}
-      <Card className="p-6">
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-xl font-semibold mb-1 flex items-center gap-2">
-                <Briefcase className="w-5 h-5" />
-                Career Pathways
-              </h2>
-              <p className="text-sm text-muted-foreground">
-                Roles graduates typically move into
-              </p>
-            </div>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() =>
-                set('careerPaths', [
-                  ...(value.careerPaths || []),
-                  { id: newEntryId(), role: '', description: '', salaryContext: '', image: '' },
-                ])
-              }
-            >
-              <Plus className="w-3.5 h-3.5 mr-1" />
-              Add Pathway
-            </Button>
-          </div>
-          <Separator />
-          {(value.careerPaths || []).map((c, i) => (
-            <div key={c.id} className="rounded-lg border p-4 space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-muted-foreground">
-                  Pathway {i + 1}
-                </span>
-                <div className="flex items-center gap-1">
-                  {reorderButtons(i, (value.careerPaths || []).length, (dir) =>
-                    set('careerPaths', move(value.careerPaths || [], i, dir))
-                  )}
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className="h-7 w-7 text-destructive"
-                    onClick={() =>
-                      set(
-                        'careerPaths',
-                        (value.careerPaths || []).filter((x) => x.id !== c.id)
-                      )
-                    }
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                  </Button>
-                </div>
-              </div>
-              <div className="grid gap-3 md:grid-cols-2">
-                <Input
-                  value={c.role}
-                  onChange={(e) =>
-                    set(
-                      'careerPaths',
-                      (value.careerPaths || []).map((x) =>
-                        x.id === c.id ? { ...x, role: e.target.value } : x
-                      )
-                    )
-                  }
-                  placeholder="Job role (e.g., Business Analyst)"
-                />
-                <Input
-                  value={c.salaryContext || ''}
-                  onChange={(e) =>
-                    set(
-                      'careerPaths',
-                      (value.careerPaths || []).map((x) =>
-                        x.id === c.id ? { ...x, salaryContext: e.target.value } : x
-                      )
-                    )
-                  }
-                  placeholder="Salary/context (optional)"
-                />
-              </div>
-              <Textarea
-                value={c.description}
-                onChange={(e) =>
-                  set(
-                    'careerPaths',
-                    (value.careerPaths || []).map((x) =>
-                      x.id === c.id ? { ...x, description: e.target.value } : x
-                    )
-                  )
-                }
-                placeholder="Short description..."
-                rows={2}
-              />
-              <Input
-                value={c.image || ''}
-                onChange={(e) =>
-                  set(
-                    'careerPaths',
-                    (value.careerPaths || []).map((x) =>
-                      x.id === c.id ? { ...x, image: e.target.value } : x
-                    )
-                  )
-                }
-                placeholder="Image URL (optional)"
-              />
-            </div>
-          ))}
+      <Card className="p-6 space-y-4">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h2 className="text-xl font-semibold flex items-center gap-2"><Briefcase className="w-5 h-5" />Career Pathway</h2>
+          <Button type="button" variant="outline" size="sm" onClick={() => set('careerPaths', [...(value.careerPaths || []), { id: newEntryId(), role: '', description: '' }])}><Plus className="w-4 h-4 mr-2" />Add Role</Button>
         </div>
+        <Separator />
+        {(value.careerPaths || []).map((career, index) => <div key={career.id} className="flex items-center gap-2">
+          <Input aria-label={`Job role ${index + 1}`} value={career.role} placeholder="Job role or profession" onChange={(event) => set('careerPaths', (value.careerPaths || []).map((item) => item.id === career.id ? { ...item, role: event.target.value } : item))} />
+          <Button type="button" variant="ghost" size="icon" aria-label={`Remove role ${index + 1}`} title="Remove role" onClick={() => set('careerPaths', (value.careerPaths || []).filter((item) => item.id !== career.id))}><Trash2 className="h-4 w-4 text-destructive" /></Button>
+        </div>)}
+        <CourseContentMedia id="career-section-file" label="Career Pathway File" url={value.careerSectionFileUrl || ''} name={value.careerSectionFileName} onChange={(url, name) => onChange({ ...value, careerSectionFileUrl: url, careerSectionFileName: name })} />
       </Card>
 
       {/* Testimonials */}

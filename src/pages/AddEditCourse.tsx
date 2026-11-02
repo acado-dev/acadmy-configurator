@@ -110,6 +110,7 @@ const AddEditCourse = () => {
     const now = new Date().toISOString();
 
     const courseData: Course = {
+      ...(courseId ? courses.find((course: Course) => course.id === courseId) : {}),
       id: courseId || Date.now().toString(),
       name: name.trim(),
       shortName: shortName.trim(),
