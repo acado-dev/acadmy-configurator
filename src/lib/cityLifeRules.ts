@@ -11,6 +11,8 @@ export interface CityContent {
   weatherLabel: string; weatherEnabled: boolean; guidanceHeading: string; guidanceDescription: string;
   aiEnabled: boolean; managerLabel: string; appointmentUrl: string; guidanceFaqIds: string[];
   facts: CityEntry[]; seasons: CityEntry[]; places: CityEntry[]; housing: CityEntry[]; gallery: CityEntry[]; faqs: CityEntry[];
+  /** Sections the university has removed; their content is kept for re-adding. */
+  hiddenSections?: string[];
 }
 export function cityEntry(values: Partial<CityEntry> = {}): CityEntry {
   return { id: crypto.randomUUID(), title: '', description: '', category: '', value: '', unit: '', context: '', months: '', temperature: '', address: '', distance: '', image: '', alt: '', caption: '', url: '', notes: '', action: '', visible: true, ...values };
@@ -39,9 +41,10 @@ export function moveCityEntry<T>(entries: T[], from: number, to: number): T[] {
 export function validateCity(content: CityContent): string[] {
   const errors: string[] = [];
   if (!content.title.trim()) errors.push('Page title is required.');
-  if (content.hero && !content.heroAlt.trim()) errors.push('Hero image alt text is required.');
-  if (content.weatherEnabled && (content.latitude.trim() === '' || content.longitude.trim() === '' || !Number.isFinite(Number(content.latitude)) || !Number.isFinite(Number(content.longitude)) || Math.abs(Number(content.latitude)) > 90 || Math.abs(Number(content.longitude)) > 180)) errors.push('Enter valid latitude (−90 to 90) and longitude (−180 to 180).');
-  for (const key of cityCollections) content[key].filter(e => e.visible).forEach(e => {
+  const off = (k: string) => (content.hiddenSections || []).includes(k);
+  if (!off('hero') && content.hero && !content.heroAlt.trim()) errors.push('Hero image alt text is required.');
+  if (!off('facts') && content.weatherEnabled && (content.latitude.trim() === '' || content.longitude.trim() === '' || !Number.isFinite(Number(content.latitude)) || !Number.isFinite(Number(content.longitude)) || Math.abs(Number(content.latitude)) > 90 || Math.abs(Number(content.longitude)) > 180)) errors.push('Enter valid latitude (−90 to 90) and longitude (−180 to 180).');
+  for (const key of cityCollections.filter(k => !off(k))) content[key].filter(e => e.visible).forEach(e => {
     if (key !== 'gallery' && !e.title.trim()) errors.push(`${key}: visible entries need a title.`);
     if ((key === 'places' || key === 'housing') && e.image && !e.alt.trim()) errors.push(`${key}: add image alt text.`);
     if (key === 'gallery' && !e.image) errors.push('Gallery images are required.');

@@ -9,6 +9,8 @@ export interface StudentLifeContent {
   dayTitle: string; dayDescription: string; video: string; poster: string; videoCaption: string;
   statistics: LifeEntry[]; moments: LifeEntry[]; communities: LifeEntry[]; facilities: LifeEntry[];
   support: LifeEntry[]; gallery: LifeEntry[]; faqs: LifeEntry[];
+  /** Sections the university has removed; their content is kept for re-adding. */
+  hiddenSections?: string[];
 }
 export interface StudentLifeRecord { universityId: string; draft: StudentLifeContent; published: StudentLifeContent | null; savedAt: string; publishedAt: string | null }
 export function newLifeEntry(values: Partial<LifeEntry> = {}): LifeEntry {
@@ -21,8 +23,10 @@ export function moveLifeEntry<T>(items: T[], from: number, to: number): T[] {
 export function validateStudentLife(content: StudentLifeContent): string[] {
   const errors: string[] = [];
   if (!content.title.trim()) errors.push('Enter a page title.');
-  if (content.hero && !content.heroAlt.trim()) errors.push('Add alt text for the hero image.');
+  const off = (k: string) => (content.hiddenSections || []).includes(k);
+  if (!off('overview') && content.hero && !content.heroAlt.trim()) errors.push('Add alt text for the hero image.');
   for (const key of ['statistics', 'moments', 'communities', 'facilities', 'support', 'gallery', 'faqs'] as const) {
+    if (off(key === 'statistics' ? 'overview' : key === 'moments' ? 'day' : key)) continue;
     content[key].filter(item => item.visible).forEach((item, index) => {
       if (key !== 'gallery' && !item.title.trim()) errors.push(`${key}: entry ${index + 1} needs a ${key === 'faqs' ? 'question' : 'title'}.`);
       if (key === 'gallery' && !item.image) errors.push(`Gallery image ${index + 1} needs an image.`);
