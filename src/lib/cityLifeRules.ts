@@ -11,6 +11,8 @@ export interface CityContent {
   weatherLabel: string; weatherEnabled: boolean; guidanceHeading: string; guidanceDescription: string;
   aiEnabled: boolean; managerLabel: string; appointmentUrl: string; guidanceFaqIds: string[];
   facts: CityEntry[]; seasons: CityEntry[]; places: CityEntry[]; housing: CityEntry[]; gallery: CityEntry[]; faqs: CityEntry[];
+  /** Sections the university has removed; their content is kept for re-adding. */
+  hiddenSections?: string[];
 }
 export function cityEntry(values: Partial<CityEntry> = {}): CityEntry {
   return { id: crypto.randomUUID(), title: '', description: '', category: '', value: '', unit: '', context: '', months: '', temperature: '', address: '', distance: '', image: '', alt: '', caption: '', url: '', notes: '', action: '', visible: true, ...values };

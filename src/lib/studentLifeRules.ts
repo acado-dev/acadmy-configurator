@@ -9,6 +9,8 @@ export interface StudentLifeContent {
   dayTitle: string; dayDescription: string; video: string; poster: string; videoCaption: string;
   statistics: LifeEntry[]; moments: LifeEntry[]; communities: LifeEntry[]; facilities: LifeEntry[];
   support: LifeEntry[]; gallery: LifeEntry[]; faqs: LifeEntry[];
+  /** Sections the university has removed; their content is kept for re-adding. */
+  hiddenSections?: string[];
 }
 export interface StudentLifeRecord { universityId: string; draft: StudentLifeContent; published: StudentLifeContent | null; savedAt: string; publishedAt: string | null }
 export function newLifeEntry(values: Partial<LifeEntry> = {}): LifeEntry {
