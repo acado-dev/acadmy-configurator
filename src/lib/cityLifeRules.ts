@@ -38,11 +38,11 @@ export function moveCityEntry<T>(entries: T[], from: number, to: number): T[] {
 }
 export function validateCity(content: CityContent): string[] {
   const errors: string[] = [];
-  if (!content.title.trim() || !content.city.trim() || !content.country.trim()) errors.push('Page title, city and country are required.');
+  if (!content.title.trim()) errors.push('Page title is required.');
   if (content.hero && !content.heroAlt.trim()) errors.push('Hero image alt text is required.');
   if (content.weatherEnabled && (content.latitude.trim() === '' || content.longitude.trim() === '' || !Number.isFinite(Number(content.latitude)) || !Number.isFinite(Number(content.longitude)) || Math.abs(Number(content.latitude)) > 90 || Math.abs(Number(content.longitude)) > 180)) errors.push('Enter valid latitude (−90 to 90) and longitude (−180 to 180).');
   for (const key of cityCollections) content[key].filter(e => e.visible).forEach(e => {
-    if (key !== 'gallery' && !e.title.trim()) errors.push(`${key}: visible entries need a title.`);
+    if (key !== 'gallery' && key !== 'places' && !e.title.trim()) errors.push(`${key}: visible entries need a title.`);
     if (e.image && !e.alt.trim()) errors.push(`${key}: add image alt text.`);
     if (key === 'gallery' && (!e.image || !e.alt.trim())) errors.push('Gallery images and alt text are required.');
     if (key === 'faqs' && !e.description.trim()) errors.push('FAQs need an answer.');
@@ -51,6 +51,5 @@ export function validateCity(content: CityContent): string[] {
     if (key === 'housing' && e.url && !isHttpsUrl(e.url)) errors.push('Housing resources must use HTTPS.');
   });
   if (content.appointmentUrl && !isHttpsUrl(content.appointmentUrl)) errors.push('Appointment calendar must use HTTPS.');
-  if (content.guidanceFaqIds.some(id => !content.faqs.some(f => f.id === id && f.visible))) errors.push('Study Guidance must reference visible FAQs.');
   return [...new Set(errors)];
 }
