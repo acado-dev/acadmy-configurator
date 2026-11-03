@@ -9,6 +9,6 @@ describe('Student Life publication rules', () => {
   it('another university cannot read this published snapshot', () => { assert.equal(publishedStudentLife(publishStudentLife(record, content), 'u-oxford', true), null); });
   it('inactive university content is hidden', () => { assert.equal(publishedStudentLife(publishStudentLife(record, content), 'u-jamk', false), null); });
   it('unpublishing hides content and retains the draft', () => { const published = publishStudentLife(record, content); const removed = { ...published, published: null }; assert.equal(publishedStudentLife(removed, 'u-jamk', true), null); assert.equal(removed.draft.title, 'Student life'); });
-  it('gallery images require alt text before publishing', () => { const invalid = { ...content, gallery: [newLifeEntry({ image: '/campus.jpg' })] }; assert.throws(() => publishStudentLife(record, invalid), /alt text/); assert.equal(validateStudentLife({ ...invalid, gallery: [newLifeEntry({ image: '/campus.jpg', alt: 'Campus library' })] }).length, 0); });
+  it('gallery images publish without alt text but need an image', () => { assert.equal(validateStudentLife({ ...content, gallery: [newLifeEntry({ image: '/campus.jpg' })] }).length, 0); assert.throws(() => publishStudentLife(record, { ...content, gallery: [newLifeEntry()] }), /needs an image/); });
   it('reordering preserves all entries and moves the selected entry', () => { assert.deepEqual(moveLifeEntry(['09:00', '12:00', '15:00'], 0, 1), ['12:00', '09:00', '15:00']); });
 });
