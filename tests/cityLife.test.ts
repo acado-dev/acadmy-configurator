@@ -12,9 +12,9 @@ describe('City Life requirements',()=>{
     c.latitude='62.2426'; c.longitude='25.7473'; expect(validateCity(c)).toEqual([]);
     expect(Object.keys(c)).not.toContain('currentTemperature');
   });
-  test('gallery requires image and alt text',()=>{ const c=sampleCity();c.gallery=[cityEntry({image:'photo.jpg'})]; expect(validateCity(c)).toContain('Gallery images and alt text are required.'); });
+  test('gallery requires an image, not alt text or captions',()=>{ const c=sampleCity();c.gallery=[cityEntry({image:'photo.jpg'})]; expect(validateCity(c)).not.toContain('Gallery images are required.'); c.gallery=[cityEntry({category:'lifestyle'})]; expect(validateCity(c)).toContain('Gallery images are required.'); });
   test('repeatable records preserve selected ordering',()=>{expect(moveCityEntry(['one','two','three'],2,0)).toEqual(['three','one','two']);});
   test('universities in the same city retain independent content',()=>{ const a=sampleCity('Mikkeli');const b=sampleCity('Mikkeli');a.faqs[0].title='Changed'; expect(b.faqs[0].title).toBe('How do students get around?'); });
   test('selected housing and appointment destinations use HTTPS',()=>{const c=sampleCity();c.housing[0].url='javascript:alert(1)';c.appointmentUrl='http://example.com';expect(validateCity(c)).toContain('Housing resources must use HTTPS.');expect(validateCity(c)).toContain('Appointment calendar must use HTTPS.');});
-  test('places no longer require a title',()=>{const c=sampleCity(); c.places=c.places.map(p=>({...p,title:''})); expect(validateCity(c).some(e=>e.startsWith('places'))).toBe(false);});
+  test('places need a name; seasons have no image or alt fields',()=>{ const c=sampleCity(); c.places=c.places.map(p=>({...p,title:''})); expect(validateCity(c).some(e=>e.startsWith('places'))).toBe(true); const d=sampleCity(); d.seasons=d.seasons.map(s=>({ ...s, image:'', alt:'', caption:'' })); expect(validateCity(d)).toEqual([]); });
 });
