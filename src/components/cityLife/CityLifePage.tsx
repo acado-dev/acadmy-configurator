@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/components/ui/accordion';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { isMapsUrl, isHttpsUrl, type CityContent, type CityEntry } from '@/lib/cityLifeRules';
+import CustomSectionsView from '@/components/customSections/CustomSectionsView';
 import { resolveCityMedia } from '@/lib/cityLife';
 export default function CityLifePage({ content, universityName }: { content: CityContent; universityName: string }) {
   const [city,setCity] = useState(content); const [category,setCategory] = useState('all'); const [guidance,setGuidance] = useState(false);
@@ -19,5 +20,6 @@ export default function CityLifePage({ content, universityName }: { content: Cit
     {on('gallery') && <section id="city-gallery" className="space-y-5"><h2 className="text-2xl font-semibold">Life in {city.city}</h2><div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">{visible(city.gallery).map(e => <figure key={e.id}>{e.image && <img src={e.image} alt={e.alt} width={480} height={270} loading="lazy" className="aspect-video w-full rounded-lg object-cover" />}<figcaption className="mt-2 text-sm text-muted-foreground">{e.caption} {e.category && `· ${e.category}`}</figcaption></figure>)}</div></section>}
     {on('faqs') && <section id="city-faqs" className="space-y-4"><h2 className="text-2xl font-semibold">City life FAQs</h2>{faqList(city.faqs)}</section>}
     {on('guidance') && <section id="city-guidance" className="space-y-5"><h2 className="text-2xl font-semibold">{city.guidanceHeading}</h2><p className="text-muted-foreground">{city.guidanceDescription}</p><div className="grid gap-6 md:grid-cols-2"><div className="space-y-4">{city.aiEnabled && <Button variant="outline" onClick={() => setGuidance(true)}><Bot className="mr-2 h-4 w-4" />Ask Acado AI</Button>}{city.appointmentUrl && isHttpsUrl(city.appointmentUrl) ? <Button asChild><a href={city.appointmentUrl} target="_blank" rel="noopener noreferrer"><CalendarDays className="mr-2 h-4 w-4" />{city.managerLabel}<ExternalLink className="ml-2 h-4 w-4" /></a></Button> : <Button disabled><CalendarDays className="mr-2 h-4 w-4" />{city.managerLabel} · Booking unavailable</Button>}</div>{faqList(city.faqs.filter(e => city.guidanceFaqIds.includes(e.id)))}</div></section>}
+    <CustomSectionsView page="city" enabled={city.enabledCustomSections} values={city.customContent} />
   </div><Dialog open={guidance} onOpenChange={setGuidance}><DialogContent><DialogHeader><DialogTitle>Acado AI study guidance</DialogTitle><DialogDescription>AI study guidance is not currently connected. You can review the selected FAQs or book a study manager below.</DialogDescription></DialogHeader>{faqList(city.faqs.filter(e => city.guidanceFaqIds.includes(e.id)))}</DialogContent></Dialog></div>;
 }

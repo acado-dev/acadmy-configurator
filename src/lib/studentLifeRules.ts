@@ -11,6 +11,9 @@ export interface StudentLifeContent {
   support: LifeEntry[]; gallery: LifeEntry[]; faqs: LifeEntry[];
   /** Sections the university has removed; their content is kept for re-adding. */
   hiddenSections?: string[];
+  /** Super-Admin-defined custom sections this university enabled, and their content keyed by section then field. */
+  enabledCustomSections?: string[];
+  customContent?: Record<string, Record<string, unknown>>;
 }
 export interface StudentLifeRecord { universityId: string; draft: StudentLifeContent; published: StudentLifeContent | null; savedAt: string; publishedAt: string | null }
 export function newLifeEntry(values: Partial<LifeEntry> = {}): LifeEntry {
