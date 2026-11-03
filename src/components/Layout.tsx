@@ -77,6 +77,7 @@ const Layout = () => {
       subItems: [
         { label: 'Dashboard', path: '/', icon: LayoutDashboard },
         { label: 'Universities', path: '/universities', icon: Building2 },
+        { label: 'Section Builder', path: '/universities/section-builder', icon: LayoutDashboard },
         { label: 'Users', path: '/users', icon: Users },
       ]
     },

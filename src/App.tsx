@@ -136,6 +136,7 @@ import StudentLifeConfiguration from '@/pages/StudentLifeConfiguration';
 import StudentLife from '@/pages/user/StudentLife';
 import CityLifeConfiguration from '@/pages/CityLifeConfiguration';
 import CityLife from '@/pages/user/CityLife';
+import SectionBuilder from '@/pages/SectionBuilder';
 
 
 const queryClient = new QueryClient();
@@ -172,6 +173,7 @@ const App = () => {
               <Route path="form-applications/:applicationId" element={<ApplicationReview />} />
               <Route path="universities" element={<Universities />} />
               <Route path="universities/add" element={<AddUniversity />} />
+              <Route path="universities/section-builder" element={<SectionBuilder />} />
               <Route path="universities/edit/:universityId" element={<AddUniversity />} />
               <Route path="universities/:universityId/view" element={<UniversityView />} />
               <Route path="universities/:universityId/details" element={<UniversityDetails />} />

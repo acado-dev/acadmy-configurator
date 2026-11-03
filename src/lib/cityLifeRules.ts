@@ -13,6 +13,9 @@ export interface CityContent {
   facts: CityEntry[]; seasons: CityEntry[]; places: CityEntry[]; housing: CityEntry[]; gallery: CityEntry[]; faqs: CityEntry[];
   /** Sections the university has removed; their content is kept for re-adding. */
   hiddenSections?: string[];
+  /** Super-Admin-defined custom sections this university enabled, and their content keyed by section then field. */
+  enabledCustomSections?: string[];
+  customContent?: Record<string, Record<string, unknown>>;
 }
 export function cityEntry(values: Partial<CityEntry> = {}): CityEntry {
   return { id: crypto.randomUUID(), title: '', description: '', category: '', value: '', unit: '', context: '', months: '', temperature: '', address: '', distance: '', image: '', alt: '', caption: '', url: '', notes: '', action: '', visible: true, ...values };
