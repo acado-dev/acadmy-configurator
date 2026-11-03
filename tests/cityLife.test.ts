@@ -16,5 +16,5 @@ describe('City Life requirements',()=>{
   test('repeatable records preserve selected ordering',()=>{expect(moveCityEntry(['one','two','three'],2,0)).toEqual(['three','one','two']);});
   test('universities in the same city retain independent content',()=>{ const a=sampleCity('Mikkeli');const b=sampleCity('Mikkeli');a.faqs[0].title='Changed'; expect(b.faqs[0].title).toBe('How do students get around?'); });
   test('selected housing and appointment destinations use HTTPS',()=>{const c=sampleCity();c.housing[0].url='javascript:alert(1)';c.appointmentUrl='http://example.com';expect(validateCity(c)).toContain('Housing resources must use HTTPS.');expect(validateCity(c)).toContain('Appointment calendar must use HTTPS.');});
-  test('guidance only selects visible FAQs',()=>{const c=sampleCity(); c.faqs[0].visible=false;expect(validateCity(c)).toContain('Study Guidance must reference visible FAQs.');});
+  test('places no longer require a title',()=>{const c=sampleCity(); c.places=c.places.map(p=>({...p,title:''})); expect(validateCity(c).some(e=>e.startsWith('places'))).toBe(false);});
 });

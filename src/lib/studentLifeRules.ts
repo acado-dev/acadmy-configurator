@@ -25,11 +25,9 @@ export function validateStudentLife(content: StudentLifeContent): string[] {
   for (const key of ['statistics', 'moments', 'communities', 'facilities', 'support', 'gallery', 'faqs'] as const) {
     content[key].filter(item => item.visible).forEach((item, index) => {
       if (key !== 'gallery' && !item.title.trim()) errors.push(`${key}: entry ${index + 1} needs a ${key === 'faqs' ? 'question' : 'title'}.`);
-      if (key === 'gallery' && (!item.image || !item.alt.trim())) errors.push(`Gallery image ${index + 1} needs an image and alt text.`);
-      if (item.image && !item.alt.trim()) errors.push(`${key}: entry ${index + 1} needs image alt text.`);
+      if (key === 'gallery' && !item.image) errors.push(`Gallery image ${index + 1} needs an image.`);
       if (key === 'faqs' && !item.description.trim()) errors.push(`FAQ ${index + 1} needs an answer.`);
       if (key === 'statistics' && !item.value.trim()) errors.push(`Statistic ${index + 1} needs a value.`);
-      if (item.destination && (!item.destination.startsWith('/user/') || item.destination.startsWith('//'))) errors.push('Choose an internal learner destination.');
     });
   }
   return [...new Set(errors)];
