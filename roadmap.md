@@ -1,7 +1,8 @@
 # Domain Management
-- [ ] Add seeded domain/sub-domain management in both panels with university scope, filters, counts and safe deletion.
-- [ ] Add reusable mapping to existing content create/edit forms; keep learner screens reference-only.
-- [ ] Test relationship/status rules and verify create, edit, mapping and persistence in both panels.
+- [x] Add seeded domain/sub-domain management in both panels with university scope, filters, counts and safe deletion.
+- [x] Add reusable mapping to existing course, event, post, wall, scholarship and job create/edit forms; keep learner screens reference-only.
+- [x] Test relationship/status rules and verify creation, mapping, counts, deletion guards and persistence in both panels; 19 tests passed.
+- Blog/podcast mapping is pending existing editors: neither module currently has a creation/editing screen. No duplicate screens were added.
 
 # City Life configuration
 - [x] Add Cloud-scoped drafts, published snapshots and private media with backend admin authorization.

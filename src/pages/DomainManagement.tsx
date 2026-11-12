@@ -29,6 +29,7 @@ export default function DomainManagement({ subdomains = false }: { subdomains?: 
   const parents = visible.filter(r => !r.parentId);
   const item = domainId ? visible.find(r => r.id === domainId && !r.parentId) : undefined;
   const count = (r: DomainRecord) => mappings.filter(m => (r.parentId ? m.subdomainId === r.id : m.domainId === r.id) && (scope === undefined || m.universityId === scope)).length;
+  const contentUrl = (type: string, url?: string) => university && url && (type === 'event' || type === 'job') ? `/university${url}` : url;
   const rows = visible.filter(r => Boolean(r.parentId) === subdomains && (!search || `${r.name} ${r.description} ${records.find(p => p.id === r.parentId)?.name || ''}`.toLowerCase().includes(search.toLowerCase())) && (status === 'all' || r.active === (status === 'active')) && (filter === 'all' || r.universityId === (filter === 'platform' ? '' : filter)) && (!subdomains || parent === 'all' || r.parentId === parent)).sort((a,b) => sort === 'name' ? a.name.localeCompare(b.name) : b.createdAt.localeCompare(a.createdAt));
   const open = (r?: DomainRecord) => {
     setError('');
