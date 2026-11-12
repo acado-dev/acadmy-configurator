@@ -1,5 +1,7 @@
+import ContentDomainMapping, { useContentDomain } from '@/components/domains/ContentDomainMapping';
+import { getDomainAdmin } from '@/lib/domainStorage';
 import { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { ArrowLeft, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -14,6 +16,9 @@ const CreateEvent = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const isEditMode = !!id;
+  const university = useLocation().pathname.startsWith('/university/');
+  const base = university ? '/university/events' : '/events';
+  const domainMapping = useContentDomain('event', id, university ? getDomainAdmin().universityId || '__unassigned__' : undefined);
 
   const [currentStep, setCurrentStep] = useState(1);
   const [eventData, setEventData] = useState<Partial<Event>>({
@@ -36,7 +41,7 @@ const CreateEvent = () => {
   useEffect(() => {
     if (isEditMode) {
       const events = JSON.parse(localStorage.getItem("events") || "[]");
-      const event = events.find((e: Event) => e.id === id);
+      const event = events.find((e: Event) => e.id === (id || eventData.id));
       if (event) {
         setEventData(event);
       }
@@ -62,6 +67,8 @@ const CreateEvent = () => {
   };
 
   const handleSaveDraft = () => {
+    const mappingError = domainMapping.error();
+    if (mappingError) { toast({ title: mappingError, variant: 'destructive' }); return; }
     const events = JSON.parse(localStorage.getItem("events") || "[]");
     
     const updatedEvent: Event = {
@@ -73,8 +80,8 @@ const CreateEvent = () => {
       createdBy: "admin",
     } as Event;
 
-    if (isEditMode) {
-      const index = events.findIndex((e: Event) => e.id === id);
+    if (id || eventData.id) {
+      const index = events.findIndex((e: Event) => e.id === (id || eventData.id));
       if (index !== -1) {
         events[index] = updatedEvent;
       }
@@ -83,6 +90,8 @@ const CreateEvent = () => {
     }
 
     localStorage.setItem("events", JSON.stringify(events));
+    domainMapping.save(updatedEvent.id);
+    setEventData(updatedEvent);
     toast({
       title: "Draft saved",
       description: "Your event has been saved as draft.",
@@ -90,6 +99,8 @@ const CreateEvent = () => {
   };
 
   const handlePublish = () => {
+    const mappingError = domainMapping.error();
+    if (mappingError) { toast({ title: mappingError, variant: 'destructive' }); return; }
     const events = JSON.parse(localStorage.getItem("events") || "[]");
     
     const publishedEvent: Event = {
@@ -102,8 +113,8 @@ const CreateEvent = () => {
       createdBy: "admin",
     } as Event;
 
-    if (isEditMode) {
-      const index = events.findIndex((e: Event) => e.id === id);
+    if (id || eventData.id) {
+      const index = events.findIndex((e: Event) => e.id === (id || eventData.id));
       if (index !== -1) {
         events[index] = publishedEvent;
       }
@@ -112,6 +123,7 @@ const CreateEvent = () => {
     }
 
     localStorage.setItem("events", JSON.stringify(events));
+    domainMapping.save(publishedEvent.id);
     const dispatched = triggerCommunication(
       isEditMode ? 'event_updated' : 'event_published',
       {
@@ -127,7 +139,7 @@ const CreateEvent = () => {
       title: isEditMode ? "Event updated" : "Event published",
       description: `Your event is now live and visible to learners. ${triggerSummary(dispatched)}.`,
     });
-    navigate("/events");
+    navigate(base);
   };
 
   const CurrentStepComponent = steps[currentStep - 1].component;
@@ -141,7 +153,7 @@ const CreateEvent = () => {
             <Button
               variant="ghost"
               size="icon"
-              onClick={() => navigate("/events")}
+              onClick={() => navigate(base)}
             >
               <ArrowLeft className="h-5 w-5" />
             </Button>
@@ -206,6 +218,7 @@ const CreateEvent = () => {
       <div className="container mx-auto px-6 py-8">
         <Card className="max-w-5xl mx-auto">
           <CardContent className="p-8">
+            {currentStep === 1 && <div className="mb-6"><ContentDomainMapping value={domainMapping.value} onChange={domainMapping.onChange} selectUniversity={!university} /></div>}
             <CurrentStepComponent
               eventData={eventData}
               setEventData={setEventData}

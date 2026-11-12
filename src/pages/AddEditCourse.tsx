@@ -1,3 +1,5 @@
+import ContentDomainMapping, { useContentDomain } from '@/components/domains/ContentDomainMapping';
+import { getDomainAdmin } from '@/lib/domainStorage';
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, Save, X, Upload, Image as ImageIcon, Video, Link2 } from 'lucide-react';
@@ -44,6 +46,7 @@ const AddEditCourse = () => {
   const [courseLevelId, setCourseLevelId] = useState('');
   const [courseTypeId, setCourseTypeId] = useState('');
   const [organizationId, setOrganizationId] = useState('');
+  const domainMapping = useContentDomain('course', courseId, organizationId);
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [isActive, setIsActive] = useState(true);
@@ -105,6 +108,8 @@ const AddEditCourse = () => {
       return;
     }
 
+    const mappingError = domainMapping.error();
+    if (mappingError) { toast({ title: mappingError, variant: 'destructive' }); return; }
     setLoading(true);
     const courses = JSON.parse(localStorage.getItem('courses') || '[]');
     const now = new Date().toISOString();
@@ -142,6 +147,7 @@ const AddEditCourse = () => {
       toast({ title: 'Success', description: 'Course created successfully' });
     }
 
+    domainMapping.save(courseData.id);
     setLoading(false);
     navigate('/courses');
   };
@@ -192,6 +198,7 @@ const AddEditCourse = () => {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
+        <ContentDomainMapping value={domainMapping.value} onChange={domainMapping.onChange} />
         {/* Basic Information */}
         <Card className="p-6">
           <div className="space-y-4">

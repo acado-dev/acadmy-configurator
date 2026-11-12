@@ -137,6 +137,7 @@ import StudentLife from '@/pages/user/StudentLife';
 import CityLifeConfiguration from '@/pages/CityLifeConfiguration';
 import CityLife from '@/pages/user/CityLife';
 import SectionBuilder from '@/pages/SectionBuilder';
+import DomainManagement from '@/pages/DomainManagement';
 
 
 const queryClient = new QueryClient();
@@ -166,6 +167,9 @@ const App = () => {
               </ProtectedRoute>
             }>
               <Route index element={<Dashboard />} />
+              <Route path="domains" element={<DomainManagement />} />
+              <Route path="domains/subdomains" element={<DomainManagement subdomains />} />
+              <Route path="domains/:domainId" element={<DomainManagement />} />
               <Route path="master-fields" element={<MasterFields />} />
               <Route path="forms" element={<Forms />} />
               <Route path="forms/:formId" element={<FormEditor />} />
@@ -317,6 +321,12 @@ const App = () => {
               </UniversityProtectedRoute>
             }>
               <Route index element={<UniversityDashboard />} />
+              <Route path="domains" element={<DomainManagement />} />
+              <Route path="domains/subdomains" element={<DomainManagement subdomains />} />
+              <Route path="domains/:domainId" element={<DomainManagement />} />
+              <Route path="events" element={<Events />} />
+              <Route path="events/create" element={<CreateEvent />} />
+              <Route path="events/edit/:id" element={<CreateEvent />} />
               <Route path="community-management" element={<CommunityAdmin />} />
               <Route path="community-management/categories" element={<CommunityAdmin page="categories" />} />
               <Route path="community-management/new" element={<CommunityAdmin page="form" />} />

@@ -14,3 +14,5 @@
 - City Life uses a dedicated Cloud row keyed by university, structured ordered collections in separate draft/published snapshots and a published-only RPC; resolve write scope from verified Cloud user_roles, never prototype account flags, so drafts and media remain private. Reuse the City Life renderer for draft preview and the internal learner route.
 - Student Life and City Life store removed sections as `hiddenSections` inside each university's content snapshot; renderers and validation skip them while content is kept so re-adding restores it.
 - Custom Student Life/City Life sections are Super-Admin definitions in the `customSections` localStorage store; universities store only `enabledCustomSections` and `customContent` in their own snapshots, and one generic editor/renderer draws any definition so new sections need no code changes.
+
+- Domain Management uses a seeded prototype taxonomy and a content-type/record-ID mapping store shared by existing editors; mapping rules centrally enforce active choices, matching parents and university scope, and deletion preserves mapped content.
