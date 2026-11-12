@@ -327,6 +327,7 @@ const App = () => {
               <Route path="events" element={<Events />} />
               <Route path="events/create" element={<CreateEvent />} />
               <Route path="events/edit/:id" element={<CreateEvent />} />
+              <Route path="events/:id" element={<EventDetail />} />
               <Route path="community-management" element={<CommunityAdmin />} />
               <Route path="community-management/categories" element={<CommunityAdmin page="categories" />} />
               <Route path="community-management/new" element={<CommunityAdmin page="form" />} />

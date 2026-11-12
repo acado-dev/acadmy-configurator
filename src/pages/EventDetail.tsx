@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams, useLocation } from "react-router-dom";
 import {
   ArrowLeft,
   Calendar,
@@ -41,6 +41,7 @@ const formatDate = (value?: string) =>
 
 const EventDetail = () => {
   const { id } = useParams();
+  const base = useLocation().pathname.startsWith('/university/') ? '/university/events' : '/events';
   const navigate = useNavigate();
   const [tab, setTab] = useState("overview");
 
@@ -53,7 +54,7 @@ const EventDetail = () => {
         <Card>
           <CardContent className="py-16 text-center space-y-4">
             <p className="text-muted-foreground">This event could not be found.</p>
-            <Button onClick={() => navigate("/events")}>Back to Events</Button>
+            <Button onClick={() => navigate(base)}>Back to Events</Button>
           </CardContent>
         </Card>
       </div>
@@ -100,10 +101,10 @@ const EventDetail = () => {
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <Button variant="outline" size="icon" onClick={() => navigate("/events")} aria-label="Back to events">
+            <Button variant="outline" size="icon" onClick={() => navigate(base)} aria-label="Back to events">
               <ArrowLeft className="h-4 w-4" />
             </Button>
-            <Link to={`/events/edit/${event.id}`}>
+            <Link to={`${base}/edit/${event.id}`}>
               <Button className="gap-2">
                 <Edit className="h-4 w-4" />
                 Edit Event
@@ -258,7 +259,7 @@ const EventDetail = () => {
                             {s.status}
                           </Badge>
                         </div>
-                        <Link to={`/events/${event.id}/stages/${s.id}/responses`}>
+                        <Link to={`${base}/${event.id}/stages/${s.id}/responses`}>
                           <Button variant="outline" size="sm" className="gap-2">
                             <Eye className="h-4 w-4" />
                             View Responses ({stageResponses.length})

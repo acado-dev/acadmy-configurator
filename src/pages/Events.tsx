@@ -1,5 +1,6 @@
+import { getDomainAdmin, domainUniversities } from '@/lib/domainStorage';
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Plus, Search, Filter, Eye, Edit, Trash2, Calendar, Users, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -35,6 +36,10 @@ import { Event } from "@/types/event";
 import { getEvents, saveEvents } from "@/lib/eventStorage";
 
 const Events = () => {
+  const university = useLocation().pathname.startsWith('/university/');
+  const base = university ? '/university/events' : '/events';
+  const scope = university ? getDomainAdmin().universityId : undefined;
+  const [universityFilter, setUniversityFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -76,7 +81,8 @@ const Events = () => {
     const matchesSearch = event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       event.conductedBy.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesStatus = statusFilter === "all" || event.status === statusFilter;
-    return matchesSearch && matchesStatus;
+    const matchesUniversity = university ? event.universityId === scope : universityFilter === 'all' || (event.universityId || '') === (universityFilter === 'platform' ? '' : universityFilter);
+    return matchesSearch && matchesStatus && matchesUniversity;
   });
 
   return (
@@ -89,7 +95,7 @@ const Events = () => {
             Manage and organize learning events for your community
           </p>
         </div>
-        <Link to="/events/create">
+        <Link to={`${base}/create`}>
           <Button className="gap-2">
             <Plus className="h-4 w-4" />
             Create Event
@@ -142,7 +148,7 @@ const Events = () => {
           <CardDescription>View and manage all events</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="flex gap-4">
+          <div className="flex flex-wrap gap-4">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
               <Input
@@ -152,6 +158,7 @@ const Events = () => {
                 className="pl-10"
               />
             </div>
+            {!university && <Select value={universityFilter} onValueChange={setUniversityFilter}><SelectTrigger className="w-56" aria-label="University filter"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="all">All universities</SelectItem><SelectItem value="platform">Platform-wide</SelectItem>{domainUniversities().map(u => <SelectItem key={u.id} value={u.id}>{u.name}</SelectItem>)}</SelectContent></Select>}
             <Select value={statusFilter} onValueChange={setStatusFilter}>
               <SelectTrigger className="w-[180px]">
                 <Filter className="mr-2 h-4 w-4" />
@@ -192,7 +199,7 @@ const Events = () => {
                   filteredEvents.map((event) => (
                     <TableRow key={event.id}>
                       <TableCell className="font-medium">
-                        <Link to={`/events/${event.id}`} className="hover:underline">
+                        <Link to={`${base}/${event.id}`} className="hover:underline">
                           {event.title}
                         </Link>
                       </TableCell>
@@ -205,12 +212,12 @@ const Events = () => {
                       <TableCell>{event.registrations || 0}</TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-2">
-                          <Link to={`/events/${event.id}`}>
+                          <Link to={`${base}/${event.id}`}>
                             <Button variant="ghost" size="icon" title="View">
                               <Eye className="h-4 w-4" />
                             </Button>
                           </Link>
-                          <Link to={`/events/edit/${event.id}`}>
+                          <Link to={`${base}/edit/${event.id}`}>
                             <Button variant="ghost" size="icon" title="Edit">
                               <Edit className="h-4 w-4" />
                             </Button>
