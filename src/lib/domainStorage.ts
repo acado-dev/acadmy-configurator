@@ -43,7 +43,7 @@ export const CONTENT_SOURCES = [
   { type: 'scholarship', key: 'scholarships', label: 'Scholarship', edit: (id: string) => `/scholarships/edit/${id}` },
   { type: 'job', key: 'jobOpportunities', label: 'Job / Internship', edit: (id: string) => `/jobs/${id}/edit` },
 ] as const;
-type Content = { id: string; name?: string; title?: string; description?: string; organizationId?: string; universityId?: string; createdAt?: string; createdDate?: string; status?: string; isPublished?: boolean; active?: boolean };
+type Content = { id: string; name?: string; title?: string; description?: string; organizationId?: string; universityId?: string };
 export function getMappings(): ContentMapping[] {
   if (!localStorage.getItem(MAP_KEY)) {
     const demos: ContentMapping[] = [];
@@ -85,5 +85,5 @@ export function deleteDomain(id: string): void {
 export function mappedContent(mapping: ContentMapping) {
   const source = CONTENT_SOURCES.find(s => s.type === mapping.contentType);
   const content = source ? readArray<Content>(source.key).find(c => c.id === mapping.contentId) : undefined;
-  return { title: content?.name || content?.title || content?.description?.slice(0, 80) || mapping.contentId, description: content?.description || '', createdAt: content?.createdAt || content?.createdDate || '', status: content?.status || (content?.isPublished === true ? 'Published' : content?.isPublished === false ? 'Draft' : content?.active === true ? 'Active' : content?.active === false ? 'Inactive' : '—'), type: source?.label || mapping.contentType, url: source?.edit(mapping.contentId) };
+  return { title: content?.name || content?.title || content?.description?.slice(0, 80) || mapping.contentId, type: source?.label || mapping.contentType, url: source?.edit(mapping.contentId) };
 }

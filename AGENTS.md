@@ -16,4 +16,3 @@
 - Custom Student Life/City Life sections are Super-Admin definitions in the `customSections` localStorage store; universities store only `enabledCustomSections` and `customContent` in their own snapshots, and one generic editor/renderer draws any definition so new sections need no code changes.
 
 - Domain Management uses a seeded prototype taxonomy and a content-type/record-ID mapping store shared by existing editors; mapping rules centrally enforce active choices, matching parents and university scope, and deletion preserves mapped content.
-- Domain detail reference listings remain presentation-only and labelled Sample, separate from persisted content and mapping counts, so examples never alter existing content or deletion rules.
