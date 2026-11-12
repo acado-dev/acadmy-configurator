@@ -1,0 +1,23 @@
+import { describe, it } from 'node:test';
+import assert from 'node:assert/strict';
+import { availableDomains, availableSubdomains, deletionBlock, validateDomain, validateMapping, type ContentMapping, type DomainRecord } from '../src/lib/domainRules';
+const record = (id: string, active = true, parentId?: string, universityId = ''): DomainRecord => ({ id, name: id, description: '', image: '', active, parentId, universityId, createdAt: '', createdBy: 'Admin' });
+const records = [record('tech'), record('business'), record('inactive', false), record('ai', true, 'tech'), record('hidden-sub', false, 'tech'), record('jamk', true, undefined, 'u-jamk')];
+const mapping: ContentMapping = { contentType: 'course', contentId: 'c1', universityId: '', domainId: 'tech', subdomainId: 'ai' };
+describe('Domain management rules', () => {
+  it('only active domains are available for new content mappings', () => assert.deepEqual(availableDomains(records, '').map(r => r.id), ['tech', 'business']));
+  it('only active sub-domains of the selected parent are available', () => assert.deepEqual(availableSubdomains(records, 'tech').map(r => r.id), ['ai']));
+  it('requires a sub-domain to match its parent', () => assert.match(validateMapping(records, { ...mapping, domainId: 'business' }), /must belong/));
+  it('blocks new mapping to inactive domains', () => assert.match(validateMapping(records, { ...mapping, domainId: 'inactive', subdomainId: '' }), /Only active/));
+  it('blocks new mapping to inactive sub-domains', () => assert.match(validateMapping(records, { ...mapping, subdomainId: 'hidden-sub' }), /Only active sub-domains/));
+  it('preserves unchanged historical mappings when a domain is deactivated', () => assert.equal(validateMapping(records.map(r => r.id === 'tech' ? { ...r, active: false } : r), mapping, mapping), ''));
+  it('university-specific taxonomy cannot be mapped to another university', () => assert.match(validateMapping(records, { ...mapping, domainId: 'jamk', subdomainId: '', universityId: 'u-other' }), /not available/));
+  it('includes university-specific and platform domains for the assigned university', () => assert.deepEqual(availableDomains(records, 'u-jamk').map(r => r.id), ['tech', 'business', 'jamk']));
+  it('blocks deletion when content is mapped', () => assert.match(deletionBlock(records[3], records, [mapping]), /mapped content/));
+  it('blocks parent deletion while sub-domains exist', () => assert.match(deletionBlock(records[0], records, []), /has sub-domains/));
+  it('allows deletion of unused records without deleting content', () => assert.equal(deletionBlock(records[1], records, [mapping]), ''));
+  it('requires sub-domain university scope to match its parent', () => assert.match(validateDomain(record('sub', true, 'tech', 'u-jamk'), records, []), /same university/));
+  it('prevents changing parent of a mapped sub-domain', () => assert.match(validateDomain({ ...records[3], parentId: 'business' }, records, [mapping]), /Reassign mapped content/));
+  it('prevents orphaning content by changing domain university', () => assert.match(validateDomain({ ...records[0], universityId: 'u-jamk' }, records, [mapping]), /University cannot change/));
+  it('sub-domain mappings remain discoverable through their parent', () => assert.equal([mapping].filter(m => m.domainId === 'tech').length, 1));
+});
