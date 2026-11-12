@@ -40,7 +40,7 @@ export const CONTENT_SOURCES = [
   { type: 'event', key: 'events', label: 'Event', edit: (id: string) => `/events/edit/${id}` },
   { type: 'post', key: 'communityPosts', label: 'Post', edit: (id: string) => `/communities/edit/${id}` },
   { type: 'wall', key: 'wallPosts', label: 'Wall post', edit: (id: string) => `/wall/edit/${id}` },
-  { type: 'job', key: 'acado_job_opportunities', label: 'Job / Internship', edit: (id: string) => `/jobs/${id}/edit` },
+  { type: 'job', key: 'jobOpportunities', label: 'Job / Internship', edit: (id: string) => `/jobs/${id}/edit` },
 ] as const;
 type Content = { id: string; name?: string; title?: string; description?: string; organizationId?: string; universityId?: string };
 export function getMappings(): ContentMapping[] {
