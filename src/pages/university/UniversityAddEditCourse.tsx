@@ -1,3 +1,5 @@
+import ContentDomainMapping, { useContentDomain } from '@/components/domains/ContentDomainMapping';
+import { getDomainAdmin } from '@/lib/domainStorage';
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, Save, Upload, Link2, FileText, Target } from 'lucide-react';
@@ -52,6 +54,7 @@ const UniversityAddEditCourse = () => {
   const [informationCollected, setInformationCollected] = useState('');
   const [matchingCriteriaConfigured, setMatchingCriteriaConfigured] = useState(false);
   const [details, setDetails] = useState<CourseDetailsData>(emptyCourseDetails);
+  const domainMapping = useContentDomain('university-course', courseId, getDomainAdmin().universityId || '__unassigned__');
 
   // Reference data
   const [categories, setCategories] = useState<CourseCategory[]>([]);
@@ -126,6 +129,8 @@ const UniversityAddEditCourse = () => {
       return;
     }
 
+    const mappingError = domainMapping.error();
+    if (mappingError) { toast({ title: mappingError, variant: 'destructive' }); return; }
     setLoading(true);
     const universityAdmin = JSON.parse(localStorage.getItem('universityAdmin') || '{}');
     const courses = JSON.parse(localStorage.getItem('universityCourses') || '[]');
@@ -168,6 +173,7 @@ const UniversityAddEditCourse = () => {
       description: `Course ${courseId ? 'updated' : 'created'} successfully`,
     });
     
+    domainMapping.save(courseData.id);
     setLoading(false);
     navigate('/university/courses');
   };
@@ -189,6 +195,7 @@ const UniversityAddEditCourse = () => {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
+        <ContentDomainMapping value={domainMapping.value} onChange={domainMapping.onChange} />
         <Card className="p-6">
           <h2 className="text-xl font-semibold mb-4">Basic Information</h2>
           <div className="grid gap-6 md:grid-cols-2">

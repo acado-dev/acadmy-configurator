@@ -1,3 +1,4 @@
+import ContentDomainMapping, { useContentDomain } from '@/components/domains/ContentDomainMapping';
 import { useState, useEffect } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -23,6 +24,7 @@ export default function CreateWallPost() {
   const navigate = useNavigate();
   const { id } = useParams();
   const isEditMode = Boolean(id);
+  const domainMapping = useContentDomain('wall', id);
 
   const [formData, setFormData] = useState({
     description: "",
@@ -128,6 +130,8 @@ export default function CreateWallPost() {
       return;
     }
 
+    const mappingError = domainMapping.error();
+    if (mappingError) { toast({ title: mappingError, variant: 'destructive' }); return; }
     const savedPosts = localStorage.getItem(STORAGE_KEY);
     const posts: WallPost[] = savedPosts ? JSON.parse(savedPosts) : [];
 
@@ -143,6 +147,7 @@ export default function CreateWallPost() {
           updatedAt: new Date(),
         };
         localStorage.setItem(STORAGE_KEY, JSON.stringify(posts));
+        domainMapping.save(id);
         toast({
           title: "Success",
           description: "Post updated successfully",
@@ -160,6 +165,7 @@ export default function CreateWallPost() {
       };
       posts.push(newPost);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(posts));
+      domainMapping.save(newPost.id);
       toast({
         title: "Success",
         description: "Post created successfully",
@@ -206,6 +212,7 @@ export default function CreateWallPost() {
         {/* Form */}
         <Card className="p-6">
           <form onSubmit={handleSubmit} className="space-y-6">
+            <ContentDomainMapping value={domainMapping.value} onChange={domainMapping.onChange} selectUniversity />
             {/* Description */}
             <div className="space-y-2">
               <Label htmlFor="description">

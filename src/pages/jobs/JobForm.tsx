@@ -1,3 +1,5 @@
+import ContentDomainMapping, { useContentDomain } from '@/components/domains/ContentDomainMapping';
+import { getDomainAdmin } from '@/lib/domainStorage';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -17,6 +19,8 @@ export default function JobForm() {
   const { id } = useParams();
   const navigate = useNavigate();
   const base = useJobsBase();
+  const universityScope = base.startsWith('/university') ? getDomainAdmin().universityId || '__unassigned__' : undefined;
+  const domainMapping = useContentDomain('job', id, universityScope);
   const companies = getIndustryCompanies();
   const existing = id ? getOpportunity(id) : undefined;
   const [f, setF] = useState<any>(existing || {
@@ -42,11 +46,14 @@ export default function JobForm() {
     if (!f.title || !f.companyId || !f.location || !f.startDate || !f.endDate) return toast.error('Please fill title, company, location and dates');
     if (f.endDate < f.startDate) return toast.error('End date must be after start date');
     if (f.type === 'Internship' && !f.duration) return toast.error('Please enter internship duration');
+    const mappingError = domainMapping.error();
+    if (mappingError) return toast.error(mappingError);
     const company = companies.find((c) => c.id === f.companyId);
     const saved = saveOpportunity({
       ...f, companyName: company?.name || f.companyName, duration: f.type === 'Internship' ? f.duration : undefined,
       openings: Number(f.openings) || undefined, createdBy: base.startsWith('/university') ? 'university_admin' : 'super_admin',
     });
+    domainMapping.save(saved.id);
     toast.success(existing ? 'Opportunity updated' : 'Opportunity created');
     if (existing) navigate(base); else setCreated(saved);
   };
@@ -126,6 +133,7 @@ export default function JobForm() {
         </CardContent>
       </Card>
 
+      <ContentDomainMapping value={domainMapping.value} onChange={domainMapping.onChange} selectUniversity={universityScope === undefined} />
       <div className="flex justify-end gap-2">
         <Button variant="outline" onClick={() => navigate(base)}>Cancel</Button>
         <Button onClick={submit}>{existing ? 'Save Changes' : 'Save Opportunity'}</Button>

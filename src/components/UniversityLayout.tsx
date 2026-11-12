@@ -106,6 +106,15 @@ const UniversityLayout = () => {
       ]
     },
     {
+      id: 'domain-management',
+      label: 'Domain Management',
+      icon: BookOpen,
+      subItems: [
+        { label: 'Domains', path: '/university/domains', icon: BookOpen },
+        { label: 'Sub-domains', path: '/university/domains/subdomains', icon: BookOpen },
+      ]
+    },
+    {
       id: 'jobs-internships',
       label: 'Jobs & Internships',
       icon: Briefcase,

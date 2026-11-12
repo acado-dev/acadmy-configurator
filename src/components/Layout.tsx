@@ -106,6 +106,15 @@ const Layout = () => {
       ]
     },
     {
+      id: 'domain-management',
+      label: 'Domain Management',
+      icon: Hash,
+      subItems: [
+        { label: 'Domains', path: '/domains', icon: Hash },
+        { label: 'Sub-domains', path: '/domains/subdomains', icon: Hash },
+      ]
+    },
+    {
       id: 'jobs-internships',
       label: 'Jobs & Internships',
       icon: Briefcase,

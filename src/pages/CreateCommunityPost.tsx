@@ -1,3 +1,4 @@
+import ContentDomainMapping, { useContentDomain } from '@/components/domains/ContentDomainMapping';
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -37,6 +38,7 @@ export default function CreateCommunityPost() {
   const navigate = useNavigate();
   const { postId } = useParams();
   const isEditMode = !!postId;
+  const domainMapping = useContentDomain('post', postId);
 
   const [categories, setCategories] = useState<CommunityCategory[]>([]);
   const [formData, setFormData] = useState<Partial<CommunityPost>>({
@@ -121,12 +123,14 @@ export default function CreateCommunityPost() {
       return;
     }
 
+    const mappingError = domainMapping.error();
+    if (mappingError) { toast({ title: mappingError, variant: 'destructive' }); return; }
     // Save post
     const savedPosts = localStorage.getItem(STORAGE_KEYS.POSTS);
     const posts: CommunityPost[] = savedPosts ? JSON.parse(savedPosts) : [];
 
     const postData: CommunityPost = {
-      id: isEditMode ? postId! : Date.now().toString(),
+      id: postId || Date.now().toString(),
       title: formData.title.trim(),
       description: formData.description || "",
       contentType: formData.contentType || "notes",
@@ -148,6 +152,7 @@ export default function CreateCommunityPost() {
     }
 
     localStorage.setItem(STORAGE_KEYS.POSTS, JSON.stringify(updatedPosts));
+    domainMapping.save(postData.id);
 
     toast({
       title: "Success",
@@ -244,6 +249,7 @@ export default function CreateCommunityPost() {
       {/* Form */}
       <Card className="p-6">
         <form onSubmit={handleSubmit} className="space-y-6">
+          <ContentDomainMapping value={domainMapping.value} onChange={domainMapping.onChange} selectUniversity />
           {/* Title */}
           <div className="space-y-2">
             <Label htmlFor="title">

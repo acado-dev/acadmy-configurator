@@ -1,3 +1,5 @@
+import ContentDomainMapping, { useContentDomain } from '@/components/domains/ContentDomainMapping';
+import { getDomainAdmin } from '@/lib/domainStorage';
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, Check } from "lucide-react";
@@ -13,6 +15,7 @@ const CreateScholarship = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const isEditMode = !!id;
+  const domainMapping = useContentDomain('scholarship', id);
 
   const [currentStep, setCurrentStep] = useState(1);
   const [scholarshipData, setScholarshipData] = useState<Partial<Scholarship>>({
@@ -32,7 +35,7 @@ const CreateScholarship = () => {
   useEffect(() => {
     if (isEditMode) {
       const scholarships = JSON.parse(localStorage.getItem("scholarships") || "[]");
-      const scholarship = scholarships.find((s: Scholarship) => s.id === id);
+      const scholarship = scholarships.find((s: Scholarship) => s.id === (id || scholarshipData.id));
       if (scholarship) {
         setScholarshipData(scholarship);
       }
@@ -58,6 +61,8 @@ const CreateScholarship = () => {
   };
 
   const handleSaveDraft = () => {
+    const mappingError = domainMapping.error();
+    if (mappingError) { toast({ title: mappingError, variant: 'destructive' }); return; }
     const scholarships = JSON.parse(localStorage.getItem("scholarships") || "[]");
     
     const updatedScholarship: Scholarship = {
@@ -69,8 +74,8 @@ const CreateScholarship = () => {
       createdBy: "admin",
     } as Scholarship;
 
-    if (isEditMode) {
-      const index = scholarships.findIndex((s: Scholarship) => s.id === id);
+    if (id || scholarshipData.id) {
+      const index = scholarships.findIndex((s: Scholarship) => s.id === (id || scholarshipData.id));
       if (index !== -1) {
         scholarships[index] = updatedScholarship;
       }
@@ -79,6 +84,8 @@ const CreateScholarship = () => {
     }
 
     localStorage.setItem("scholarships", JSON.stringify(scholarships));
+    domainMapping.save(updatedScholarship.id);
+    setScholarshipData(updatedScholarship);
     toast({
       title: "Draft saved",
       description: "Your scholarship has been saved as draft.",
@@ -86,6 +93,8 @@ const CreateScholarship = () => {
   };
 
   const handlePublish = () => {
+    const mappingError = domainMapping.error();
+    if (mappingError) { toast({ title: mappingError, variant: 'destructive' }); return; }
     const scholarships = JSON.parse(localStorage.getItem("scholarships") || "[]");
     
     const publishedScholarship: Scholarship = {
@@ -98,8 +107,8 @@ const CreateScholarship = () => {
       createdBy: "admin",
     } as Scholarship;
 
-    if (isEditMode) {
-      const index = scholarships.findIndex((s: Scholarship) => s.id === id);
+    if (id || scholarshipData.id) {
+      const index = scholarships.findIndex((s: Scholarship) => s.id === (id || scholarshipData.id));
       if (index !== -1) {
         scholarships[index] = publishedScholarship;
       }
@@ -108,6 +117,7 @@ const CreateScholarship = () => {
     }
 
     localStorage.setItem("scholarships", JSON.stringify(scholarships));
+    domainMapping.save(publishedScholarship.id);
     toast({
       title: "Scholarship published",
       description: "Your scholarship is now live and accepting applications.",
@@ -191,6 +201,7 @@ const CreateScholarship = () => {
       <div className="container mx-auto px-6 py-8">
         <Card className="max-w-5xl mx-auto">
           <CardContent className="p-8">
+            {currentStep === 1 && <div className="mb-6"><ContentDomainMapping value={domainMapping.value} onChange={domainMapping.onChange} selectUniversity /></div>}
             <CurrentStepComponent
               scholarshipData={scholarshipData}
               setScholarshipData={setScholarshipData}
