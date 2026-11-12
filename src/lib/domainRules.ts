@@ -38,6 +38,7 @@ export function deletionBlock(record: DomainRecord, records: DomainRecord[], map
 }
 export function validateDomain(record: DomainRecord, records: DomainRecord[], mappings: ContentMapping[]): string {
   if (!record.name.trim()) return 'Name is required.';
+  if (record.parentId !== undefined && !record.parentId) return 'Select a parent domain.';
   if (records.some(r => r.id !== record.id && r.universityId === record.universityId && r.parentId === record.parentId && r.name.trim().toLowerCase() === record.name.trim().toLowerCase())) return 'A record with this name already exists.';
   const old = records.find(r => r.id === record.id);
   if (old && old.universityId !== record.universityId && (records.some(r => r.parentId === record.id) || mappings.some(m => m.domainId === record.id || m.subdomainId === record.id))) return 'University cannot change while sub-domains or content are mapped.';

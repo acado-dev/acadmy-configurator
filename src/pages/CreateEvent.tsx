@@ -73,6 +73,7 @@ const CreateEvent = () => {
     
     const updatedEvent: Event = {
       ...eventData,
+      universityId: domainMapping.value.universityId,
       id: eventData.id || `event-${Date.now()}`,
       status: "draft",
       updatedAt: new Date().toISOString(),
@@ -105,6 +106,7 @@ const CreateEvent = () => {
     
     const publishedEvent: Event = {
       ...eventData,
+      universityId: domainMapping.value.universityId,
       id: eventData.id || `event-${Date.now()}`,
       status: "active",
       publishedAt: new Date().toISOString(),

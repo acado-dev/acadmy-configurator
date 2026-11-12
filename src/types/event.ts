@@ -25,6 +25,7 @@ export interface EventStage {
 
 export interface Event {
   id: string;
+  universityId?: string;
   // Basic Details
   logo?: string;
   title: string;

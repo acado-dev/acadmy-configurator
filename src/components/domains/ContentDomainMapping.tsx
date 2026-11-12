@@ -1,10 +1,13 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import { availableDomains, availableSubdomains, domainUniversities, getDomains, readMapping, saveMapping, validateMapping, type ContentMapping } from '@/lib/domainStorage';
 
 export function useContentDomain(contentType: string, contentId?: string, fixedUniversity?: string) {
   const [value, setValue] = useState<ContentMapping>(() => readMapping(contentType, contentId || '') || { contentType, contentId: contentId || '', universityId: fixedUniversity || '', domainId: '', subdomainId: '' });
+  useEffect(() => {
+    setValue(readMapping(contentType, contentId || '') || { contentType, contentId: contentId || '', universityId: fixedUniversity || '', domainId: '', subdomainId: '' });
+  }, [contentType, contentId]);
   const mapping = { ...value, universityId: fixedUniversity ?? value.universityId };
   return {
     value: mapping,

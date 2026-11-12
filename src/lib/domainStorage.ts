@@ -45,6 +45,14 @@ export const CONTENT_SOURCES = [
 ] as const;
 type Content = { id: string; name?: string; title?: string; description?: string; organizationId?: string; universityId?: string };
 export function getMappings(): ContentMapping[] {
+  if (!localStorage.getItem(MAP_KEY)) {
+    const demos: ContentMapping[] = [];
+    if (readArray<Content>('courses').some(c => c.id === 'course-demo-fellowship')) {
+      const course = readArray<Content>('courses').find(c => c.id === 'course-demo-fellowship');
+      demos.push({ contentType: 'course', contentId: 'course-demo-fellowship', universityId: course?.organizationId || '', domainId: 'dom-business', subdomainId: 'sub-entrepreneurship' });
+    }
+    localStorage.setItem(MAP_KEY, JSON.stringify(demos));
+  }
   return readArray<ContentMapping>(MAP_KEY).filter(m => {
     const source = CONTENT_SOURCES.find(s => s.type === m.contentType);
     return source && readArray<Content>(source.key).some(c => c.id === m.contentId);
