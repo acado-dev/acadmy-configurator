@@ -1,3 +1,8 @@
+# Domain Management
+- [ ] Add seeded domain/sub-domain management in both panels with university scope, filters, counts and safe deletion.
+- [ ] Add reusable mapping to existing content create/edit forms; keep learner screens reference-only.
+- [ ] Test relationship/status rules and verify create, edit, mapping and persistence in both panels.
+
 # City Life configuration
 - [x] Add Cloud-scoped drafts, published snapshots and private media with backend admin authorization.
 - [x] Add ten-section editor in both panels and internal learner screen, without changing Course Detail.
